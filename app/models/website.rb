@@ -1,2 +1,3 @@
 class Website < ApplicationRecord
+
 end

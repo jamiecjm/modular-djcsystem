@@ -10,10 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170708101556) do
+ActiveRecord::Schema.define(version: 20180225132715) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_admin_comments", force: :cascade do |t|
+    t.string "namespace"
+    t.text "body"
+    t.string "resource_type"
+    t.bigint "resource_id"
+    t.string "author_type"
+    t.bigint "author_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
+    t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+  end
 
   create_table "commissions", id: :serial, force: :cascade do |t|
     t.integer "project_id"
@@ -43,6 +57,10 @@ ActiveRecord::Schema.define(version: 20170708101556) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "commission_id"
+    t.string "unit_no"
+    t.float "unit_size"
+    t.float "spa_value"
+    t.float "nett_value"
     t.index ["commission_id"], name: "index_sales_on_commission_id"
     t.index ["date"], name: "index_sales_on_date"
     t.index ["project_id"], name: "index_sales_on_project_id"
@@ -58,6 +76,7 @@ ActiveRecord::Schema.define(version: 20170708101556) do
     t.integer "sale_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "other_user"
     t.index ["sale_id"], name: "index_salevalues_on_sale_id"
     t.index ["user_id"], name: "index_salevalues_on_user_id"
   end
@@ -68,6 +87,8 @@ ActiveRecord::Schema.define(version: 20170708101556) do
     t.string "ancestry"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "overriding", default: false
+    t.float "overriding_percentage"
     t.index ["ancestry"], name: "index_teams_on_ancestry"
     t.index ["leader_id"], name: "index_teams_on_leader_id"
   end

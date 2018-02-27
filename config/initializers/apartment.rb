@@ -94,7 +94,7 @@ Rails.application.config.middleware.use Apartment::Elevators::Generic, lambda { 
   if website.nil?
     subdomain = request.host.split('.')[0]
     website = Website.find_by(subdomain: subdomain)
-    if subdomain == 'www' || (Rails.env.development? && subdomain == 'lvh')
+    if subdomain == 'www'
       return 'public'
     else
       website = Website.find_by(subdomain: subdomain)
