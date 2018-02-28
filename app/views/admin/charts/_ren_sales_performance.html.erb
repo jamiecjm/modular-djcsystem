@@ -1,0 +1,50 @@
+<div id='chart_div'></div>
+<script type="text/javascript">
+
+  // Load the Visualization API and the corechart package.
+  google.charts.load('current', {'packages':['corechart']});
+
+  // Set a callback to run when the Google Visualization API is loaded.
+  google.charts.setOnLoadCallback(drawChart);
+
+  // Callback that creates and populates a data table,
+  // instantiates the pie chart, passes in the data and
+  // draws it.
+  function drawChart() {
+
+    // Create the data table.
+    var data = new google.visualization.arrayToDataTable([
+        ["REN","REN Nett Value", {role: "annotation"}],
+        <%if sales.blank?%>
+            [0, 0, 0]
+        <%else%>
+            <%sales.each do |x|%>
+              ["<%=x[0]%>", <%=x[1]%>, <%=x[1]%>],
+            <%end%>
+            <%if sales.length < 30%>
+              <%(30 - sales.length).times do %>
+                [null, null, null],
+              <%end%>
+            <%end%>
+        <%end%>
+        
+        ]);
+
+    // Set chart options
+    var options = {'title': 'REN Total Nett Value',
+                    'height': 800,
+                    'chartArea': {'width': '80%','height': '90%'},
+                    'legend': {position: 'none'},
+                    'hAxis': {title: 'Total Nett Value (RM)'}
+                  };
+
+    // Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+
+  $(window).resize(function(){
+    drawChart();
+  });
+
+</script>

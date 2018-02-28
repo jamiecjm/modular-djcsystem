@@ -19,7 +19,12 @@ class Sale < ApplicationRecord
 
 	enum status: ["Booked","Done","Cancelled"]
 
-	scope :by_upline, ->(id) { where(id: User.find(id[/\d+/].to_i).pseudo_team_sales.pluck(:id)) }
+	scope :upline_eq, ->(id) { 
+		if id.is_a? String
+			id = id[/\d+/].to_i
+		end
+		where(id: User.find(id).pseudo_team_sales.pluck(:id)) 
+	}
 	scope :not_cancelled, ->{search(status_not_eq: 2).result}
 
 	def display_name
@@ -27,7 +32,7 @@ class Sale < ApplicationRecord
 	end
 
 	def self.ransackable_scopes(_auth_object = nil)
-	  [:by_upline]
+	  [:upline_eq]
 	end
 
 end

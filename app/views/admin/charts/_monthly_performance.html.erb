@@ -1,0 +1,39 @@
+<div id= 'chart_div'></div>
+<script type="text/javascript">
+
+  google.charts.load('current', {packages: ['corechart', 'bar']});
+  google.charts.setOnLoadCallback(drawAnnotations);
+
+  function drawAnnotations() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Month');
+    data.addColumn('number', 'Nett Value (RM)');
+    data.addColumn({type: 'number', role: 'annotation'});
+
+    data.addRows([
+     <%sales.each do |x|%>
+      ["<%=x[0]%>", <%=x[1]%>, <%=x[1]%>],
+     <%end%>
+    ]);
+
+    var options = {
+      title: "Monthly Sales Figure",
+      height: 600,
+      legend: {position: 'none'},
+      vAxis: { title: 'Total Nett Value (RM)'
+              },
+      annotations: {
+          alwaysOutside: true,
+        }, 
+      chartArea: {'width': '80%','height': '80%'}
+    };
+
+    var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+
+  $(window).resize(function(){
+    drawAnnotations();
+  });
+
+</script>

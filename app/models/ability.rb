@@ -18,7 +18,7 @@ class Ability
   	can :manage, Salevalue
   	can :manage, Sale
   	
-    can :read, ActiveAdmin::Page, name: "Dashboard"
+    can :read, ActiveAdmin::Page
   end
 
 end

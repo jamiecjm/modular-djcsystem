@@ -44,8 +44,8 @@ before_action only: :index do
 	if params['q']['date_lteq'].blank?
 		params['q']['date_lteq'] = Date.today
 	end
-	if params['q']['by_upline'].blank?
-		params['q']['by_upline'] = "[#{current_user.id}]"
+	if params['q']['upline_eq'].blank?
+		params['q']['upline_eq'] = "[#{current_user.id}]"
 	end
 end
 
@@ -114,7 +114,6 @@ sidebar :summary, only: :index, priority: 0 do
 			span @all_sales.length
 		end
 	end
-	
 end
 
 form do |f|
@@ -144,12 +143,13 @@ end
 
 filter :date
 # filter :teams, as: :select, collection: proc { Team.where(overriding: true) }
-filter :by_upline, as: :select, label: 'Upline', :collection => proc { User.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
+filter :upline, as: :select, label: 'Upline', :collection => proc { User.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
 filter :status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}
 filter :project
 filter :unit_no
 filter :buyer
 filter :users, label: 'REN'
+# filter :users_location, label:'REN Location', as: :select, collection: User.locations.map {|k,v| [k,v]}
 filter :unit_size
 filter :spa_value
 filter :nett_value

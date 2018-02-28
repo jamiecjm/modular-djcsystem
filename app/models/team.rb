@@ -2,13 +2,28 @@ class Team < ApplicationRecord
 
 	has_many :users
 	belongs_to :leader, class_name: 'User'
+	has_one :main_team, class_name: 'Team', through: :leader, source: :team
 	has_many :salevalues, -> {distinct}, through: :leader
 	has_many :sales, -> {distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
 
 	has_ancestry
 
-	scope :sales_by_upline, ->(id) {  }
+	scope :upline_eq, ->(id) {
+		if id.is_a? String
+			id = id[/\d+/].to_i
+		end
+		user = User.find(id)
+		team = Team.find_by_sql "SELECT  \"teams\".* FROM \"teams\" WHERE \"teams\".\"leader_id\" = #{user.id}"
+		team = team.first
+		if team.ancestry.nil?
+			ancestry = "#{team.id}"
+		else
+			ancestry = "#{team.ancestry}/#{team.id}"
+		end
+		subtree = Team.find_by_sql "SELECT \"teams\".id FROM \"teams\" WHERE ((\"teams\".\"ancestry\" LIKE '#{ancestry}/%' OR \"teams\".\"ancestry\" = '#{ancestry}') OR \"teams\".\"id\" = #{team.id})"
+		search(id_in: subtree.map(&:id)).result
+	}
 
 	def members
 		# including subtree
@@ -21,7 +36,7 @@ class Team < ApplicationRecord
 	end
 
 	def self.ransackable_scopes(_auth_object = nil)
-	  [:sales_by_upline]
+	  [:upline_eq]
 	end
 
 end
