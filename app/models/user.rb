@@ -16,11 +16,31 @@ class User < ApplicationRecord
 	enum location: ["KL","JB","Penang","Melaka"]
   	enum position: ["REN","Team Leader","Team Manager"]
 
-  	scope :approved, -> { where(approved?: true) }
-  	scope :pending, -> { where(approved?: false) }
+  	default_scope { where(approved?: true) }
+  	scope :pending, -> { unscoped.where(approved?: false).where.not(team_id: nil) }
+  	scope :upline_eq, -> (id){
+  		if id.is_a? String
+			id = id[/\d+/].to_i
+		end
+		user = User.find(id)
+		teams = user.pseudo_team.subtree
+		users = teams.pluck(:leader_id)
+		search(id_in: users).result	
+  	}
+  	scope :referrer_eq, -> (id){
+  		if id.is_a? String
+			id = id[/\d+/].to_i
+		end
+		user = User.find(id)
+		search(id_in: user.children.ids).result 		
+  	}
 
 	def display_name
 		prefered_name
+	end
+
+	def self.ransackable_scopes(_auth_object = nil)
+	  [:upline_eq, :referrer_eq]
 	end
 
 	def leader?

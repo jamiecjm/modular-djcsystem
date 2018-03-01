@@ -124,13 +124,13 @@ index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_co
 		d1 = params['q']['sales_date_gteq_datetime'].to_date
 		d2 = params['q']['sales_date_lteq_datetime'].to_date
 		months = (d1..d2).map {|d| [d.strftime('%B %Y'), 0]}.uniq
-		@sales.merge!(months.to_h){|k, old_v, new_v| old_v + new_v}
+		@sales = months.to_h.merge!(@sales){|k, old_v, new_v| old_v + new_v}
 		render partial: 'admin/charts/monthly_performance', :locals => {sales: @sales}
 	end
 end
 
+filter :upline_eq, as: :select, label: 'Upline', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
 filter :main_team, label: 'Team',as: :select, collection: proc { Team.where(overriding: true) }
-filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
 filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
 filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
 filter :sales_status, as: :select, collection: Sale.statuses.map {|k,v| [k,v]}

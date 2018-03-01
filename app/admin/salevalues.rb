@@ -50,7 +50,23 @@ before_action only: :index do
 
 end
 
-index title: 'Individual Sales' do
+batch_action :change_status_of, form: {
+	status: %w[Booked Done Cancelled]
+	} do |ids, inputs|
+		sales = Sale.search(salevalues_id_in: ids).result(distinct: true)
+		sales.update_all(status: inputs[:status])
+		redirect_to collection_path, notice: "Sales with id #{sales.ids.join(', ')} marked as #{inputs[:status]}"
+end
+
+member_action :view do |sv|
+	redirect_to sale_path(sv.sale)
+end
+
+member_action :edit do |sv|
+	redirect_to edit_sale_path(sv.sale)
+end
+
+index title: 'Individual Sales' do |sv|
 	selectable_column
 	column :sale, sortable: 'sales.id'
 	column :date, sortable: 'sales.date' do |sv|
@@ -118,7 +134,7 @@ sidebar :summary, only: :index, priority: 0 do
 
 end
 
-filter :user, label: 'REN'
+filter :user, label: 'REN', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
 filter :sale
 filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
 filter :sale_date, as: :date_range

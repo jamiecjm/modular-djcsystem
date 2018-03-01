@@ -12,7 +12,7 @@ ActiveAdmin.register Sale do
 #   permitted
 # end
 
-permit_params :date, :project_id, :unit_no, :unit_size, :spa_value, :nett_value, :buyer, :package, :remark,
+permit_params :date, :project_id, :unit_no, :unit_size, :spa_value, :nett_value, :buyer, :package, :remark, :spa_sign_date, :la_date,
 salevalues_attributes: [:user_id, :other_user, :percentage, :id, :sale_id, :_destroy],
 other_salevalues_attributes: [:user_id, :other_user, :percentage, :id, :sale_id, :_destroy]
 
@@ -53,6 +53,24 @@ before_action only: :index do
 	if params['q']['upline_eq'].blank?
 		params['q']['upline_eq'] = "[#{current_user.id}]"
 	end
+end
+
+batch_action :change_status_of, form: {
+	status: %w[Booked Done Cancelled]
+	} do |ids, inputs|
+		Sale.where(id: ids).update_all(status: inputs[:status])
+		redirect_to collection_path, notice: "Sales with id #{ids.join(', ')} marked as #{inputs[:status]}"
+end
+
+member_action :email_report, method: :post do
+	@id = resource.id
+	respond_to do |format|
+		format.js
+	end
+end
+
+action_item :email_report, only: :show do
+	link_to 'Email Report', email_report_sale_path, remote: true, method: :post
 end
 
 index title: 'Team Sales' do
@@ -122,6 +140,38 @@ sidebar :summary, only: :index, priority: 0 do
 	end
 end
 
+show do
+		attributes_table do
+			row :date
+			list_row :ren do |s|
+				s.salevalues.map {|sv| sv.user.prefered_name + " (#{sv.percentage}%)"}
+			end
+			list_row :other_ren do |s|
+				s.other_salevalues.map {|sv| sv.other_user + " (#{sv.percentage}%)"}
+			end
+			row :project
+			row :unit_no
+			row :size
+			row :spa_value do |s|
+				number_to_currency(s.spa_value, unit: 'RM ', precision: 2 )
+			end
+			row :nett_value do |s|
+				number_to_currency(s.nett_value, unit: 'RM ', precision: 2 )
+			end
+			row :buyer
+			row :status
+			row :package
+			row :remark
+		end
+
+		attributes_table title: 'SPA and LA Sign Date' do
+			
+			row :spa_sign_date, label: 'SPA Sign Date'
+			row :la_date, label: 'LA Sign Date'
+			
+		end
+end
+
 form do |f|
 	# f.semantic_errors *f.object.errors.keys
 	inputs do 
@@ -144,13 +194,20 @@ form do |f|
 		input :remark
 	end
 
+	if !f.object.new_record?
+		inputs do
+			input :spa_sign_date
+			input :la_date
+		end
+	end
+
 	actions
 end
 
+filter :upline, as: :select, label: 'Upline', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
 filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
 filter :date
 # filter :teams, as: :select, collection: proc { Team.where(overriding: true) }
-filter :upline, as: :select, label: 'Upline', :collection => proc { User.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
 filter :status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}
 filter :project
 filter :unit_no
