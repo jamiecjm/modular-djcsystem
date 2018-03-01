@@ -25,6 +25,8 @@ class Team < ApplicationRecord
 		search(id_in: subtree.map(&:id)).result
 	}
 
+	scope :year, ->(year) {}
+
 	def members
 		# including subtree
 		user_ids = subtree.pluck(:leader_id)
@@ -36,7 +38,7 @@ class Team < ApplicationRecord
 	end
 
 	def self.ransackable_scopes(_auth_object = nil)
-	  [:upline_eq]
+	  [:upline_eq, :year]
 	end
 
 end

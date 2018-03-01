@@ -30,11 +30,7 @@
 	max-width: 200px;
 }
 
-.teams.index .resource_selection_toggle_panel{
-	display: none;
-}
-
-.teams.index #index_footer{
+.teams.index .index_as_barchart .resource_selection_toggle_panel, .teams.index .index_as_column_chart .resource_selection_toggle_panel{
 	display: none;
 }
 

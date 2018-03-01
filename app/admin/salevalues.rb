@@ -31,16 +31,23 @@ before_action only: :index do
 	if params['q']['user_id_eq'].blank?
 		params['q']['user_id_eq'] = current_user.id
 	end
-	if params['q']['sale_date_gteq_datetime'].blank?
-		if Date.current >= Date.current.strftime('%Y-12-16').to_date
-			params['q']['sale_date_gteq_datetime'] = Date.current.strftime('%Y-12-16').to_date
-		else
-			params['q']['sale_date_gteq_datetime'] = "#{Date.current.year-1}-12-16".to_date
+	if params['q']['year'].blank?
+		if params['q']['sale_date_gteq_datetime'].blank?
+			if Date.current >= Date.current.strftime('%Y-12-16').to_date
+				params['q']['sale_date_gteq_datetime'] = Date.current.strftime('%Y-12-16').to_date
+			else
+				params['q']['sale_date_gteq_datetime'] = "#{Date.current.year-1}-12-16".to_date
+			end
 		end
+		if params['q']['sale_date_lteq_datetime'].blank?
+			params['q']['sale_date_lteq_datetime'] = Date.today
+		end
+	else
+		year = params['q']['year']
+		params['q']['sale_date_gteq_datetime'] = "#{year.to_i-1}-12-16"
+		params['q']['sale_date_lteq_datetime'] = "#{year}-12-15"
 	end
-	if params['q']['sale_date_lteq_datetime'].blank?
-		params['q']['sale_date_lteq_datetime'] = Date.today
-	end
+
 end
 
 index title: 'Individual Sales' do
@@ -113,6 +120,7 @@ end
 
 filter :user, label: 'REN'
 filter :sale
+filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
 filter :sale_date, as: :date_range
 filter :sale_status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}
 filter :project

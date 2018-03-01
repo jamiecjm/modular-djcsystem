@@ -32,27 +32,25 @@ before_action only: :index do
 		params['q'] = {}
 	end
 	if params['as'] == 'column_chart'
-		if params['q']['sales_date_gteq_datetime'].nil?
-			if Date.current >= Date.current.strftime('%Y-12-16').to_date
-				params['q']['sales_date_gteq_datetime'] = Date.current.strftime('%Y-12-16').to_date
-			else
-				params['q']['sales_date_gteq_datetime'] = "#{Date.current.year-1}-12-16".to_date
-			end
+		if params['q']['year'].nil?
+			params['q']['year'] = Date.current.year
 		end
-		if params['q']['sales_date_lteq_datetime'].nil?
-			if Date.current <= Date.current.strftime('%Y-12-15').to_date
-				params['q']['sales_date_lteq_datetime'] = Date.current.strftime('%Y-12-15').to_date
-			else
-				params['q']['sales_date_lteq_datetime'] = "#{Date.current.year+1}-12-15".to_date
-			end
-		end
+		year = params['q']['year']
+		params['q']['sales_date_gteq_datetime'] = "#{year.to_i-1}-12-16"
+		params['q']['sales_date_lteq_datetime'] = "#{year}-12-15"
 	else
-		if params['q']['sales_date_gteq_datetime'].nil?
-			params['q']['sales_date_gteq_datetime'] = Date.current.beginning_of_month
-		end
-		if params['q']['sales_date_lteq_datetime'].nil?
-			params['q']['sales_date_lteq_datetime'] = Date.today
-		end			
+		if params['q']['year'].nil?
+			if params['q']['sales_date_gteq_datetime'].nil?
+				params['q']['sales_date_gteq_datetime'] = Date.current.beginning_of_month
+			end
+			if params['q']['sales_date_lteq_datetime'].nil?
+				params['q']['sales_date_lteq_datetime'] = Date.today
+			end		
+		else
+			year = params['q']['year']
+			params['q']['sales_date_gteq_datetime'] = "#{year.to_i-1}-12-16"
+			params['q']['sales_date_lteq_datetime'] = "#{year}-12-15"
+		end	
 	end
 	if params['q']['sales_status_eq'].nil?
 		params['q']['sales_status_in'] = [0,1]
@@ -98,7 +96,7 @@ index title: 'Sales Performance', default: true do
 	column :total_sales, sortable: :total_sales
 end
 
-index title: 'Sales Performance Barchart', as: :barchart do
+index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barchart' do
 	div class: 'graph_div' do
 		@sales = teams.per(teams.length * teams.total_pages).order('SUM(salevalues.nett_value) DESC').sum('salevalues.nett_value')
 		@sales = @sales.map { |k,v| [k[0],v]}
@@ -110,29 +108,31 @@ index title: 'Sales Performance Barchart', as: :barchart do
 	end
 end
 
-index title: 'Monthly Sales Performance', as: :column_chart do
+index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_column_chart' do
 	div class: 'graph_div' do
 		div class: 'logo_div' do
 			image_tag 'https://res.cloudinary.com/dpog1tvij/image/upload/v1499525286/gtsyyemrtaij33arjmba.png'
 		end
-		@sales = teams.per(teams.length * teams.total_pages).group('teams.id').group_by_month('sales.date', format: "%b %Y").sum('salevalues.nett_value')
+		@sales = teams.per(teams.length * teams.total_pages).group('teams.id').group_by_month('sales.date', format: "%B %Y").sum('salevalues.nett_value')
 		@sales.to_a.map do |k,v|
 			new_key = k[1]
 			@sales[new_key] ||= 0
 			@sales[new_key] += v
 			@sales.delete(k)
 		end
+		year = params['q']['year'] 
 		d1 = params['q']['sales_date_gteq_datetime'].to_date
 		d2 = params['q']['sales_date_lteq_datetime'].to_date
 		months = (d1..d2).map {|d| [d.strftime('%B %Y'), 0]}.uniq
-		@sales.merge!(months.to_h)
+		@sales.merge!(months.to_h){|k, old_v, new_v| old_v + new_v}
 		render partial: 'admin/charts/monthly_performance', :locals => {sales: @sales}
 	end
 end
 
 filter :main_team, label: 'Team',as: :select, collection: proc { Team.where(overriding: true) }
 filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
-filter :sales_date, as: :date_range
+filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
+filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
 filter :sales_status, as: :select, collection: Sale.statuses.map {|k,v| [k,v]}
 filter :leader_location, as: :select, label: 'REN Location', :collection => User.locations.map {|k,v| [k,v]} 
 filter :projects

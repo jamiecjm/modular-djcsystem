@@ -22,6 +22,7 @@
               ["<%=x[0]%>", <%=x[1]%>, <%=x[1]%>],
             <%end%>
             <%if sales.length < 30%>
+              <% height = 30 %>
               <%(30 - sales.length).times do %>
                 [null, null, null],
               <%end%>
@@ -32,7 +33,7 @@
 
     // Set chart options
     var options = {'title': 'REN Total Nett Value',
-                    'height': 800,
+                    'height': <%=(height ||= sales.length)*25%>,
                     'chartArea': {'width': '80%','height': '90%'},
                     'legend': {position: 'none'},
                     'hAxis': {title: 'Total Nett Value (RM)'}

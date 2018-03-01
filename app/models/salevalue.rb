@@ -13,5 +13,10 @@ class Salevalue < ApplicationRecord
 	scope :other_team, -> {where.not(other_user: nil)}
 	scope :not_cancelled, -> { search(sale_status_not_eq: 2).result }
 	scope :cancelled, -> { search(sale_status_eq: 2).result }
+	scope :year, -> (year) {}
+
+	def self.ransackable_scopes(_auth_object = nil)
+	  [:year]
+	end
 
 end

@@ -34,15 +34,21 @@ before_action only: :index do
 	if params['q'].blank?
 		params['q'] = {}
 	end
-	if params['q']['date_gteq'].blank?
-		if Date.current >= Date.current.strftime('%Y-12-16').to_date
-			params['q']['date_gteq'] = Date.current.strftime('%Y-12-16').to_date
-		else
-			params['q']['date_gteq'] = "#{Date.current.year-1}-12-16".to_date
+	if params['q']['year'].blank?
+		if params['q']['date_gteq'].blank?
+			if Date.current >= Date.current.strftime('%Y-12-16').to_date
+				params['q']['date_gteq'] = Date.current.strftime('%Y-12-16').to_date
+			else
+				params['q']['date_gteq'] = "#{Date.current.year-1}-12-16".to_date
+			end
 		end
-	end
-	if params['q']['date_lteq'].blank?
-		params['q']['date_lteq'] = Date.today
+		if params['q']['date_lteq'].blank?
+			params['q']['date_lteq'] = Date.today
+		end
+	else
+		year = params['q']['year']
+		params['q']['date_gteq'] = "#{year.to_i-1}-12-16"
+		params['q']['date_lteq'] = "#{year}-12-15"
 	end
 	if params['q']['upline_eq'].blank?
 		params['q']['upline_eq'] = "[#{current_user.id}]"
@@ -141,6 +147,7 @@ form do |f|
 	actions
 end
 
+filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
 filter :date
 # filter :teams, as: :select, collection: proc { Team.where(overriding: true) }
 filter :upline, as: :select, label: 'Upline', :collection => proc { User.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }

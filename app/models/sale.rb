@@ -26,13 +26,14 @@ class Sale < ApplicationRecord
 		where(id: User.find(id).pseudo_team_sales.pluck(:id)) 
 	}
 	scope :not_cancelled, ->{search(status_not_eq: 2).result}
+	scope :year, ->(year) {}
 
 	def display_name
 		"Sale \##{id}"
 	end
 
 	def self.ransackable_scopes(_auth_object = nil)
-	  [:upline_eq]
+	  [:upline_eq, :year]
 	end
 
 end
