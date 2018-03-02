@@ -14,15 +14,17 @@ ActiveAdmin.register Salevalue do
 
 menu label: 'Individual', parent: 'Sales'
 
+config.sort_order = 'sales.date_desc'
+
 includes :sale, :project, :commission
 
-scope 'Booked/Done', default: true do |sv|
+scope 'Booked/Done', default: true, show_count: false do |sv|
 	sv.not_cancelled
 end
 
-scope :cancelled
+scope :cancelled, show_count: false
 
-scope :all
+scope :all, show_count: false
 
 before_action only: :index do 
 	if params['q'].blank?
@@ -66,7 +68,20 @@ member_action :edit do |sv|
 	redirect_to edit_sale_path(sv.sale)
 end
 
-index title: 'Individual Sales' do |sv|
+controller do
+	before_action :denied, only: [:show, :edit, :destroy]
+	def show
+	end
+	def edit
+	end
+	def destroy
+	end
+	def denied
+		redirect_to root_path, alert: 'You are not authorized to perform this action.'
+	end
+end
+
+index title: 'Individual Sales', pagination_total: false do |sv|
 	selectable_column
 	column :sale, sortable: 'sales.id'
 	column :date, sortable: 'sales.date' do |sv|
@@ -134,7 +149,7 @@ sidebar :summary, only: :index, priority: 0 do
 
 end
 
-filter :user, label: 'REN', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
+filter :user, label: 'REN', :collection => proc { current_user.pseudo_team_members.order('prefered_name').pluck(:prefered_name, :id) }
 filter :sale
 filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
 filter :sale_date, as: :date_range
@@ -149,5 +164,36 @@ filter :comm
 filter :sale_unit_size, as: :numeric, label: 'Unit Size'
 filter :sale_spa_value, as: :numeric, label: 'Unit SPA Value'
 filter :sale_nett_value, as: :numeric, label: 'Unit Nett Value'
+
+csv do
+	column(:sale) {|sv| sv.sale.display_name }
+	column(:date) do |sv|
+		sv.sale.date
+	end
+	column(:status) do |sv|
+		sv.sale.status
+	end
+	column(:project) {|sv| sv.project.name}
+	column(:unit_no) do |sv|
+		sv.sale.unit_no
+	end
+	column(:buyer) do |sv|
+		sv.sale.buyer
+	end
+	column('REN Sale Percentage') {|sv| sv.percentage}
+	column('REN SPA Value') {|sv| sv.spa}
+	column('REN Nett Value') {|sv| sv.nett_value}
+	column('REN Commission') {|sv| sv.comm}
+	column(:unit_size) do |sv|
+		sv.sale.unit_size
+	end
+	column(:unit_spa_value) do |sv|
+		sv.sale.spa_value
+	end
+	column(:unit_nett_value) do |sv|
+		sv.sale.nett_value
+	end	
+	column(:commission) {|sv| sv.commission.percentage}
+end
 
 end

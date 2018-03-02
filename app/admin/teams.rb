@@ -138,4 +138,25 @@ filter :leader_location, as: :select, label: 'REN Location', :collection => User
 filter :projects
 filter :leader, label: 'REN'
 
+csv do
+	column(:no) do
+		if @no.nil?
+			@no = 1
+		else
+			@no += 1
+		end
+	end
+	column('Name') do |t|
+		t.leader.prefered_name
+	end
+	column('Location') do |t|
+		t.leader.location
+	end
+	column('Team') { |t| t.main_team.display_name }
+	column :total_spa_value
+	column :total_nett_value
+	column :total_comm
+	column :total_sales
+end
+
 end

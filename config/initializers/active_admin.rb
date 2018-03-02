@@ -234,7 +234,7 @@ ActiveAdmin.setup do |config|
         end
         menu.add label: 'Teams', priority: 2
         menu.add label: 'Projects', priority: 3 do |p|
-          p.add label: 'New', url: '/projects/new', priority: 0
+          p.add label: 'New', url: '/projects/new', priority: 0, if: proc { current_user.leader? }
         end
       end
     end

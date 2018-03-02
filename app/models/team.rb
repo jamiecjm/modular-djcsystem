@@ -34,7 +34,7 @@ class Team < ApplicationRecord
 	end
 
 	def display_name
-		leader.prefered_name
+		name ||= leader.prefered_name
 	end
 
 	def self.ransackable_scopes(_auth_object = nil)

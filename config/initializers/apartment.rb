@@ -93,7 +93,6 @@ Rails.application.config.middleware.use Apartment::Elevators::Generic, lambda { 
   website = Website.find_by(external_host: request.host)
   if website.nil?
     subdomain = request.host.split('.')[0]
-    website = Website.find_by(subdomain: subdomain)
     if subdomain == 'www'
       return 'public'
     else

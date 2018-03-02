@@ -16,26 +16,47 @@ menu parent: 'Projects', label: 'List'
 
 permit_params :name, commissions_attributes: [:percentage, :effective_date, :id, :project_id, :_destroy]
 
-index do
+scope :all, default: true do |projects|
+	@max_comms = (projects.map(&:commissions).map(&:length)).max
+	projects
+end
+
+index pagination_total: false do
 	selectable_column
 	id_column
 	column :name
-	1.times do
-		max_comms = (projects.map(&:commissions).map(&:length)).max
-		(1..max_comms).each do |x|
-			column "Commission #{x} | Effective Date" do |p|
-				comms = p.commissions
-				if comms[x-1]
-					"#{comms[x-1].percentage}% | #{comms[x-1].effective_date}"
-				else
-					'-'
-				end
+	(1..controller.instance_variable_get(:@max_comms)).each do |x|
+		column "Commission #{x} (%)" do |p|
+			comm = p.commissions.order(:effective_date)[x-1]
+			if comm
+				"#{comm.percentage}%"
+			else
+				nil
+			end
+		end
+		column "Commission #{x} Effective Date" do |p|
+			comm = p.commissions.order(:effective_date)[x-1]
+			if comm
+				"#{comm.effective_date}"
+			else
+				nil
 			end
 		end
 	end
 	column :created_at
 	column :updated_at
 	actions
+end
+
+show do
+	attributes_table do
+		row :name
+		list_row :commissions do |p|
+			p.commissions.map {|c| "#{c.percentage}% | #{c.effective_date}" }
+		end
+		row :created_at
+		row :updated_at
+	end
 end
 
 form do |f|
@@ -53,5 +74,29 @@ filter :name
 filter :commissions_percentage, as: :numeric
 filter :commissions_effective_date, as: :date_range
 
+csv do
+	column :id
+	column :name
+	(1..controller.instance_variable_get(:@max_comms)).each do |x|
+		column("Commission #{x} (%)") do |p|
+			comm = p.commissions.order(:effective_date)[x-1]
+			if comm
+				"#{comm.percentage}"
+			else
+				nil
+			end
+		end
+		column("Commission #{x} Effective Date") do |p|
+			comm = p.commissions.order(:effective_date)[x-1]
+			if comm
+				"#{comm.effective_date}"
+			else
+				nil
+			end
+		end
+	end
+	column :created_at
+	column :updated_at
+end
 
 end

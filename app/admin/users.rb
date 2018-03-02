@@ -1,11 +1,15 @@
 ActiveAdmin.register User do
-  permit_params :email, :password, :password_confirmation
+  permit_params :name, :prefered_name, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation
 
   menu parent: 'Teams', label: 'Members'
 
-  scope :all, default: true
+  scope :approved, default: true, show_count: false
 
   scope :pending, if: proc { current_user.leader? }
+
+  scope :archived, if: proc { current_user.admin? }, show_count: false do |users|
+    users.unscoped.where(archived: true)
+  end
 
   before_action only: :index do
     if params['q'].blank?
@@ -17,7 +21,7 @@ ActiveAdmin.register User do
   end
 
   batch_action :approve, if: proc {current_user.leader?}, confirm: "Are you sure?" do |ids, inputs|
-      User.unscoped.where(id: ids).update_all(approved?: true)
+      User.where(id: ids).update_all(approved?: true)
       redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been approved"
   end
 
@@ -26,7 +30,12 @@ ActiveAdmin.register User do
     redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been disapproved"
   end
 
-  index do
+  batch_action :archive, if: proc {current_user.admin?}, confirm: "Are you sure?" do |ids, inputs|
+    User.where(id: ids).update_all(archived: true)
+    redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been archived"
+  end
+
+  index pagination_total: false do
     selectable_column
     id_column
     column :name
@@ -51,7 +60,7 @@ ActiveAdmin.register User do
         input :birthday
         if f.object.new_record? || current_user.leader?
           input :team, as: :select, collection: Team.where(overriding: true)
-          input :parent_id, label: 'Referrer', as: :select, collection: User.all.order(:prefered_name).map {|u| [u.prefered_name, u.id ]}
+          input :parent_id, label: 'Referrer', as: :select, collection: User.approved.order(:prefered_name).map {|u| [u.prefered_name, u.id ]}
           input :location
         end
     end
@@ -86,6 +95,20 @@ ActiveAdmin.register User do
   filter :email
   filter :phone_no
   filter :birthday
+
+  csv do
+    column :id
+    column :name
+    column :prefered_name
+    column :email
+    column :phone_no
+    column :birthday
+    column(:team) { |u| u.team.display_name}
+    column('Referrer') { |u| u.parent&.prefered_name}
+    column :location
+    column :created_at
+    column :updated_at
+  end
 
 
 end

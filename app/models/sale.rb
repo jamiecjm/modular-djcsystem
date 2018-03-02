@@ -1,14 +1,15 @@
 class Sale < ApplicationRecord
 
 	has_many :salevalues, dependent: :destroy
+	has_many :main_salevalues, -> {where(other_user: nil)}, class_name: 'Salevalue', dependent: :destroy
 	has_many :other_salevalues, -> {other_team}, class_name: 'Salevalue', dependent: :destroy
-	has_many :users, -> {distinct}, through: :salevalues
-	has_many :teams, -> {distinct}, through: :salevalues
+	has_many :users, -> {distinct}, through: :main_salevalues
+	has_many :teams, -> {distinct}, through: :main_salevalues
 	belongs_to :project
 	has_one :unit
 	belongs_to :commission, optional: true
 
-	accepts_nested_attributes_for :salevalues
+	accepts_nested_attributes_for :main_salevalues
 	accepts_nested_attributes_for :other_salevalues
 
 	validates :date, presence: true
@@ -16,6 +17,7 @@ class Sale < ApplicationRecord
 	validates :spa_value, presence: true
 	validates :nett_value, presence: true
 	validates :buyer, presence: true
+	validates :main_salevalues, :presence => true
 
 	enum status: ["Booked","Done","Cancelled"]
 
@@ -28,12 +30,33 @@ class Sale < ApplicationRecord
 	scope :not_cancelled, ->{search(status_not_eq: 2).result}
 	scope :year, ->(year) {}
 
+	before_save :set_comm
+
 	def display_name
 		"Sale \##{id}"
 	end
 
 	def self.ransackable_scopes(_auth_object = nil)
 	  [:upline_eq, :year]
+	end
+
+	def set_comm
+		comm = project.commissions.where('effective_date <= ?', date).order('effective_date DESC').limit(1).first
+		self.commission_id = comm.id
+		if !new_record? && (project_id_changed? || commission_id_changed?)
+			salevalues.each do |sv|
+				sv.calc_comm
+				sv.save
+			end
+		end
+	end
+
+	def titleize_buyer
+		self.buyer = buyer.upcase_first_word
+	end
+
+	def upcase_unit_no
+		self.unit_no = unit_no.upcase
 	end
 
 end

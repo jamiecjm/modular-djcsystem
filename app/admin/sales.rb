@@ -13,22 +13,30 @@ ActiveAdmin.register Sale do
 # end
 
 permit_params :date, :project_id, :unit_no, :unit_size, :spa_value, :nett_value, :buyer, :package, :remark, :spa_sign_date, :la_date,
-salevalues_attributes: [:user_id, :other_user, :percentage, :id, :sale_id, :_destroy],
+main_salevalues_attributes: [:user_id, :other_user, :percentage, :id, :sale_id, :_destroy],
 other_salevalues_attributes: [:user_id, :other_user, :percentage, :id, :sale_id, :_destroy]
 
 menu label: 'Team', priority: 1, parent: 'Sales'
 
-includes :salevalues
+config.sort_order = 'date_desc'
+# config.filters = false
 
-scope 'Booked/Done', default: true do |sales|
+includes :salevalues, :commission, :project
+
+scope 'Booked/Done', default: true, show_count: false do |sales|
+	@max_ren = (sales.map(&:salevalues).map(&:length)).max
 	sales.not_cancelled
 end
 
-scope :cancelled do |sales|
+scope :cancelled, show_count: false do |sales|
+	@max_ren = (sales.map(&:salevalues).map(&:length)).max
 	sales.search(status_eq: 2).result
 end
 
-scope :all
+scope :all, show_count: false do |sales|
+	@max_ren = (sales.map(&:salevalues).map(&:length)).max
+	sales
+end
 
 before_action only: :index do
 	if params['q'].blank?
@@ -73,7 +81,7 @@ action_item :email_report, only: :show do
 	link_to 'Email Report', email_report_sale_path, remote: true, method: :post
 end
 
-index title: 'Team Sales' do
+index title: 'Team Sales', pagination_total: false do
 	selectable_column
 	id_column
 	column :date
@@ -82,10 +90,9 @@ index title: 'Team Sales' do
 	column :unit_no
 	column :buyer
 	1.times do
-		max_ren = (sales.map(&:salevalues).map(&:length)).max
-		(1..max_ren).each do |x|
+		(1..controller.instance_variable_get(:@max_ren)).each do |x|
 			list_column "REN #{x} (%)", sortable: 'users.name' do |sale|
-				sv = sale.salevalues
+				sv = sale.main_salevalues.order(:order) + sale.other_salevalues.order(:order)
 				if sv[x-1]
 					if sv[x-1].user.nil?
 						[sv[x-1].other_user, "(#{sv[x-1].percentage}%)"]
@@ -98,9 +105,14 @@ index title: 'Team Sales' do
 			end
 		end
 	end
+
 	number_column :unit_size, as: :currency, seperator: ',', unit: ''
 	number_column :spa_value, as: :currency, seperator: ',', unit: ''
 	number_column :nett_value, as: :currency, seperator: ',', unit: ''
+	column 'Commission Percentage (%)', :commission
+	number_column :commission, as: :currency, seperator: ',', unit: '' do |sale|
+		sale.nett_value * sale.commission.percentage/100
+	end
 	actions
 end
 
@@ -111,7 +123,7 @@ sidebar :summary, only: :index, priority: 0 do
 		end
 		column do
 			span @all_sales = sales.per(sales.length * sales.total_pages), style: "display: none"
-			span number_to_currency(@all_sales.sum('salevalues.spa'), unit: 'RM ', delimeter: ',')
+			span number_to_currency(@all_sales.map(&:main_salevalues).flatten.pluck('spa').inject(:+), unit: 'RM ', delimeter: ',')
 		end
 	end
 	columns do
@@ -119,7 +131,7 @@ sidebar :summary, only: :index, priority: 0 do
 			span 'Total Nett Value'
 		end
 		column do
-			span number_to_currency(@all_sales.sum('salevalues.nett_value'), unit: 'RM ', delimeter: ',')
+			span number_to_currency(@all_sales.map(&:main_salevalues).flatten.pluck('nett_value').inject(:+), unit: 'RM ', delimeter: ',')
 		end
 	end
 	columns do
@@ -127,7 +139,7 @@ sidebar :summary, only: :index, priority: 0 do
 			span 'Total Commision'
 		end
 		column do
-			span number_to_currency(@all_sales.sum('salevalues.comm'), unit: 'RM ', delimeter: ',')
+			span number_to_currency(@all_sales.map(&:main_salevalues).flatten.pluck('comm').inject(:+), unit: 'RM ', delimeter: ',')
 		end
 	end	
 	columns do
@@ -141,46 +153,49 @@ sidebar :summary, only: :index, priority: 0 do
 end
 
 show do
-		attributes_table do
-			row :date
-			list_row :ren do |s|
-				s.salevalues.map {|sv| sv.user.prefered_name + " (#{sv.percentage}%)"}
-			end
-			list_row :other_ren do |s|
-				s.other_salevalues.map {|sv| sv.other_user + " (#{sv.percentage}%)"}
-			end
-			row :project
-			row :unit_no
-			row :size
-			row :spa_value do |s|
-				number_to_currency(s.spa_value, unit: 'RM ', precision: 2 )
-			end
-			row :nett_value do |s|
-				number_to_currency(s.nett_value, unit: 'RM ', precision: 2 )
-			end
-			row :buyer
-			row :status
-			row :package
-			row :remark
+	attributes_table do
+		row :date
+		row :status
+		row :project
+		row :unit_no
+		row :buyer
+		list_row :ren do |s|
+			s.salevalues.map {|sv| 
+				if sv.user.nil?
+					sv.other_user + " (#{sv.percentage}%)"
+				else
+					sv.user.prefered_name + " (#{sv.percentage}%)"
+				end
+			}
 		end
+		number_row :unit_size, as: :currency, seperator: ',', unit: ''
+		number_row :spa_value, as: :currency, seperator: ',', unit: ''
+		number_row :nett_value, as: :currency, seperator: ',', unit: ''
+		row 'Commission Percentage (%)' do |sale|
+			sale.commission
+		end
+		number_row :commission, as: :currency, seperator: ',', unit: '' do |sale|
+			sale.nett_value * sale.commission.percentage/100
+		end
+	end
 
-		attributes_table title: 'SPA and LA Sign Date' do
-			
-			row :spa_sign_date, label: 'SPA Sign Date'
-			row :la_date, label: 'LA Sign Date'
-			
-		end
+	attributes_table title: 'SPA and LA Sign Date' do
+		
+		row :spa_sign_date, label: 'SPA Sign Date'
+		row :la_date, label: 'LA Sign Date'
+		
+	end
 end
 
 form do |f|
 	# f.semantic_errors *f.object.errors.keys
 	inputs do 
 		input :date
-		has_many :salevalues, :allow_destroy => true, new_record: 'Add REN', heading: 'REN' do |sv|
-			sv.input :user, label: 'Name'
+		has_many :main_salevalues, :allow_destroy => true, new_record: 'Add REN', heading: 'REN', sortable: :order, sortable_start: 1 do |sv|
+			sv.input :user, label: 'Name', as: :select, collection: User.approved.order(:prefered_name).map {|u| [u.prefered_name, u.id ]}
 			sv.input :percentage, min: 0, step: 'any'
 		end
-		has_many :other_salevalues, :allow_destroy => true, new_record: 'Add Other Team\'s REN', heading: 'Other Team\'s REN' do |sv|
+		has_many :other_salevalues, :allow_destroy => true, new_record: 'Add Other Team\'s REN', heading: 'Other Team\'s REN', sortable: :order, sortable_start: 1 do |sv|
 			sv.input :other_user, label: 'Name'
 			sv.input :percentage
 		end
@@ -214,8 +229,44 @@ filter :unit_no
 filter :buyer
 filter :users, label: 'REN'
 # filter :users_location, label:'REN Location', as: :select, collection: User.locations.map {|k,v| [k,v]}
-filter :unit_size
-filter :spa_value
-filter :nett_value
+filter :unit_size, as: :numeric_range_filter
+filter :spa_value, as: :numeric_range_filter
+filter :nett_value, as: :numeric_range_filter
+
+csv do
+	column :id
+	column :date
+	column :status
+	column(:project) {|sale| sale.project.name}
+	column :unit_no
+	column :buyer
+	(1..controller.instance_variable_get(:@max_ren)).each do |x|
+		column("REN #{x}") {|sale|
+			sv = (sale.main_salevalues.order(:order) + sale.other_salevalues.order(:order)).flatten[x-1]
+			if sv
+				if sv.user.nil?
+					sv.other_user
+				else
+					sv.user.prefered_name
+				end
+			else
+				nil
+			end
+		}
+		column("REN #{x} Comm Percentage (%)") {|sale|
+			sv = (sale.main_salevalues.order(:order) + sale.other_salevalues.order(:order)).flatten[x-1]
+			if sv
+				sv.percentage
+			else
+				nil
+			end
+		}
+	end
+	column :unit_size
+	column :spa_value
+	column :nett_value
+	column(:commission_percentage) {|sale| sale.commission.percentage}
+	column(:commission) {|sale| sale.nett_value * sale.commission.percentage/100 }
+end
 
 end
