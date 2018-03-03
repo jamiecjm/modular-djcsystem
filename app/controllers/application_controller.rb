@@ -5,8 +5,16 @@ class ApplicationController < ActionController::Base
 
 	helper_method :current_website
 
+	# before_action :set_mailer_host
+
+	protected
+
 	def access_denied(exception)
 		redirect_to root_path, alert: exception.message
+	end
+
+	def denied
+		redirect_to root_path, alert: 'You are not authorized to perform this action.'
 	end
 
 	def current_website
@@ -20,6 +28,14 @@ class ApplicationController < ActionController::Base
 			end
 		end  
 		return website 	
+	end
+
+	def set_mailer_host
+		ActionMailer::Base.default_url_options[:host] = request.host_with_port
+	end
+
+	def configure_permitted_parameters
+		devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :prefered_name, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation])
 	end
 
 end

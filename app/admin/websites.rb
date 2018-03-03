@@ -12,6 +12,8 @@ ActiveAdmin.register Website, as: 'Company Profile' do
 #   permitted
 # end
 
+permit_params :superteam_name, :email, :logo, :subdomain, :external_host
+
 menu label: 'Company Profile', priority: 99, if: proc { current_user.admin? }
 
 config.filters = false
@@ -29,7 +31,7 @@ before_action only: :index do
 	end
 end
 
-index title: 'Company Profile' do
+index title: 'Company Profile', pagination_total: false do
 	column 'Company Name', :superteam_name
 	column :email
 	column :logo
@@ -37,6 +39,17 @@ index title: 'Company Profile' do
 	column :external_host
 	column :created_at
 	column :updated_at
+	actions
+end
+
+form do |f|
+	inputs do
+		input :superteam_name, label: 'Company Name'
+		input :email
+		input :logo, as: :file
+		input :subdomain
+		input :external_host
+	end
 	actions
 end
 

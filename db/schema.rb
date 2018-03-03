@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180302033842) do
+ActiveRecord::Schema.define(version: 20180303145545) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,8 +76,8 @@ ActiveRecord::Schema.define(version: 20180302033842) do
     t.integer "sale_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "other_user"
     t.integer "order"
+    t.string "other_user"
     t.index ["sale_id"], name: "index_salevalues_on_sale_id"
     t.index ["user_id"], name: "index_salevalues_on_user_id"
   end
@@ -133,7 +133,12 @@ ActiveRecord::Schema.define(version: 20180302033842) do
     t.datetime "updated_at", null: false
     t.boolean "admin", default: false
     t.boolean "archived", default: false
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
     t.index ["ancestry"], name: "index_users_on_ancestry"
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["prefered_name"], name: "index_users_on_prefered_name"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

@@ -72,6 +72,18 @@ before_action only: :index do
 	end
 end	
 
+collection_action :download do
+	respond_to do |format|
+		format.js
+	end
+end
+
+action_item :download, only: :index do
+	link_to 'Download', download_teams_path(url: request.fullpath), remote: true
+end
+
+batch_action :destroy, false
+
 index title: 'Sales Performance', default: true do
 	column :no do |t|
 		if @no.nil?
@@ -97,21 +109,22 @@ index title: 'Sales Performance', default: true do
 end
 
 index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barchart' do
-	div class: 'graph_div' do
+	div id: 'chart' do
 		@sales = teams.per(teams.length * teams.total_pages).order('SUM(salevalues.nett_value) DESC').sum('salevalues.nett_value')
 		@sales = @sales.map { |k,v| [k[0],v]}
 		@sales = @sales.to_h.sort_by{|k, v| v}.reverse
 		div class: 'logo_div' do
-			image_tag 'https://res.cloudinary.com/dpog1tvij/image/upload/v1499525286/gtsyyemrtaij33arjmba.png'
+			image_tag current_website.logo.url
 		end
 		render partial: 'admin/charts/ren_sales_performance', :locals => {sales: @sales}
 	end
+	a id: 'download_link', download: "graph-#{Date.current}"
 end
 
 index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_column_chart' do
-	div class: 'graph_div' do
+	div id: 'chart' do
 		div class: 'logo_div' do
-			image_tag 'https://res.cloudinary.com/dpog1tvij/image/upload/v1499525286/gtsyyemrtaij33arjmba.png'
+			image_tag current_website.logo.url
 		end
 		@sales = teams.per(teams.length * teams.total_pages).group('teams.id').group_by_month('sales.date', format: "%B %Y").sum('salevalues.nett_value')
 		@sales.to_a.map do |k,v|
@@ -127,6 +140,7 @@ index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_co
 		@sales = months.to_h.merge!(@sales){|k, old_v, new_v| old_v + new_v}
 		render partial: 'admin/charts/monthly_performance', :locals => {sales: @sales}
 	end
+	a id: 'download_link', download: "graph-#{Date.current}"
 end
 
 filter :upline_eq, as: :select, label: 'Upline', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }

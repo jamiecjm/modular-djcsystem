@@ -3,7 +3,7 @@ ActiveAdmin.register User do
 
   menu parent: 'Teams', label: 'Members'
 
-  scope :approved, default: true, show_count: false
+  scope :approved, default: true
 
   scope :pending, if: proc { current_user.leader? }
 
@@ -35,6 +35,8 @@ ActiveAdmin.register User do
     redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been archived"
   end
 
+  batch_action :destroy, false
+
   index pagination_total: false do
     selectable_column
     id_column
@@ -58,7 +60,7 @@ ActiveAdmin.register User do
         input :email
         input :phone_no
         input :birthday
-        if f.object.new_record? || current_user.leader?
+        if current_user.leader?
           input :team, as: :select, collection: Team.where(overriding: true)
           input :parent_id, label: 'Referrer', as: :select, collection: User.approved.order(:prefered_name).map {|u| [u.prefered_name, u.id ]}
           input :location

@@ -19,12 +19,30 @@ config.sort_order = 'sales.date_desc'
 includes :sale, :project, :commission
 
 scope 'Booked/Done', default: true, show_count: false do |sv|
-	sv.not_cancelled
+	sv = sv.not_cancelled
+	@total_spa = sv.pluck('spa').inject(:+)
+	@total_nett_value = sv.pluck('nett_value').inject(:+)
+	@total_comm = sv.pluck('comm').inject(:+)
+	@total_sales = sv.length
+	sv
 end
 
-scope :cancelled, show_count: false
+scope :cancelled, show_count: false do |sv|
+	sv = sv.cancelled
+	@total_spa = sv.pluck('spa').inject(:+)
+	@total_nett_value = sv.pluck('nett_value').inject(:+)
+	@total_comm = sv.pluck('comm').inject(:+)
+	@total_sales = sv.length
+	sv
+end
 
-scope :all, show_count: false
+scope :all, show_count: false do |sv|
+	@total_spa = sv.pluck('spa').inject(:+)
+	@total_nett_value = sv.pluck('nett_value').inject(:+)
+	@total_comm = sv.pluck('comm').inject(:+)
+	@total_sales = sv.length
+	sv
+end
 
 before_action only: :index do 
 	if params['q'].blank?
@@ -32,6 +50,10 @@ before_action only: :index do
 	end
 	if params['q']['user_id_eq'].blank?
 		params['q']['user_id_eq'] = current_user.id
+	else
+		unless current_user.pseudo_team_members.pluck(:id).include?(params['q']['user_id_eq'].to_i)
+			redirect_to root_path, alert: 'You are not authorized to perform this action.'
+		end
 	end
 	if params['q']['year'].blank?
 		if params['q']['sale_date_gteq_datetime'].blank?
@@ -76,9 +98,6 @@ controller do
 	end
 	def destroy
 	end
-	def denied
-		redirect_to root_path, alert: 'You are not authorized to perform this action.'
-	end
 end
 
 index title: 'Individual Sales', pagination_total: false do |sv|
@@ -119,7 +138,7 @@ sidebar :summary, only: :index, priority: 0 do
 			span 'Total SPA Value'
 		end
 		column do
-			span number_to_currency(salevalues.sum('spa'), unit: 'RM ', delimeter: ',')
+			span number_to_currency(controller.instance_variable_get(:@total_spa), unit: 'RM ', delimeter: ',')
 		end
 	end
 	columns do
@@ -127,7 +146,7 @@ sidebar :summary, only: :index, priority: 0 do
 			span 'Total Nett Value'
 		end
 		column do
-			span number_to_currency(salevalues.sum('nett_value'), unit: 'RM ', delimeter: ',')
+			span number_to_currency(controller.instance_variable_get(:@total_nett_value), unit: 'RM ', delimeter: ',')
 		end
 	end
 	columns do
@@ -135,7 +154,7 @@ sidebar :summary, only: :index, priority: 0 do
 			span 'Total Commision'
 		end
 		column do
-			span number_to_currency(salevalues.sum('comm'), unit: 'RM ', delimeter: ',')
+			span number_to_currency(controller.instance_variable_get(:@total_comm), unit: 'RM ', delimeter: ',')
 		end
 	end	
 	columns do
@@ -143,7 +162,7 @@ sidebar :summary, only: :index, priority: 0 do
 			span 'Total Sales'
 		end
 		column do
-			span salevalues.per(salevalues.length * salevalues.total_pages).length
+			span controller.instance_variable_get(:@total_sales)
 		end
 	end
 

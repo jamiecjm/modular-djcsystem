@@ -2,9 +2,10 @@ class User < ApplicationRecord
 	# Include default devise modules. Others available are:
 	# :confirmable, :lockable, :timeoutable and :omniauthable
 	devise :database_authenticatable, 
-	       :recoverable, :rememberable, :trackable, :validatable
+	       :recoverable, :rememberable, :trackable, :validatable, 
+	       :registerable, :confirmable
 
-    belongs_to :team
+    belongs_to :team, optional: true
 	has_one :pseudo_team, class_name: 'Team', foreign_key: :leader_id
 	has_many :salevalues, dependent: :destroy
 	has_many :sales, ->{distinct}, through: :salevalues
@@ -40,12 +41,13 @@ class User < ApplicationRecord
   	validates :prefered_name, uniqueness: true
   	validates :prefered_name, presence: true
   	validates :email, presence: true
-  	validates :team, presence: true
-  	validates :parent_id, presence: true
+  	validates :parent_id, presence: true, unless: proc { is_root? }
   	validates :location, presence: true
 
   	before_validation :titleize_name
   	before_validation :downcase_email
+  	before_create :set_team
+  	after_create :create_pseudo_team
 
 	def display_name
 		prefered_name
@@ -69,12 +71,20 @@ class User < ApplicationRecord
 	end
 
 	def titleize_name
-		self.name = name.upcase_first_word
-		self.prefered_name = prefered_name.upcase_first_word
+		self.name = name.upcase_first_word if name
+		self.prefered_name = prefered_name.upcase_first_word if prefered_name
 	end
 
 	def downcase_email
-		self.email = email.downcase
+		self.email = email.downcase if email
+	end
+
+	def set_team
+		self.team_id = parent.team_id
+	end
+
+	def create_pseudo_team
+		Team.create(leader_id: id, parent_id: parent.pseudo_team.id)
 	end
 
 end

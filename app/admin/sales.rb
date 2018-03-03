@@ -19,22 +19,39 @@ other_salevalues_attributes: [:user_id, :other_user, :percentage, :id, :sale_id,
 menu label: 'Team', priority: 1, parent: 'Sales'
 
 config.sort_order = 'date_desc'
-# config.filters = false
+batch_action :destroy, false
 
 includes :salevalues, :commission, :project
 
 scope 'Booked/Done', default: true, show_count: false do |sales|
+	sales = sales.not_cancelled
 	@max_ren = (sales.map(&:salevalues).map(&:length)).max
-	sales.not_cancelled
+	sv = sales.map(&:main_salevalues).flatten
+	@total_spa = sv.pluck('spa').inject(:+)
+	@total_nett_value = sv.pluck('nett_value').inject(:+)
+	@total_comm = sv.pluck('comm').inject(:+)
+	@total_sales = sales.length
+	sales
 end
 
 scope :cancelled, show_count: false do |sales|
+	sales = sales.search(status_eq: 2).result
 	@max_ren = (sales.map(&:salevalues).map(&:length)).max
-	sales.search(status_eq: 2).result
+	sv = sales.map(&:main_salevalues).flatten
+	@total_spa = sv.pluck('spa').inject(:+)
+	@total_nett_value = sv.pluck('nett_value').inject(:+)
+	@total_comm = sv.pluck('comm').inject(:+)
+	@total_sales = sales.length
+	sales
 end
 
 scope :all, show_count: false do |sales|
 	@max_ren = (sales.map(&:salevalues).map(&:length)).max
+	sv = sales.map(&:main_salevalues).flatten
+	@total_spa = sv.pluck('spa').inject(:+)
+	@total_nett_value = sv.pluck('nett_value').inject(:+)
+	@total_comm = sv.pluck('comm').inject(:+)
+	@total_sales = sales.length
 	sales
 end
 
@@ -60,6 +77,11 @@ before_action only: :index do
 	end
 	if params['q']['upline_eq'].blank?
 		params['q']['upline_eq'] = "[#{current_user.id}]"
+	else
+		upline = params['q']['upline_eq'][/\d+/].to_i 
+		unless current_user.pseudo_team_members.pluck(:id).include?(upline)
+			redirect_to root_path, alert: 'You are not authorized to perform this action.'
+		end
 	end
 end
 
@@ -89,23 +111,20 @@ index title: 'Team Sales', pagination_total: false do
 	column :project
 	column :unit_no
 	column :buyer
-	1.times do
-		(1..controller.instance_variable_get(:@max_ren)).each do |x|
-			list_column "REN #{x} (%)", sortable: 'users.name' do |sale|
-				sv = sale.main_salevalues.order(:order) + sale.other_salevalues.order(:order)
-				if sv[x-1]
-					if sv[x-1].user.nil?
-						[sv[x-1].other_user, "(#{sv[x-1].percentage}%)"]
-					else
-						[sv[x-1].user.prefered_name, "(#{sv[x-1].percentage}%)"]
-					end
+	(1..controller.instance_variable_get(:@max_ren)).each do |x|
+		list_column "REN #{x} (%)", sortable: 'users.name' do |sale|
+			sv = sale.main_salevalues.order(:order) + sale.other_salevalues.order(:order)
+			if sv[x-1]
+				if sv[x-1].user.nil?
+					[sv[x-1].other_user, "(#{sv[x-1].percentage}%)"]
 				else
-					['-']
+					[sv[x-1].user.prefered_name, "(#{sv[x-1].percentage}%)"]
 				end
+			else
+				nil
 			end
 		end
 	end
-
 	number_column :unit_size, as: :currency, seperator: ',', unit: ''
 	number_column :spa_value, as: :currency, seperator: ',', unit: ''
 	number_column :nett_value, as: :currency, seperator: ',', unit: ''
@@ -113,7 +132,6 @@ index title: 'Team Sales', pagination_total: false do
 	number_column :commission, as: :currency, seperator: ',', unit: '' do |sale|
 		sale.nett_value * sale.commission.percentage/100
 	end
-	actions
 end
 
 sidebar :summary, only: :index, priority: 0 do
@@ -122,8 +140,7 @@ sidebar :summary, only: :index, priority: 0 do
 			span 'Total SPA Value'
 		end
 		column do
-			span @all_sales = sales.per(sales.length * sales.total_pages), style: "display: none"
-			span number_to_currency(@all_sales.map(&:main_salevalues).flatten.pluck('spa').inject(:+), unit: 'RM ', delimeter: ',')
+			span number_to_currency(controller.instance_variable_get(:@total_spa), unit: 'RM ', delimeter: ',')
 		end
 	end
 	columns do
@@ -131,7 +148,7 @@ sidebar :summary, only: :index, priority: 0 do
 			span 'Total Nett Value'
 		end
 		column do
-			span number_to_currency(@all_sales.map(&:main_salevalues).flatten.pluck('nett_value').inject(:+), unit: 'RM ', delimeter: ',')
+			span number_to_currency(controller.instance_variable_get(:@total_nett_value), unit: 'RM ', delimeter: ',')
 		end
 	end
 	columns do
@@ -139,7 +156,7 @@ sidebar :summary, only: :index, priority: 0 do
 			span 'Total Commision'
 		end
 		column do
-			span number_to_currency(@all_sales.map(&:main_salevalues).flatten.pluck('comm').inject(:+), unit: 'RM ', delimeter: ',')
+			span number_to_currency(controller.instance_variable_get(:@total_comm), unit: 'RM ', delimeter: ',')
 		end
 	end	
 	columns do
@@ -147,7 +164,7 @@ sidebar :summary, only: :index, priority: 0 do
 			span 'Total Sales'
 		end
 		column do
-			span @all_sales.length
+			span controller.instance_variable_get(:@total_sales)
 		end
 	end
 end

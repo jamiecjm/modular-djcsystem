@@ -21,6 +21,8 @@ scope :all, default: true do |projects|
 	projects
 end
 
+batch_action :destroy, false
+
 index pagination_total: false do
 	selectable_column
 	id_column

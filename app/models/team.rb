@@ -9,6 +9,9 @@ class Team < ApplicationRecord
 
 	has_ancestry
 
+	validates :parent_id, presence: true
+	validates :leader_id, presence: true
+
 	scope :upline_eq, ->(id) {
 		if id.is_a? String
 			id = id[/\d+/].to_i

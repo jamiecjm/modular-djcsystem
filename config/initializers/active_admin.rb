@@ -4,7 +4,7 @@ ActiveAdmin.setup do |config|
   # Set the title that is displayed on the main layout
   # for each of the active admin pages.
   #
-  config.site_title = "Modular Djcsystem"
+  config.site_title = proc {current_website.superteam_name}
 
   # Set the link url for the title. For example, to take
   # users to your main site. Defaults to no link.
@@ -62,7 +62,7 @@ ActiveAdmin.setup do |config|
   # method in a before filter of all controller actions to
   # ensure that there is a user with proper rights. You can use
   # CanCanAdapter or make your own. Please refer to documentation.
-  config.authorization_adapter = ActiveAdmin::CanCanAdapter
+  # config.authorization_adapter = ActiveAdmin::CanCanAdapter
 
   # In case you prefer Pundit over other solutions you can here pass
   # the name of default policy class. This policy will be used in every
@@ -145,7 +145,8 @@ ActiveAdmin.setup do |config|
   # You can add before, after and around filters to all of your
   # Active Admin resources and pages from here.
   #
-  # config.before_action :do_something_awesome
+  config.before_action :set_mailer_host
+  config.before_action :configure_permitted_parameters, if: :devise_controller?
 
   # == Localize Date/Time Format
   #
@@ -203,6 +204,7 @@ ActiveAdmin.setup do |config|
   #
   # To load a javascript file:
     config.register_javascript 'https://www.gstatic.com/charts/loader.js'
+    config.register_javascript 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js'
 
   # == CSV options
   #
@@ -300,3 +302,4 @@ ActiveAdmin.setup do |config|
   #
   # config.order_clause = MyOrderClause
 end
+
