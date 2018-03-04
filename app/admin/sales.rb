@@ -21,36 +21,39 @@ menu label: 'Team', priority: 1, parent: 'Sales'
 config.sort_order = 'date_desc'
 batch_action :destroy, false
 
-includes :salevalues, :commission, :project
+includes :commission, :project, :other_salevalues, main_salevalues: :user
 
 scope 'Booked/Done', default: true, show_count: false do |sales|
 	sales = sales.not_cancelled
-	@max_ren = (sales.map(&:salevalues).map(&:length)).max
-	sv = sales.map(&:main_salevalues).flatten
-	@total_spa = sv.pluck('spa').inject(:+)
-	@total_nett_value = sv.pluck('nett_value').inject(:+)
-	@total_comm = sv.pluck('comm').inject(:+)
+	sv = Salevalue.where(sale_id: sales.ids)
+	@max_ren = sv.joins(:sale).group('sales.id').count.values.max
+	team_sv = sv.where(other_user: nil)
+	@total_spa = team_sv.pluck('spa').inject(:+)
+	@total_nett_value = team_sv.pluck('nett_value').inject(:+)
+	@total_comm = team_sv.pluck('comm').inject(:+)
 	@total_sales = sales.length
 	sales
 end
 
 scope :cancelled, show_count: false do |sales|
 	sales = sales.search(status_eq: 2).result
-	@max_ren = (sales.map(&:salevalues).map(&:length)).max
-	sv = sales.map(&:main_salevalues).flatten
-	@total_spa = sv.pluck('spa').inject(:+)
-	@total_nett_value = sv.pluck('nett_value').inject(:+)
-	@total_comm = sv.pluck('comm').inject(:+)
+	sv = Salevalue.where(sale_id: sales.ids)
+	@max_ren = sv.joins(:sale).group('sales.id').count.values.max
+	team_sv = sv.where(other_user: nil)
+	@total_spa = team_sv.pluck('spa').inject(:+)
+	@total_nett_value = team_sv.pluck('nett_value').inject(:+)
+	@total_comm = team_sv.pluck('comm').inject(:+)
 	@total_sales = sales.length
 	sales
 end
 
 scope :all, show_count: false do |sales|
-	@max_ren = (sales.map(&:salevalues).map(&:length)).max
-	sv = sales.map(&:main_salevalues).flatten
-	@total_spa = sv.pluck('spa').inject(:+)
-	@total_nett_value = sv.pluck('nett_value').inject(:+)
-	@total_comm = sv.pluck('comm').inject(:+)
+	sv = Salevalue.where(sale_id: sales.ids)
+	@max_ren = sv.joins(:sale).group('sales.id').count.values.max
+	team_sv = sv.where(other_user: nil)
+	@total_spa = team_sv.pluck('spa').inject(:+)
+	@total_nett_value = team_sv.pluck('nett_value').inject(:+)
+	@total_comm = team_sv.pluck('comm').inject(:+)
 	@total_sales = sales.length
 	sales
 end
@@ -77,11 +80,6 @@ before_action only: :index do
 	end
 	if params['q']['upline_eq'].blank?
 		params['q']['upline_eq'] = "[#{current_user.id}]"
-	else
-		upline = params['q']['upline_eq'][/\d+/].to_i 
-		unless current_user.pseudo_team_members.pluck(:id).include?(upline)
-			redirect_to root_path, alert: 'You are not authorized to perform this action.'
-		end
 	end
 end
 
@@ -113,7 +111,7 @@ index title: 'Team Sales', pagination_total: false do
 	column :buyer
 	(1..controller.instance_variable_get(:@max_ren)).each do |x|
 		list_column "REN #{x} (%)", sortable: 'users.name' do |sale|
-			sv = sale.main_salevalues.order(:order) + sale.other_salevalues.order(:order)
+			sv = sale.main_salevalues + sale.other_salevalues
 			if sv[x-1]
 				if sv[x-1].user.nil?
 					[sv[x-1].other_user, "(#{sv[x-1].percentage}%)"]

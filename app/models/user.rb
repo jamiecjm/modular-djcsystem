@@ -6,7 +6,8 @@ class User < ApplicationRecord
 	       :registerable, :confirmable
 
     belongs_to :team, optional: true
-	has_one :pseudo_team, class_name: 'Team', foreign_key: :leader_id
+    belongs_to :referrer, class_name: 'User', primary_key: proc{ ancestry.split('/').last.to_i }	
+    has_one :pseudo_team, class_name: 'Team', foreign_key: :leader_id
 	has_many :salevalues, dependent: :destroy
 	has_many :sales, ->{distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
@@ -67,7 +68,7 @@ class User < ApplicationRecord
 	end
 
 	def pseudo_team_sales
-		pseudo_team_members.map(&:sales).flatten.uniq
+		Sale.search(users_id: pseudo_team_members.ids).result
 	end
 
 	def titleize_name

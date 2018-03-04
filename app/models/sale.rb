@@ -1,8 +1,8 @@
 class Sale < ApplicationRecord
 
 	has_many :salevalues, dependent: :destroy
-	has_many :main_salevalues, -> {where(other_user: nil)}, class_name: 'Salevalue', dependent: :destroy
-	has_many :other_salevalues, -> {other_team}, class_name: 'Salevalue', dependent: :destroy
+	has_many :main_salevalues, -> {where(other_user: nil).order(:order)}, class_name: 'Salevalue', dependent: :destroy
+	has_many :other_salevalues, -> {other_team.order(:order)}, class_name: 'Salevalue', dependent: :destroy
 	has_many :users, -> {distinct}, through: :main_salevalues
 	has_many :teams, -> {distinct}, through: :main_salevalues
 	belongs_to :project

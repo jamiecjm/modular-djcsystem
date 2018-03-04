@@ -14,6 +14,8 @@ ActiveAdmin.register Team do
 
 menu priority: 0, parent: 'Teams', label: 'Performance'
 
+includes :leader, main_team: :leader
+
 controller do
     def scoped_collection
     	if params['as'].blank?
@@ -144,7 +146,7 @@ index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_co
 end
 
 filter :upline_eq, as: :select, label: 'Upline', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
-filter :main_team, label: 'Team',as: :select, collection: proc { Team.where(overriding: true) }
+filter :main_team, label: 'Team',as: :select, collection: proc { Team.includes(:leader).where(overriding: true) }
 filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
 filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
 filter :sales_status, as: :select, collection: Sale.statuses.map {|k,v| [k,v]}

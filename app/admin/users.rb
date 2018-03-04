@@ -3,6 +3,8 @@ ActiveAdmin.register User do
 
   menu parent: 'Teams', label: 'Members'
 
+  includes team: :leader
+
   scope :approved, default: true
 
   scope :pending, if: proc { current_user.leader? }
@@ -89,7 +91,7 @@ ActiveAdmin.register User do
   end
 
   filter :upline_eq, as: :select, label: 'Upline', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
-  filter :team,as: :select, collection: proc { Team.where(overriding: true) }
+  filter :team,as: :select, collection: proc { Team.includes(:leader).where(overriding: true) }
   filter :referrer_eq, as: :select, label: 'Referrer', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
   filter :location, as: :select, collection: User.locations.map {|k,v| [k,v]}
   filter :name
