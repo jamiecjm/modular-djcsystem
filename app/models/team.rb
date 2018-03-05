@@ -9,7 +9,7 @@ class Team < ApplicationRecord
 
 	has_ancestry orphan_strategy: :adopt
 
-	validates :parent_id, presence: true
+	# validates :parent_id, presence: true
 	validates :leader_id, presence: true
 
 	scope :upline_eq, ->(id) {
