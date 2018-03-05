@@ -102,7 +102,7 @@ member_action :send_report do
 	sale = Sale.find(params[:id])
 	to = params[:to].gsub(/\s+/, '').split(',')
 	UserMailer.email_admin(user: current_user, sale: sale, to: to, subject: params['subject'], 
-		content: params['content'], company_name: current_website.superteam_name).deliver
+		content: params['content'], company: current_website).deliver
 end
 
 action_item :email_report, only: :show do
@@ -112,7 +112,7 @@ end
 controller do
 	def create
 		super
-		UserMailer.generate_report(resource, current_website.superteam_name).deliver
+		UserMailer.generate_report(resource, current_website).deliver
 	end
 end
 

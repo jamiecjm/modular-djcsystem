@@ -24,7 +24,7 @@ ActiveAdmin.register User do
 
   batch_action :approve, if: proc {current_user.leader?}, confirm: "Are you sure?", if: proc {params['scope']=='pending'} do |ids, inputs|
       User.where(id: ids).update_all(locked_at: nil)
-      UserMailer.notify(User.where(id: ids), current_website.superteam_name).deliver
+      UserMailer.notify(User.where(id: ids), current_website).deliver
       redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been approved"
   end
 

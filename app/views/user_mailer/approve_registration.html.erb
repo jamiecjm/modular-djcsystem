@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-  </head>
-
-  <body>
-    <%= yield %>
     The following member requested for a DJC Sales System - <%=@company_name%> account:<br><br>
     Full name: <%=@user.name%><br>
     Prefered name: <%=@user.prefered_name%><br>
@@ -20,5 +11,3 @@
     <%=link_to "Login", users_url(scope: 'pending')%> to view details.
     <p></p>
     DJC Sales System
-  </body>
-</html>

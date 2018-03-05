@@ -1,8 +1,8 @@
 class UserMailer < ApplicationMailer
 
-  def approve_registration(user,website_name)
+  def approve_registration(user,website)
     @user     = user
-    @company_name = website_name
+    @company_name = website.superteam_name
     subject = "DJC Sales System: Approval Needed for Account Registration"
     recipients = [@user.leader,@user.team.root.leader]
     mail( :to      => recipients.map(&:email).uniq,
@@ -11,9 +11,9 @@ class UserMailer < ApplicationMailer
 	  end
 	end
 
-  def notify(users,website_name)
+  def notify(users,website)
     @users = users
-    @company_name = website_name
+    @company_name = website.superteam_name
     subject = "DJC Sales System: Account Registration Approved"
     mail( :to      => @users.pluck(:email),
           :subject => subject) do |format|
@@ -21,9 +21,9 @@ class UserMailer < ApplicationMailer
     end
   end
 
-	def generate_report(sale, website_name)
+	def generate_report(sale, website)
 	    @sale = sale
-      @company_name = website_name
+      @company_name = website.superteam_name
 	    mail( :to      => sale.users.pluck(:email),
 	          :subject => "Sale Report \##{@sale.id}") do |format|
 	            format.html
@@ -33,7 +33,7 @@ class UserMailer < ApplicationMailer
   def email_admin(var={})
     @user = var[:user]
     @sale = var[:sale]
-    @company_name = var[:company_name]
+    @company_name = var[:company].superteam_name
     @content = var[:content]
     mail( :to      => var[:to],
           :from   => @user.email,

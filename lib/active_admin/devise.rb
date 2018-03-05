@@ -82,7 +82,7 @@ module ActiveAdmin
         if resource.errors.empty?
           set_flash_message!(:notice, :confirmed)
           if resource.locked_at != nil
-            UserMailer.approve_registration(resource, current_website.superteam_name).deliver
+            UserMailer.approve_registration(resource, current_website).deliver
           end
           respond_with_navigational(resource){ redirect_to after_confirmation_path_for(resource_name, resource) }
         else

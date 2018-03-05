@@ -63,12 +63,10 @@ gem 'cancancan'
 gem 'activeadmin_addons'
 gem 'chartkick'
 gem 'groupdate'
-gem 'awesome_print'
-gem 'imgkit'
-gem 'wkhtmltoimage-binary'
 gem 'carrierwave'
 gem 'mini_magick'
 gem 'fog-aws'
 gem 'tinymce-rails'
 gem "figaro"
 gem "font-awesome-rails"
+gem 'sendgrid-actionmailer'
