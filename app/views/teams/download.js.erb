@@ -8,18 +8,18 @@
 // 		document.getElementById('download_link').click();
 // 	}
 // });
-$('#main_content').css('position', 'relative');
-var window_width = screen.width;
-var chart_width = $('#chart').width();
-var scale = Math.round(window_width/chart_width*10)/10;
-var right = (chart_width - window_width)/2;
+// $('#main_content').css('position', 'relative');
+// var window_width = screen.width;
+// var chart_width = $('#chart').width();
+// var scale = Math.round(window_width/chart_width*10)/10;
+// var right = (chart_width - window_width)/2;
 
-$('#chart').css({
-	'transform': 'scale('+ scale +')',
-    'position': 'absolute',
-    'right': '-'+ right +'px',
-    'transform-origin':'top right'
-})
+// $('#chart').css({
+// 	'transform': 'scale('+ scale +')',
+//     'position': 'absolute',
+//     'right': '-'+ right +'px',
+//     'transform-origin':'top right'
+// })
 
 html2canvas($('#chart')[0], {
 	useCORS: true,
@@ -32,8 +32,8 @@ html2canvas($('#chart')[0], {
 	document.getElementById('download_link').click();
 })
 
-$('#main_content').css('position', 'initial');
-$('#chart').css({
-	'transform': 'none',
-    'position': 'initial'
-})
+// $('#main_content').css('position', 'initial');
+// $('#chart').css({
+// 	'transform': 'none',
+//     'position': 'initial'
+// })
