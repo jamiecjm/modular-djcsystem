@@ -8,14 +8,34 @@
 // 		document.getElementById('download_link').click();
 // 	}
 // });
+$('#main_content').css('position', 'relative');
+var window_width = window.innerWidth;
+var sidebar_width = $('#sidebar').width()+100;
+var space_width = window_width - sidebar_width;
+var chart_width = $('#chart').width();
+scale = space_width/chart_width;
+var space_top = $('#sidebar').position().top + $('#sidebar h3').height();
+
+$('#chart').css({
+	'transform': 'scale('+ scale +')',
+    'position': 'absolute',
+    'right': '-'+ sidebar_width +'px',
+    'top': '-'+space_top+'px'
+})
 
 html2canvas($('#chart')[0], {
 	useCORS: true,
 	letterRendering: true,
 	allowTaint: false,
-	backgroundColor: '#FFFFFF'	
+	backgroundColor: '#FFFFFF'
 }).then(function(canvas){
 	var myImage = canvas.toDataURL("image/png")
 	$('#download_link').attr('href',myImage)
 	document.getElementById('download_link').click();
+})
+
+$('#main_content').css('position', 'initial');
+$('#chart').css({
+	'transform': 'none',
+    'position': 'initial'
 })

@@ -126,7 +126,7 @@ index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barch
 		end
 		render partial: 'admin/charts/ren_sales_performance', :locals => {sales: @sales}
 	end
-	a id: 'download_link', download: "graph-#{Date.current}"
+	a id: 'download_link', download: "barchart-#{Date.current}"
 end
 
 index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_column_chart' do
@@ -148,7 +148,7 @@ index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_co
 		@sales = months.to_h.merge!(@sales){|k, old_v, new_v| old_v + new_v}
 		render partial: 'admin/charts/monthly_performance', :locals => {sales: @sales}
 	end
-	a id: 'download_link', download: "graph-#{Date.current}"
+	a id: 'download_link', download: "column_chart-#{Date.current}"
 end
 
 filter :upline_eq, as: :select, label: 'Upline', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
