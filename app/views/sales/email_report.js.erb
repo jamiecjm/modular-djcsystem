@@ -1,3 +1,59 @@
-ActiveAdmin.modal_dialog("Send report to: ", {emails: 'text'}, function(inputs) {
-	alert (inputs.emails)
+var checkExist = setInterval(function() {
+   if ($('.ui-dialog').length) {
+      clearInterval(checkExist);
+      $('textarea[name=subject]').html('<%= j "#{@sale.project.name}(Unit No: #{@sale.unit_no}) [SPA and LA Signed]" %>');
+      var content =   
+      	'<p>Hi,</p>'+
+	    '<p>Please be notified that the following unit has signed SPA and LA.</p>'+
+	    'Date: <%=@sale.date%><br>'+
+	    '<%(@sale.main_salevalues + @sale.other_salevalues).each_with_index do |sv,index|%>'+
+	        '<%if sv.user%>'+
+	        'REN <%=index+1%>: <%=sv.user.prefered_name%> (<%=sv.percentage%>%)<br>'+
+	        '<%else%>'+
+	        'REN <%=index+1%>: <%=sv.other_user%> (<%=sv.percentage%>%)<br>'+
+	        '<%end%>' +
+	    '<%end%>' +
+	    'Project: <%=@sale.project.name%><br>' +
+	    'Unit No: <%=@sale.unit_no%><br>' +
+	    'Size: <%=number_with_delimiter(@sale.unit_size)%> sqft<br>' +
+	    'Buyer: <%=@sale.buyer%><br>' +
+	    'SPA Price: RM <%=number_with_delimiter('%.2f' % @sale.spa_value)%><br>' +
+	    'Nett Price: RM <%=number_with_delimiter('%.2f' % @sale.nett_value)%><br>' +
+	    'Package: <%=@sale.package%><br>' +
+	    'Remark: <%=@sale.remark%><br>' +
+	    'Team: <%=@company_name%><br><br>' +
+	    'SPA Sign Date: <%=@sale.spa_sign_date%><br>' +
+	    'LA Sign Date: <%=@sale.la_date%><br><br>' +
+	    '<%=@user.prefered_name%><br>' +
+	    '<%=@company_name%>'
+		;
+      $('textarea[name=content]').html(content);
+      tinyMCE.init({
+	    selector: 'textarea[name=content]'
+	  });
+   }
+}, 100);
+ActiveAdmin.modal_dialog("Send report to: ", {
+	to: 'text',
+	subject: 'textarea',
+	content: 'textarea'
+}, 
+function(inputs) {
+	$.get({
+		url: '<%=send_report_sale_path%>',
+		data: {
+			id: '<%=@sale.id%>',
+			to: inputs.to,
+			subject: inputs.subject,
+			content: inputs.content
+		},
+		dataType: 'JSON',
+		success: function(){
+			alert('Your email is being sent.')
+		},
+		error: function(){
+			alert('Email failed to send. Try again later.')
+		}
+
+	})
 })

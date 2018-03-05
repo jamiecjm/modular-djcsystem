@@ -52,14 +52,6 @@ module ActiveAdmin
 
     class SessionsController < ::Devise::SessionsController
       include ::ActiveAdmin::Devise::Controller
-
-      def create
-        self.resource = warden.authenticate!(auth_options)
-        set_flash_message!(:notice, :signed_in)
-        sign_in(resource_name, resource)
-        yield resource if block_given?
-        respond_with resource, location: after_sign_in_path_for(resource)
-      end
     end
 
     class PasswordsController < ::Devise::PasswordsController
@@ -72,10 +64,31 @@ module ActiveAdmin
 
     class RegistrationsController < ::Devise::RegistrationsController
       include ::ActiveAdmin::Devise::Controller
+
+      private
+
+      # Notice the name of the method
+      def sign_up_params
+        params.require(:user).permit(:name, :prefered_name, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation)
+      end
     end
 
     class ConfirmationsController < ::Devise::ConfirmationsController
       include ::ActiveAdmin::Devise::Controller
+
+      def show
+        self.resource = resource_class.confirm_by_token(params[:confirmation_token])
+        yield resource if block_given?
+        if resource.errors.empty?
+          set_flash_message!(:notice, :confirmed)
+          if resource.locked_at != nil
+            UserMailer.approve_registration(resource, current_website.superteam_name).deliver
+          end
+          respond_with_navigational(resource){ redirect_to after_confirmation_path_for(resource_name, resource) }
+        else
+          respond_with_navigational(resource.errors, status: :unprocessable_entity){ render :new }
+        end
+      end
     end
 
     def self.controllers_for_filters

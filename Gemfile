@@ -69,3 +69,6 @@ gem 'wkhtmltoimage-binary'
 gem 'carrierwave'
 gem 'mini_magick'
 gem 'fog-aws'
+gem 'tinymce-rails'
+gem "figaro"
+gem "font-awesome-rails"

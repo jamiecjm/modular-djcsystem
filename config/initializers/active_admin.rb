@@ -146,7 +146,7 @@ ActiveAdmin.setup do |config|
   # Active Admin resources and pages from here.
   #
   config.before_action :set_mailer_host
-  config.before_action :configure_permitted_parameters, if: :devise_controller?
+  # config.before_action :configure_permitted_parameters, if: :devise_controller?
 
   # == Localize Date/Time Format
   #
@@ -204,7 +204,7 @@ ActiveAdmin.setup do |config|
   #
   # To load a javascript file:
     config.register_javascript 'https://www.gstatic.com/charts/loader.js'
-    config.register_javascript 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js'
+    # config.register_javascript 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.0.0-alpha.10/html2canvas.min.js'
 
   # == CSV options
   #
@@ -234,7 +234,9 @@ ActiveAdmin.setup do |config|
         menu.add label: 'Sales', priority: 1 do |s|
           s.add label: 'New', url: '/sales/new', priority: 0
         end
-        menu.add label: 'Teams', priority: 2
+        menu.add label: 'Teams', priority: 2 do |t|
+          t.add label: 'Profiles', url: proc{ team_path(current_user.team_id) }, priority: 0, if: proc { current_user.leader? }
+        end
         menu.add label: 'Projects', priority: 3 do |p|
           p.add label: 'New', url: '/projects/new', priority: 0, if: proc { current_user.leader? }
         end
@@ -293,7 +295,7 @@ ActiveAdmin.setup do |config|
   # By default, the footer shows the current Active Admin version. You can
   # override the content of the footer here.
   #
-  # config.footer = 'my custom footer text'
+  config.footer = 'Powered by DJC System 2018'
 
   # == Sorting
   #

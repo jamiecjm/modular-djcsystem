@@ -7,7 +7,7 @@ class Team < ApplicationRecord
 	has_many :sales, -> {distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
 
-	has_ancestry
+	has_ancestry orphan_strategy: :adopt
 
 	validates :parent_id, presence: true
 	validates :leader_id, presence: true

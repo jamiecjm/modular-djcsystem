@@ -19,7 +19,6 @@ other_salevalues_attributes: [:user_id, :other_user, :percentage, :id, :sale_id,
 menu label: 'Team', priority: 1, parent: 'Sales'
 
 config.sort_order = 'date_desc'
-batch_action :destroy, false
 
 includes :commission, :project, :other_salevalues, main_salevalues: :user
 
@@ -91,14 +90,30 @@ batch_action :change_status_of, form: {
 end
 
 member_action :email_report, method: :post do
-	@id = resource.id
+	@sale = resource
+	@user = current_user
+	@company_name = current_website.superteam_name
 	respond_to do |format|
 		format.js
 	end
 end
 
+member_action :send_report do
+	sale = Sale.find(params[:id])
+	to = params[:to].gsub(/\s+/, '').split(',')
+	UserMailer.email_admin(user: current_user, sale: sale, to: to, subject: params['subject'], 
+		content: params['content'], company_name: current_website.superteam_name).deliver
+end
+
 action_item :email_report, only: :show do
 	link_to 'Email Report', email_report_sale_path, remote: true, method: :post
+end
+
+controller do
+	def create
+		super
+		UserMailer.generate_report(resource, current_website.superteam_name).deliver
+	end
 end
 
 index title: 'Team Sales', pagination_total: false do
@@ -238,11 +253,11 @@ filter :upline, as: :select, label: 'Upline', :collection => proc { current_user
 filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
 filter :date
 # filter :teams, as: :select, collection: proc { Team.where(overriding: true) }
-filter :status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}
-filter :project
+filter :status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}, input_html: {multiple: true}
+filter :project, input_html: {multiple: true}
 filter :unit_no
 filter :buyer
-filter :users, label: 'REN'
+filter :users, label: 'REN', input_html: {multiple: true}
 # filter :users_location, label:'REN Location', as: :select, collection: User.locations.map {|k,v| [k,v]}
 filter :unit_size, as: :numeric_range_filter
 filter :spa_value, as: :numeric_range_filter

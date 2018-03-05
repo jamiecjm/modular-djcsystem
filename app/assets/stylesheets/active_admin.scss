@@ -12,6 +12,9 @@
 @import "active_admin/mixins";
 @import "active_admin/base";
 @import "activeadmin_addons/all";
+@import "font-awesome";
+@import 'flexbox';
+@import "admin/\*";
 
 // Overriding any non-variable SASS must be done after the fact.
 // For example, to change the default status-tag color:
@@ -39,8 +42,16 @@
     float: right;
 }
 
+.login_logo_div{
+	height: 150px;
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
 img {
 	max-height: 100%;
+	max-width: 100%;
 }
 
 #chart_div{
@@ -51,4 +62,40 @@ img {
 	border: 1px solid black;
 	padding: 10px;
 	min-width: 1200px;
+}
+
+.ui-dialog li {
+    @include flexbox();
+    @include flex-direction(column);
+}
+
+.ui-dialog {
+    position: absolute !important;
+     width: auto !important; 
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%,-50%) !important;
+}
+
+.ui-dialog form textarea[name='content']{
+	min-height: 200px;
+}
+
+.ui-dialog-content{
+	width: 30vw !important;
+    min-width: 300px;
+}
+
+.ui-dialog form input[type=text], .ui-dialog form input[type=password], .ui-dialog form input[type=email], 
+.ui-dialog form input[type=number], .ui-dialog form input[type=url], .ui-dialog form input[type=tel], 
+.ui-dialog form input[type=date], .ui-dialog form input[type=time], .ui-dialog form textarea {
+	width: auto !important;
+}
+
+#website_remove_logo_input{
+	padding-top: 0 !important;
+}
+
+#website_remove_logo{
+	display: none;
 }

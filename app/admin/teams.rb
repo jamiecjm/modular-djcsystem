@@ -12,17 +12,23 @@ ActiveAdmin.register Team do
 #   permitted
 # end
 
-menu priority: 0, parent: 'Teams', label: 'Performance'
+menu priority: 1, parent: 'Teams', label: 'Performance'
 
 includes :leader, main_team: :leader
 
+permit_params :name, :leader_id, :overriding, :overriding_percentage
+
 controller do
     def scoped_collection
-    	if params['as'].blank?
-		  	end_of_association_chain.group('leader_id', 'users.prefered_name', 'teams.id').select('SUM(salevalues.spa) as total_spa_value', 'SUM(salevalues.nett_value) as total_nett_value', 
-				'SUM(salevalues.comm) as total_comm', 'COUNT(salevalues.id) as total_sales', :leader_id)
-		elsif params['as'] == 'barchart'
-			end_of_association_chain.group('users.prefered_name', 'teams.id')
+    	if params['action'] == 'index'
+	    	if params['as'].blank?
+			  	end_of_association_chain.group('leader_id', 'users.prefered_name', 'teams.id').select('SUM(salevalues.spa) as total_spa_value', 'SUM(salevalues.nett_value) as total_nett_value', 
+					'SUM(salevalues.comm) as total_comm', 'COUNT(salevalues.id) as total_sales', :leader_id)
+			elsif params['as'] == 'barchart'
+				end_of_association_chain.group('users.prefered_name', 'teams.id')
+			else
+				end_of_association_chain
+			end
 		else
 			end_of_association_chain
 		end
@@ -80,7 +86,7 @@ collection_action :download do
 	end
 end
 
-action_item :download, only: :index do
+action_item :download, only: :index, if: proc { params['as']=='barchart' || params['as']=='column_chart' } do
 	link_to 'Download', download_teams_path(url: request.fullpath), remote: true
 end
 
@@ -146,13 +152,46 @@ index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_co
 end
 
 filter :upline_eq, as: :select, label: 'Upline', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
-filter :main_team, label: 'Team',as: :select, collection: proc { Team.includes(:leader).where(overriding: true) }
+filter :main_team, label: 'Team',as: :select, collection: proc { Team.includes(:leader).where(overriding: true) }, input_html: {multiple: true}
 filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
 filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
-filter :sales_status, as: :select, collection: Sale.statuses.map {|k,v| [k,v]}
-filter :leader_location, as: :select, label: 'REN Location', :collection => User.locations.map {|k,v| [k,v]} 
-filter :projects
-filter :leader, label: 'REN'
+filter :sales_status, as: :select, collection: Sale.statuses.map {|k,v| [k,v]}, input_html: {multiple: true}
+filter :leader_location, as: :select, label: 'REN Location', :collection => User.locations.map {|k,v| [k,v]}, input_html: {multiple: true}
+filter :projects, input_html: {multiple: true}
+filter :leader, label: 'REN', input_html: {multiple: true}
+
+show do
+	attributes_table do
+		row :name
+		row :leader
+		row 'Upline Team' do |team|
+			team.parent
+		end
+		row :overriding
+		row :overriding_percentage
+	end
+
+    panel "Downlines" do
+      table_for team.descendants.where(overriding: true).includes(:leader) do
+        column :name
+        column :leader
+        column :overriding
+        column :overriding_percentage
+        column '' do |team|
+        	link_to 'Edit', edit_team_path(team), target: '_blank'
+        end
+      end
+    end
+end
+
+form do |f|
+	inputs do
+		input :name
+		input :leader
+		input :overriding_percentage
+	end
+	actions
+end
 
 csv do
 	column(:no) do

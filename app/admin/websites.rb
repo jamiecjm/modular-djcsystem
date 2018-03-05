@@ -12,7 +12,7 @@ ActiveAdmin.register Website, as: 'Company Profile' do
 #   permitted
 # end
 
-permit_params :superteam_name, :email, :logo, :subdomain, :external_host
+permit_params :superteam_name, :email, :logo, :logo_cache, :remove_logo, :subdomain, :external_host
 
 menu label: 'Company Profile', priority: 99, if: proc { current_user.admin? }
 
@@ -31,10 +31,19 @@ before_action only: :index do
 	end
 end
 
+member_action :remove_logo do
+	resource.remove_logo!
+	respond_to do |format|
+		format.js
+	end
+end
+
 index title: 'Company Profile', pagination_total: false do
 	column 'Company Name', :superteam_name
 	column :email
-	column :logo
+	column :logo do |w|
+		image_tag w.logo&.thumb&.url if w.logo?
+	end
 	column :subdomain
 	column :external_host
 	column :created_at
@@ -42,11 +51,33 @@ index title: 'Company Profile', pagination_total: false do
 	actions
 end
 
+show do
+	attributes_table do
+	 	row 'Company Name' do |w| 
+	 		w.superteam_name
+	 	end
+		row :email
+		row :logo do |w|
+			image_tag w.logo&.thumb&.url if w.logo?
+		end
+		row :subdomain
+		row :external_host
+		row :created_at
+		row :updated_at
+	end
+end
+
 form do |f|
 	inputs do
 		input :superteam_name, label: 'Company Name'
 		input :email
-		input :logo, as: :file
+	  	input :logo, :as => :file, :hint => f.object.logo? \
+	  	? image_tag(f.object.logo.thumb.url)
+	  	: content_tag(:span, '')
+	  	input :logo_cache, :as => :hidden
+	  	if f.object.logo?
+	  		input :remove_logo, as: :boolean, :label => link_to('Remove', remove_logo_company_profile_path, remote: true)
+	  	end
 		input :subdomain
 		input :external_host
 	end

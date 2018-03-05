@@ -1,9 +1,21 @@
-html2canvas($('#chart'), {
+// html2canvas($('#chart'), {
+// 	useCORS: true,
+// 	letterRendering: true,
+// 	backgroundColor: '#FFFFFF',
+// 	onclone: function(canvas) {
+// 		var myImage = canvas.toDataURL("image/png")
+// 		$('#download_link').attr('href',myImage)
+// 		document.getElementById('download_link').click();
+// 	}
+// });
+
+html2canvas($('#chart')[0], {
 	useCORS: true,
 	letterRendering: true,
-	onrendered: function(canvas) {
-		var myImage = canvas.toDataURL("image/png")
-		$('#download_link').attr('href',myImage)
-		document.getElementById('download_link').click();
-	}
-});
+	allowTaint: true,
+	backgroundColor: '#FFFFFF'	
+}).then(function(canvas){
+	var myImage = canvas.toDataURL("image/png")
+	$('#download_link').attr('href',myImage)
+	document.getElementById('download_link').click();
+})

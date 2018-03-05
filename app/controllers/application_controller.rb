@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
 
 	include LocalSubdomain
 
+	# before_action :define_website
 	helper_method :current_website
 
 	# before_action :set_mailer_host
@@ -27,7 +28,7 @@ class ApplicationController < ActionController::Base
 			  	website = Website.find_by(subdomain: subdomain)
 			end
 		end  
-		return website 	
+		website 
 	end
 
 	def set_mailer_host

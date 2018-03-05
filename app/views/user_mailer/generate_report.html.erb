@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+      /* Email styles need to be inline */
+    </style>
+  </head>
+
+  <body>
+    Date: <%=@sale.date%><br>
+    <%(@sale.main_salevalues + @sale.other_salevalues).each_with_index do |sv,index|%>
+    <%if sv.user%>
+    REN <%=index+1%>: <%=sv.user.prefered_name%> (<%=sv.percentage%>%)<br>
+    <%else%>
+    REN <%=index+1%>: <%=sv.other_user%> (<%=sv.percentage%>%)<br>
+    <%end%>
+    <%end%>
+    Project: <%=@sale.project.name%><br>
+    Unit No: <%=@sale.unit_no%><br>
+    Size: <%=number_with_delimiter(@sale.unit_size)%> sqft<br>
+    Buyer: <%=@sale.buyer%><br>
+    SPA Price: RM <%=number_with_delimiter('%.2f' % @sale.spa_value)%><br>
+    Nett Price: RM <%=number_with_delimiter('%.2f' % @sale.nett_value)%><br>
+    Package: <%=@sale.package%><br>
+    Remark: <%=@sale.remark%><br>
+    Team: <%=@company_name%><br><br>
+    <p>
+        Congratulations on closing a sale. <%=link_to 'Login', sale_url(@sale) %> to check your sales report.
+    </p>
+    DJC Sales System
+  </body>
+</html>

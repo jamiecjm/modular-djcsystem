@@ -1,5 +1,7 @@
 //= require active_admin/base
 //= require activeadmin_addons/all
+//= require tinymce-jquery
+//= require html2canvas
 
 $(document).ready(function(){
   // $('a.popup').click(function(e) {
@@ -10,4 +12,7 @@ $(document).ready(function(){
   //   	alert (inputs.emails)
   //   })
   // })	
+  if ($('.index_as_column_chart').length || $('.index_as_barchart').length){
+  	$('#index_footer').hide();
+  }
 })

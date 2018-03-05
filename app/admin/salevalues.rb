@@ -18,6 +18,8 @@ config.sort_order = 'sales.date_desc'
 
 includes :sale, :project, :commission
 
+actions :index, :create, :update
+
 scope 'Booked/Done', default: true, show_count: false do |sv|
 	sv = sv.not_cancelled
 	@total_spa = sv.pluck('spa').inject(:+)
@@ -172,8 +174,8 @@ filter :user, label: 'REN', :collection => proc { current_user.pseudo_team_membe
 filter :sale
 filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
 filter :sale_date, as: :date_range
-filter :sale_status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}
-filter :project
+filter :sale_status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}, input_html: {multiple: true}
+filter :project, input_html: {multiple: true}
 filter :sale_unit_no, as: :string
 filter :sale_buyer, as: :string
 filter :percentage

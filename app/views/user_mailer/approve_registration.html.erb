@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  </head>
+
+  <body>
+    <%= yield %>
+    The following member requested for a DJC Sales System - <%=@company_name%> account:<br><br>
+    Full name: <%=@user.name%><br>
+    Prefered name: <%=@user.prefered_name%><br>
+    Referral: <%=@user.parent.prefered_name if @user.parent != nil%><br>
+    Leader: <%=@user.leader.prefered_name if @user.leader != nil%><br>
+    Location: <%=@user.location%><br>
+    Mobile number: <%=@user.phone_no%><br>
+    Email: <%=@user.email%><br>
+    Date of birth: <%=@user.birthday%><br><br>
+
+    <%=link_to "Login", users_url(scope: 'pending')%> to view details.
+    <p></p>
+    DJC Sales System
+  </body>
+</html>

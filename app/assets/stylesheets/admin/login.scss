@@ -1,0 +1,17 @@
+body.logged_out {
+    background: #FAFAFA !important;
+}
+
+body.logged_out #content_wrapper #active_admin_content{
+    box-shadow: initial !important;
+    background: none !important;
+    padding: inherit !important;
+}
+
+body.logged_out #wrapper{
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+

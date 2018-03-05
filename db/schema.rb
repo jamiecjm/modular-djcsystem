@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180303145545) do
+ActiveRecord::Schema.define(version: 20180304051218) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,7 +119,6 @@ ActiveRecord::Schema.define(version: 20180303145545) do
     t.integer "team_id"
     t.integer "location"
     t.integer "position"
-    t.boolean "approved?", default: false
     t.string "ancestry"
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -137,6 +136,7 @@ ActiveRecord::Schema.define(version: 20180303145545) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
+    t.datetime "locked_at"
     t.index ["ancestry"], name: "index_users_on_ancestry"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true

@@ -3,24 +3,23 @@ class User < ApplicationRecord
 	# :confirmable, :lockable, :timeoutable and :omniauthable
 	devise :database_authenticatable, 
 	       :recoverable, :rememberable, :trackable, :validatable, 
-	       :registerable, :confirmable
+	       :registerable, :confirmable, :lockable
 
     belongs_to :team, optional: true
-    belongs_to :referrer, class_name: 'User', primary_key: proc{ ancestry.split('/').last.to_i }	
+    has_one :leader, through: :team
     has_one :pseudo_team, class_name: 'Team', foreign_key: :leader_id
 	has_many :salevalues, dependent: :destroy
 	has_many :sales, ->{distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
 	has_many :units, ->{distinct}, through: :sales
 
-	has_ancestry
+	has_ancestry orphan_strategy: :adopt
 
 	enum location: ["KL","JB","Penang","Melaka"]
   	enum position: ["REN","Team Leader","Team Manager"]
 
-  	default_scope -> {where(archived: false)}
-  	scope :approved, -> { where(approved?: true) }
-  	scope :pending, -> { where(approved?: false) }
+  	scope :approved, -> { where(locked_at: nil, archived: false) }
+  	scope :pending, -> { where.not(locked_at: nil).where(unconfirmed_email: nil, archived: false) }
   	scope :upline_eq, -> (id){
   		if id.is_a? String
 			id = id[/\d+/].to_i
@@ -48,6 +47,7 @@ class User < ApplicationRecord
   	before_validation :titleize_name
   	before_validation :downcase_email
   	before_create :set_team
+  	before_create :lock_user
   	after_create :create_pseudo_team
 
 	def display_name
@@ -86,6 +86,10 @@ class User < ApplicationRecord
 
 	def create_pseudo_team
 		Team.create(leader_id: id, parent_id: parent.pseudo_team.id)
+	end
+
+	def lock_user
+		self.locked_at = Time.now
 	end
 
 end
