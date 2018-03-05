@@ -9,18 +9,15 @@
 // 	}
 // });
 $('#main_content').css('position', 'relative');
-var window_width = window.innerWidth;
-var sidebar_width = $('#sidebar').width()+100;
-var space_width = window_width - sidebar_width;
+var window_width = $(window).width();
 var chart_width = $('#chart').width();
-scale = space_width/chart_width;
-var space_top = $('#sidebar').position().top + $('#sidebar h3').height();
+var scale = window_width/chart_width;
+var right = (chart_width - window_width)/2
 
 $('#chart').css({
 	'transform': 'scale('+ scale +')',
     'position': 'absolute',
-    'right': '-'+ sidebar_width +'px',
-    'top': '-'+space_top+'px'
+    'right': '-'+ right +'px'
 })
 
 html2canvas($('#chart')[0], {
