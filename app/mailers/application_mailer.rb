@@ -10,7 +10,7 @@ class ApplicationMailer < ActionMailer::Base
 		  	website = Website.find_by(subdomain: subdomain)
 		end
 	end  
-	return website.email
+	website.email
   }
   layout 'mailer'
 end
