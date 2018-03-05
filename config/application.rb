@@ -23,6 +23,5 @@ module ModularDjcsystem
     config.filter_parameters << :password
 
     config.time_zone = 'Asia/Kuala_Lumpur'
-    config.active_record.default_timezone = :local
   end
 end

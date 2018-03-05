@@ -12,7 +12,7 @@
 html2canvas($('#chart')[0], {
 	useCORS: true,
 	letterRendering: true,
-	allowTaint: true,
+	allowTaint: false,
 	backgroundColor: '#FFFFFF'	
 }).then(function(canvas){
 	var myImage = canvas.toDataURL("image/png")
