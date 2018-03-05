@@ -20,5 +20,6 @@ module ModularDjcsystem
   	config.sass.load_paths << File.expand_path('../../lib/assets/stylesheets/')
   	config.sass.load_paths << File.expand_path('../../vendor/assets/stylesheets/')
     config.assets.paths << File.expand_path('../../vendor/assets/javascripts/')
+    config.filter_parameters << :password
   end
 end

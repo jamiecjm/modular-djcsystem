@@ -185,6 +185,7 @@ show do
 end
 
 form do |f|
+	f.semantic_errors *f.object.errors.keys
 	inputs do
 		input :name
 		input :leader

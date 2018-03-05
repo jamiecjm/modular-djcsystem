@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
 	# before_action :define_website
 	helper_method :current_website
-
+	before_action :set_raven_context
 	# before_action :set_mailer_host
 
 	protected
@@ -38,5 +38,11 @@ class ApplicationController < ActionController::Base
 	def configure_permitted_parameters
 		devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :prefered_name, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation])
 	end
+	
+	private
 
+	def set_raven_context
+		Raven.user_context(id: session[:current_user_id]) # or anything else in session
+		Raven.extra_context(params: params.to_unsafe_h, url: request.url)
+	end
 end

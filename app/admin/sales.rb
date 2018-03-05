@@ -112,7 +112,9 @@ end
 controller do
 	def create
 		super
-		UserMailer.generate_report(resource, current_website).deliver
+		if resource.id
+			UserMailer.generate_report(resource, current_website).deliver
+		end
 	end
 end
 
@@ -218,7 +220,7 @@ show do
 end
 
 form do |f|
-	# f.semantic_errors *f.object.errors.keys
+	f.semantic_errors *f.object.errors.keys
 	inputs do 
 		input :date
 		has_many :main_salevalues, :allow_destroy => true, new_record: 'Add REN', heading: 'REN', sortable: :order, sortable_start: 1 do |sv|
