@@ -22,23 +22,23 @@ ActiveAdmin.register User do
     end
   end
 
-  batch_action :approve, if: proc {current_user.leader?}, confirm: "Are you sure?", if: proc {params['scope']=='pending'} do |ids, inputs|
+  batch_action :approve, confirm: "Are you sure?", if: proc {current_user.leader? && params['scope']=='pending'} do |ids, inputs|
       User.where(id: ids).update_all(locked_at: nil)
       UserMailer.notify(User.where(id: ids), current_website).deliver
       redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been approved"
   end
 
-  batch_action :disapprove, if: proc {current_user.leader?}, confirm: "Are you sure?", if: proc {params['scope']=='approved' || params['scope'].nil? } do |ids, inputs|
+  batch_action :disapprove, confirm: "Are you sure?", if: proc {current_user.leader? && (params['scope']=='approved' || params['scope'].nil?) } do |ids, inputs|
     User.where(id: ids).update_all(locked_at: Time.now)
     redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been disapproved"
   end
 
-  batch_action :archive, if: proc {current_user.admin?}, confirm: "Are you sure?", if: proc {params['scope']=='pending' || params['scope'] == 'approved' || params['scope'].nil?} do |ids, inputs|
+  batch_action :archive, confirm: "Are you sure?", if: proc {current_user.admin? && (params['scope']=='pending' || params['scope'] == 'approved' || params['scope'].nil?)} do |ids, inputs|
     User.where(id: ids).update_all(archived: true, locked_at: Time.now)
     redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been archived"
   end
 
-  batch_action :unarchive, if: proc {current_user.admin?}, confirm: "Are you sure?", if: proc {params['scope']=='archived'} do |ids, inputs|
+  batch_action :unarchive, confirm: "Are you sure?", if: proc {current_user.admin? && params['scope']=='archived'} do |ids, inputs|
     User.where(id: ids).update_all(archived: false)
     redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been unarchived"
   end
