@@ -275,6 +275,8 @@ GEM
       faraday (~> 0.9)
       mimemagic
       smtpapi (~> 0.1)
+    sentry-raven (2.7.2)
+      faraday (>= 0.7.6, < 1.0)
     smtpapi (0.1.0)
     spring (2.0.2)
       activesupport (>= 4.2)
@@ -347,6 +349,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   selenium-webdriver
   sendgrid-actionmailer
+  sentry-raven
   spring
   spring-watcher-listen (~> 2.0.0)
   tinymce-rails
