@@ -68,7 +68,7 @@ class User < ApplicationRecord
 	end
 
 	def pseudo_team_sales
-		Sale.search(users_id: pseudo_team_members.ids).result
+		Sale.search(users_id_in: pseudo_team_members.ids).result
 	end
 
 	def titleize_name
