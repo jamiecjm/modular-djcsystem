@@ -10,9 +10,8 @@
 	}
 
 	#active_admin_content #sidebar{
-		position: absolute;
-	    right: -270px;
-	    top: 15%;
+		position: relative;
+	    right: -285px;
 	}
 
 	table.index_table {
@@ -96,5 +95,11 @@
 
 	.filter-trigger:hover{
 		cursor: pointer;
+	}
+}
+
+@include desktop-only(){
+	.filter-trigger{
+		display: none;
 	}
 }

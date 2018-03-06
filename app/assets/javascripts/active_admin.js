@@ -21,7 +21,7 @@ $(document).ready(function(){
     if ($('#sidebar').position().left > $(window).width()){
       $('#sidebar').animate({right: 0});
     }else{
-      $('#sidebar').animate({right: -270})
+      $('#sidebar').animate({right: -285})
     }
     
   })

@@ -51,12 +51,12 @@ img {
 	}
 }
 
-.ui-dialog li {
+.show.sales .ui-dialog li {
     @include flexbox();
     @include flex-direction(column);
 }
 
-.ui-dialog {
+.show.sales .ui-dialog {
     position: absolute !important;
      width: auto !important; 
     top: 50% !important;
@@ -64,18 +64,18 @@ img {
     transform: translate(-50%,-50%) !important;
 }
 
-.ui-dialog form textarea[name='content']{
+.show.sales .ui-dialog form textarea[name='content']{
 	min-height: 200px;
 }
 
-.ui-dialog-content{
+.show.sales .ui-dialog-content{
 	width: 30vw !important;
     min-width: 300px;
 }
 
-.ui-dialog form input[type=text], .ui-dialog form input[type=password], .ui-dialog form input[type=email], 
-.ui-dialog form input[type=number], .ui-dialog form input[type=url], .ui-dialog form input[type=tel], 
-.ui-dialog form input[type=date], .ui-dialog form input[type=time], .ui-dialog form textarea {
+.show.sales .ui-dialog form input[type=text], .show.sales .ui-dialog form input[type=password], .show.sales .ui-dialog form input[type=email], 
+.show.sales .ui-dialog form input[type=number], .show.sales .ui-dialog form input[type=url], .show.sales .ui-dialog form input[type=tel], 
+.show.sales .ui-dialog form input[type=date], .show.sales .ui-dialog form input[type=time], .show.sales .ui-dialog form textarea {
 	width: auto !important;
 }
 
