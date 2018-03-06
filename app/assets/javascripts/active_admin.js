@@ -61,7 +61,7 @@ $(window).resize(hide_menu);
 $(window).resize(scale_chart);
 
 function hide_menu(){
-  if ($(window).width() < 768){
+  if ($(window).width() <= 767){
     if ($('#site_title svg').length == 0){
       $('#site_title').prepend('<i class="fas fa-bars"></i>');
     }
@@ -85,7 +85,7 @@ function hide_menu(){
 }
 
 function scale_chart(){
-  if($(window).width() < 768){
+  if($(window).width() <= 767){
     scale = ($('#active_admin_content').width()-15)/1200
     $('#chart').css('transform', 'scale('+scale+')');
   } else {

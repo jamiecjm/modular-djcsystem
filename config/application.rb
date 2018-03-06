@@ -17,8 +17,7 @@ module ModularDjcsystem
     # -- all .rb files in that directory are automatically loaded.
     config.autoload_paths += %W(#{config.root}/lib)
   	config.autoload_paths += Dir["#{config.root}/lib/**/"]
-  	config.sass.load_paths << File.expand_path('../../lib/assets/stylesheets/')
-  	config.sass.load_paths << File.expand_path('../../vendor/assets/stylesheets/')
+    config.sass.load_paths << File.expand_path('../../vendor/assets/stylesheets/')
     config.assets.paths << File.expand_path('../../vendor/assets/javascripts/')
     config.filter_parameters << :password
 
