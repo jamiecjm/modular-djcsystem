@@ -147,6 +147,7 @@ index title: 'Team Sales', pagination_total: false do
 	number_column :commission, as: :currency, seperator: ',', unit: '' do |sale|
 		sale.nett_value * sale.commission.percentage/100
 	end
+	actions
 end
 
 sidebar :summary, only: :index, priority: 0 do
