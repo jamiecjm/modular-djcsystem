@@ -2,9 +2,7 @@ html2canvas($('#chart')[0], {
 	useCORS: true,
 	letterRendering: true,
 	allowTaint: false,
-	backgroundColor: '#FFFFFF',
-	windowWidth: 1500,
-	windowHeight: 1500
+	backgroundColor: '#FFFFFF'
 }).then(function(canvas){
 	var myImage = canvas.toDataURL("image/png");
 	$('#download_link').attr('href',myImage);

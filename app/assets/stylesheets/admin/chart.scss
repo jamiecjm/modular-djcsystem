@@ -1,0 +1,32 @@
+@import "flexbox";
+@import "media-query-mixins";
+
+.teams.index .index_as_barchart .resource_selection_toggle_panel, .teams.index .index_as_column_chart .resource_selection_toggle_panel{
+	display: none;
+}
+
+.logo_div {
+	height: 70px;
+    float: right;
+}
+
+.login_logo_div{
+	height: 150px;
+	background-position: center;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+#chart_div{
+	clear: both;
+}
+
+#chart {
+	border: 1px solid black;
+	padding: 10px;
+	min-width: 1200px;
+
+	@include mobile-only{
+	    transform-origin: top left;
+	}
+}

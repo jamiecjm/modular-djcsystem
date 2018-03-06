@@ -1,0 +1,81 @@
+@import "flexbox";
+@import "media-query-mixins";
+
+@include mobile-only{
+
+	table.index_table {
+		border: 0;
+	}
+	table.index_table thead {
+		display: none;
+	}
+	table.index_table tr {
+	    border: 2px solid #ddd;
+	    display: block;
+	    margin-bottom: 20px;
+	}
+	table.index_table td {
+		border-bottom: 1px solid #ddd;
+		display: block;
+		text-align: left;
+		@include flexbox();
+		padding: 5px 12px 5px 12px;
+	}
+
+	table.index_table tr.even td{
+		background: white;
+	}
+
+	table.index_table tr td:nth-child(2n) {
+		background: #f4f5f5;
+	}
+
+	table.index_table tr.selected td{
+		background: #d9e4ec;
+	}
+
+	table.index_table td:before {
+	/*
+	* aria-label has no advantage, it won't be read inside a table.index_table
+	content: attr(aria-label);
+	*/
+		content: attr(data-label);
+		width: 40%;
+		font-weight: bold;
+		text-transform: uppercase;
+		display: inline-block;
+	}
+	table.index_table td:last-child {
+		border-bottom: 0;
+	}
+
+	table.index_table ul{
+		@include flexbox();
+	}
+
+	table.index_table ul li{
+		margin-right: 5px;
+	}
+
+}
+
+@include desktop-only(){
+
+	table.index_table td:not(.col-buyer){
+		white-space: nowrap;
+	}
+
+	th[class^='col col-ren'] {
+	    white-space: nowrap;  
+	}
+
+	.col-buyer {
+		max-width: 200px;
+		min-width: 150px;
+		
+	}
+}
+
+thead .resource_selection_toggle_cell{
+	display: none;
+}

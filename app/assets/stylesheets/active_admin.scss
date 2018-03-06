@@ -5,53 +5,9 @@
 @import "media-query-mixins";
 @import "admin/\*";
 
-.index #summary_sidebar_section .panel_contents .columns .column:first-child{
-	width: 38% !important;
-}
-.index #summary_sidebar_section .panel_contents .columns .column:last-child{
-	width: 58% !important;
-}
-
-.col-buyer {
-	@include desktop-only{
-		max-width: 200px;
-    	min-width: 150px;
-	}
-}
-
-.teams.index .index_as_barchart .resource_selection_toggle_panel, .teams.index .index_as_column_chart .resource_selection_toggle_panel{
-	display: none;
-}
-
-.logo_div {
-	height: 70px;
-    float: right;
-}
-
-.login_logo_div{
-	height: 150px;
-	background-position: center;
-	background-size: contain;
-	background-repeat: no-repeat;
-}
-
 img {
 	max-height: 100%;
 	max-width: 100%;
-}
-
-#chart_div{
-	clear: both;
-}
-
-#chart {
-	border: 1px solid black;
-	padding: 10px;
-	min-width: 1200px;
-
-	@include mobile-only{
-	    transform-origin: top left;
-	}
 }
 
 .show.sales .ui-dialog li {
@@ -90,7 +46,5 @@ img {
 	display: none;
 }
 
-thead .resource_selection_toggle_cell{
-	display: none;
-}
+
 
