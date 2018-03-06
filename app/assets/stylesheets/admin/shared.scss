@@ -1,0 +1,14 @@
+@import "flexbox";
+@import "media-query-mixins";
+
+.desktop-only{
+	@include mobile-only{
+		display: none;
+	}
+}
+
+.mobile-only{
+	@include desktop-only{
+		display: none;
+	}
+}
