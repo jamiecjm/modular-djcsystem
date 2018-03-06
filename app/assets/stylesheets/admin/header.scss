@@ -66,9 +66,15 @@
 	}		
 }
 
+#header h1{
+	@include flexbox();
+	@include align-items(center);
+    margin-top: 0;
+}
+
 #header h1 a{
 	@include mobile-only(){
-		margin-left: 20px;
+		margin-left: 32.5px;
 	}
 }
 
@@ -78,6 +84,7 @@
 
 #site_title .fa-times, #site_title .fa-bars{
 	cursor: pointer;
+	font-size: 20px;
 }
 
 #header .svg-inline--fa.fa-w-12{
