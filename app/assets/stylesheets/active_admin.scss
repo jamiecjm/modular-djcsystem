@@ -13,7 +13,10 @@
 }
 
 .col-buyer {
-	max-width: 200px;
+	@include desktop-only{
+		max-width: 200px;
+    	min-width: 150px;
+	}
 }
 
 .teams.index .index_as_barchart .resource_selection_toggle_panel, .teams.index .index_as_column_chart .resource_selection_toggle_panel{

@@ -6,6 +6,7 @@
 $(document).ready(function(){
   hide_menu();
   scale_chart();
+  add_sort_order_form();
 
   $('#tabs').append($('#utility_nav li').clone());
 
@@ -22,7 +23,7 @@ $(document).ready(function(){
   $(".col").each(function(){
     var attr = $(this).attr("class").replace(/col /, "");
     attr = attr.replace(/col-/, "");
-    var data_label = attr.replace(/_/, " ");
+    var data_label = attr.replace(/_/, ' ');
     $(this).attr("data-label", data_label);
   });
 
@@ -79,4 +80,38 @@ function scale_chart(){
   } else {
     $("#chart").css("transform", "none");
   } 
+}
+
+function add_sort_order_form(){
+  var attrs = [];
+  $('thead a').each(function(){
+    var value = $(this).attr('href').replace(/.+order=/,'').replace(/&.+/,'');
+    value = value.replace(/_desc/,'');
+    value = value.replace(/_asc/,'');
+    attrs.push(value);
+  });
+  attrs = attrs.filter(onlyUnique);
+  options = '';
+  attrs.forEach(function(item){
+    h_item = item.replace(/_/, ' ').replace(/\./,' ').toUpperCase();
+    options += '<option value='+item+'_asc>'+h_item+' ASC</option>';
+    options += '<option value='+item+'_desc>'+h_item+' DESC</option>';
+  });
+  $('#active_admin_content.with_sidebar #sidebar').prepend('<div class="mobile-only sidebar_section panel" id="sort_sidebar_section">' +
+          '<h3>Sort</h3>' +
+          '<div class="panel_contents">' +
+            '<form action='+window.location.pathname+' class="filter_form">' +
+              '<label class="label">Attributes</label>' +
+              '<div class="filter_form_field">' +
+                '<select name="order">'+options+'</select>' +
+              '</div>' +
+              '<input type="submit">' +
+            '</form>' +
+          '</div>' +
+        '</div>');
+
+}
+
+function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
 }

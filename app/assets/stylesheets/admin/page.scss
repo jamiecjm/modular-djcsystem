@@ -64,12 +64,6 @@
 		border-bottom: 0;
 	}
 
-
-
-	.col-buyer{
-		max-width: none !important;
-	}
-
 	table.index_table ul{
 		@include flexbox();
 	}
@@ -102,5 +96,13 @@
 @include desktop-only(){
 	.filter-trigger{
 		display: none;
+	}
+
+	table.index_table td:not(.col-buyer){
+		white-space: nowrap;
+	}
+
+	th[class^='col col-ren'] {
+	    white-space: nowrap;  
 	}
 }

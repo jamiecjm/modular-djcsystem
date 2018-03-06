@@ -127,7 +127,7 @@ index title: 'Team Sales', pagination_total: false do
 	column :unit_no
 	column :buyer
 	(1..controller.instance_variable_get(:@max_ren)).each do |x|
-		list_column "REN #{x} (%)", sortable: 'users.name' do |sale|
+		list_column "REN #{x} (%)" do |sale|
 			sv = sale.main_salevalues + sale.other_salevalues
 			if sv[x-1]
 				if sv[x-1].user.nil?
