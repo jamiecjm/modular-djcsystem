@@ -15,3 +15,9 @@ body.logged_out #wrapper{
     transform: translate(-50%,-50%);
 }
 
+
+body.logged_out #content_wrapper{
+	@include mobile-only(){
+		width: auto;
+	}
+}
