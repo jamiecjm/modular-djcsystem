@@ -72,7 +72,11 @@
 	}
 }
 
-#site_title .fa:hover{
+#site_title svg:hover{
+	cursor: pointer;
+}
+
+#site_title .fa-times, #site_title .fa-bars{
 	cursor: pointer;
 }
 

@@ -55,15 +55,13 @@ function hide_menu(){
     if ($("#site_title svg").length === 0){
       $("#site_title").prepend("<i class=\"fas fa-bars\"></i>");
     }
-    $("#site_title a").css("margin-left","7px");
-    
+    $("#site_title a").css("margin-left","7px");  
     if ($("#site_title svg").hasClass("fa-bars")){
       $("#tabs").css({
         "top": "calc(-100vh + 41px)",
         "display": "block"
       });        
     }
-
   } else {
     $("#site_title svg").remove();
     $("#site_title a").css("margin-left","0");

@@ -99,6 +99,10 @@
 	.filter-trigger:hover{
 		cursor: pointer;
 	}
+
+	.filter-trigger{
+		cursor: pointer;
+	}
 }
 
 @include desktop-only(){
