@@ -10,7 +10,7 @@ class LogoUploader < CarrierWave::Uploader::Base
   if Rails.env.production?
     storage :fog
   else
-    storage :fog
+    storage :file
   end
 
   # Override the directory where uploaded files will be stored.
@@ -36,7 +36,7 @@ class LogoUploader < CarrierWave::Uploader::Base
 
   # Create different versions of your uploaded files:
   version :thumb do
-    process resize_to_fit: [999, 70]
+    process resize_to_fit: [500, 140]
   end
 
   # Add a white list of extensions which are allowed to be uploaded.

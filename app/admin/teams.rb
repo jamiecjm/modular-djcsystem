@@ -122,7 +122,7 @@ index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barch
 		@sales = @sales.map { |k,v| [k[0],v]}
 		@sales = @sales.to_h.sort_by{|k, v| v}.reverse
 		div class: 'logo_div' do
-			image_tag current_website.logo.url, crossorigin: 'anonymous'
+			image_tag current_website.logo.url if current_website.logo?
 		end
 		render partial: 'admin/charts/ren_sales_performance', :locals => {sales: @sales}
 	end
@@ -132,7 +132,7 @@ end
 index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_column_chart' do
 	div id: 'chart' do
 		div class: 'logo_div' do
-			image_tag current_website.logo.url, crossorigin: 'anonymous'
+			image_tag current_website.logo.url if current_website.logo?
 		end
 		@sales = teams.per(teams.length * teams.total_pages).group('teams.id').group_by_month('sales.date', format: "%B %Y").sum('salevalues.nett_value')
 		@sales.to_a.map do |k,v|
