@@ -16,46 +16,47 @@ $(document).ready(function(){
 });
 
 function add_sort_order_form(){
-  var attrs = [];
-  $('thead a').each(function(){
-    var value = $(this).attr('href').replace(/.+order=/,'').replace(/&.+/,'');
-    value = value.replace(/_desc/,'');
-    value = value.replace(/_asc/,'');
-    attrs.push(value);
-  });
-  attrs = attrs.filter(onlyUnique);
-  options = '';
-  attrs.forEach(function(item){
-    var h_item = item.replace(/_/, ' ').replace(/\./,' ').toUpperCase();
-    var item_asc = item+'_asc'
-    var item_desc = item+'_desc'
-    var default_val = getUrlParameter('order');
-    var asc_selected = '';
-    var desc_selected = '';
-    if (default_val === item_asc){
-      asc_selected = 'selected=selected'
-    }
-    else if (default_val === item_desc) {
-      desc_selected = 'selected=selected'
-    }
+  if ($('.index_as_table').length != 0 || $('.index_as_table2').length != 0){
+    var attrs = [];
+    $('thead a').each(function(){
+      var value = $(this).attr('href').replace(/.+order=/,'').replace(/&.+/,'');
+      value = value.replace(/_desc/,'');
+      value = value.replace(/_asc/,'');
+      attrs.push(value);
+    });
+    attrs = attrs.filter(onlyUnique);
+    options = '';
+    attrs.forEach(function(item){
+      var h_item = item.replace(/_/, ' ').replace(/\./,' ').toUpperCase();
+      var item_asc = item+'_asc'
+      var item_desc = item+'_desc'
+      var default_val = getUrlParameter('order');
+      var asc_selected = '';
+      var desc_selected = '';
+      if (default_val === item_asc){
+        asc_selected = 'selected=selected'
+      }
+      else if (default_val === item_desc) {
+        desc_selected = 'selected=selected'
+      }
 
-    options += '<option value='+item_asc+' '+asc_selected+'>'+h_item+' ASC</option>';
-    options += '<option value='+item_desc+' '+desc_selected+'>'+h_item+' DESC</option>';
-  });
-  $('#active_admin_content.with_sidebar #sidebar').prepend('<div class="mobile-only sidebar_section panel" id="sort_sidebar_section">' +
-          '<h3>Sort</h3>' +
-          '<div class="panel_contents">' +
-            '<form action='+window.location.pathname+' class="filter_form">' +
-              '<label class="label">Attributes</label>' +
-              '<div class="filter_form_field">' +
-                '<select name="order">'+options+'</select>' +
-              '</div>' +
-              '<input type="submit">' +
-            '</form>' +
-          '</div>' +
-        '</div>');
-  $( "select[name=order]" ).select2({});
-
+      options += '<option value='+item_asc+' '+asc_selected+'>'+h_item+' ASC</option>';
+      options += '<option value='+item_desc+' '+desc_selected+'>'+h_item+' DESC</option>';
+    });
+    $('#active_admin_content.with_sidebar #sidebar').prepend('<div class="mobile-only sidebar_section panel" id="sort_sidebar_section">' +
+            '<h3>Sort</h3>' +
+            '<div class="panel_contents">' +
+              '<form action='+window.location.pathname+' class="filter_form">' +
+                '<label class="label">Attributes</label>' +
+                '<div class="filter_form_field">' +
+                  '<select name="order">'+options+'</select>' +
+                '</div>' +
+                '<input type="submit">' +
+              '</form>' +
+            '</div>' +
+          '</div>');
+    $( "select[name=order]" ).select2({});    
+  }
 }
 
 function onlyUnique(value, index, self) { 

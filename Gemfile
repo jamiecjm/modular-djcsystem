@@ -70,3 +70,4 @@ gem 'tinymce-rails'
 gem "figaro"
 gem 'sendgrid-actionmailer'
 gem "sentry-raven"
+gem 'cloudinary'
