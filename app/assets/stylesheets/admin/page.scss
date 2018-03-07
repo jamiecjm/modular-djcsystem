@@ -7,16 +7,12 @@
 	    margin: 0 auto;
 	}
 
-	body.logged_out #login form fieldset input[type=text], 
-	body.logged_out #login form fieldset input[type=email], 
-	body.logged_out #login form fieldset input[type=password]{
-		width: calc(80%);
-	}
-
-	body.logged_out form input[type=text], body.logged_out form input[type=password], body.logged_out form input[type=email], 
-	body.logged_out form input[type=number], body.logged_out form input[type=url], body.logged_out form input[type=tel], 
-	body.logged_out form input[type=date], body.logged_out form input[type=time], body.logged_out form textarea{
-		width: calc(80%);
+	body.logged_out #registration_new input[type=text], body.logged_out #registration_new input[type=password], 
+	body.logged_out #registration_new input[type=email], body.logged_out #registration_new input[type=number], 
+	body.logged_out #registration_new input[type=url], body.logged_out #registration_new input[type=tel], 
+	body.logged_out #registration_new input[type=date], body.logged_out #registration_new input[type=time], 
+	body.logged_out #registration_new textarea{
+		width: calc(80%) !important;
 	}
 
 	#registration_new fieldset ol > li label{
