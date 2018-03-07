@@ -1,7 +1,7 @@
 var checkExist = setInterval(function() {
    if ($('.ui-dialog').length) {
       clearInterval(checkExist);
-      $('.ui-dialog select').select2({});
+      // $('.ui-dialog select').select2({});
       $('textarea[name=subject]').html('<%= j "#{@sale.project.name}(Unit No: #{@sale.unit_no}) [SPA and LA Signed]" %>');
       var content =   
       	'<p>Hi,</p>'+

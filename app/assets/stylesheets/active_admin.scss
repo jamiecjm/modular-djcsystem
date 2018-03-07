@@ -22,6 +22,9 @@ img {
     left: 50% !important;
     transform: translate(-50%,-50%) !important;
     z-index: 9999;
+    @include mobile-only{
+        top: 100% !important;
+    }
 }
 
 .show.sales .ui-dialog form textarea[name='content']{
