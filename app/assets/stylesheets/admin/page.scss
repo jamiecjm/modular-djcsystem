@@ -82,4 +82,8 @@
 	form .ui-sortable input[type=url], form .ui-sortable input[type=tel], form .ui-sortable textarea {
 	    width: calc(80% - 22px);
 	}
+
+	.download_links{
+		display: none;
+	}
 }
