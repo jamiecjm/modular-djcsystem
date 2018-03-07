@@ -17,14 +17,17 @@ img {
 
 .show.sales .ui-dialog {
     position: absolute !important;
-     width: auto !important; 
+    width: auto !important; 
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%,-50%) !important;
+    z-index: 9999;
 }
 
 .show.sales .ui-dialog form textarea[name='content']{
-	min-height: 200px;
+    @include desktop-only{
+        min-height: 200px;
+    }
 }
 
 .show.sales .ui-dialog-content{

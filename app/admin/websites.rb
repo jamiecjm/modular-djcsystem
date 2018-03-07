@@ -42,7 +42,7 @@ index title: 'Company Profile', pagination_total: false do
 	column 'Company Name', :superteam_name
 	column :email
 	column :logo do |w|
-		image_tag w.logo&.thumb&.url if w.logo?
+		image_tag w.logo.thumb.url if w.logo?
 	end
 	column :subdomain
 	column :external_host
@@ -58,7 +58,7 @@ show do
 	 	end
 		row :email
 		row :logo do |w|
-			image_tag w.logo.url if w.logo?
+			image_tag w.logo.thumb.url if w.logo?
 		end
 		row :subdomain
 		row :external_host

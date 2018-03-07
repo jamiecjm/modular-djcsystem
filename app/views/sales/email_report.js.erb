@@ -1,6 +1,7 @@
 var checkExist = setInterval(function() {
    if ($('.ui-dialog').length) {
       clearInterval(checkExist);
+      $('.ui-dialog select').select2({});
       $('textarea[name=subject]').html('<%= j "#{@sale.project.name}(Unit No: #{@sale.unit_no}) [SPA and LA Signed]" %>');
       var content =   
       	'<p>Hi,</p>'+
@@ -34,7 +35,7 @@ var checkExist = setInterval(function() {
    }
 }, 100);
 ActiveAdmin.modal_dialog("Send report to: ", {
-	to: 'text',
+	to: ['ksadiman@iqi-group.com', 'peiyen@iqi-group.com'],
 	subject: 'textarea',
 	content: 'textarea'
 }, 
