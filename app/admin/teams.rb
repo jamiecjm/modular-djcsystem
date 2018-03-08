@@ -39,26 +39,23 @@ before_action only: :index do
 	if params['q'].blank?
 		params['q'] = {}
 	end
-	if params['as'] == 'column_chart'
-		if params['q']['year'].nil?
-			params['q']['year'] = Date.current.year
-		end
-		year = params['q']['year']
-		params['q']['sales_date_gteq_datetime'] = "#{year.to_i-1}-12-16"
-		params['q']['sales_date_lteq_datetime'] = "#{year}-12-15"
-	else
-		if params['q']['year'].nil?
-			if params['q']['sales_date_gteq_datetime'].nil?
-				params['q']['sales_date_gteq_datetime'] = Date.current.beginning_of_month
-			end
-			if params['q']['sales_date_lteq_datetime'].nil?
-				params['q']['sales_date_lteq_datetime'] = Date.today
-			end		
+	if params['q']['year'].blank?
+		if Date.current >= Date.current.strftime('%Y-12-16').to_date
+			params['q']['year'] = Date.current.year + 1
 		else
-			year = params['q']['year']
-			params['q']['sales_date_gteq_datetime'] = "#{year.to_i-1}-12-16"
-			params['q']['sales_date_lteq_datetime'] = "#{year}-12-15"
+			params['q']['year'] = Date.current.year
 		end	
+	end
+	if params['as'] == 'column_chart'
+		params['q']['sales_date_gteq_datetime'] = "#{params['q']['year'].to_i-1}-12-16".to_date
+		params['q']['sales_date_lteq_datetime'] = params['q']['sales_date_gteq_datetime'] + 1.year - 1.day
+	else
+		if params['q']['month'].blank?
+			params['q']['month'] = Date::MONTHNAMES[Date.current.month]
+		end
+		month = params['q']['month'].to_date.month
+		params['q']['sales_date_gteq_datetime'] = "#{params['q']['year']}-#{month}-1".to_date
+		params['q']['sales_date_lteq_datetime'] = params['q']['sales_date_gteq_datetime'] + 1.month - 1.day
 	end
 	if params['q']['sales_status_eq'].nil?
 		params['q']['sales_status_in'] = [0,1]
@@ -157,8 +154,9 @@ end
 
 filter :upline_eq, as: :select, label: 'Upline', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
 filter :main_team, label: 'Team',as: :select, collection: proc { Team.includes(:leader).where(overriding: true) }, input_html: {multiple: true}
-filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
-filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
+filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
+filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}, if: proc {params['as'] != 'column_chart'}
+# filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
 filter :sales_status, as: :select, collection: Sale.statuses.map {|k,v| [k,v]}, input_html: {multiple: true}
 filter :leader_location, as: :select, label: 'REN Location', :collection => User.locations.map {|k,v| [k,v]}, input_html: {multiple: true}
 filter :projects, input_html: {multiple: true}

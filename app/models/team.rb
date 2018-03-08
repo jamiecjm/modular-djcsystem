@@ -29,6 +29,7 @@ class Team < ApplicationRecord
 	}
 
 	scope :year, ->(year) {}
+	scope :month, ->(month) {}
 
 	def members
 		# including subtree
@@ -41,7 +42,7 @@ class Team < ApplicationRecord
 	end
 
 	def self.ransackable_scopes(_auth_object = nil)
-	  [:upline_eq, :year]
+	  [:upline_eq, :year, :month]
 	end
 
 end

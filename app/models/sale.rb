@@ -29,6 +29,7 @@ class Sale < ApplicationRecord
 	}
 	scope :not_cancelled, ->{search(status_not_eq: 2).result}
 	scope :year, ->(year) {}
+	scope :month, ->(month) {}
 
 	before_save :set_comm
 
@@ -37,7 +38,7 @@ class Sale < ApplicationRecord
 	end
 
 	def self.ransackable_scopes(_auth_object = nil)
-	  [:upline_eq, :year]
+	  [:upline_eq, :year, :month]
 	end
 
 	def set_comm

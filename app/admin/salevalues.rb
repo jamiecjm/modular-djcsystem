@@ -58,20 +58,19 @@ before_action only: :index do
 		end
 	end
 	if params['q']['year'].blank?
-		if params['q']['sale_date_gteq_datetime'].blank?
-			if Date.current >= Date.current.strftime('%Y-12-16').to_date
-				params['q']['sale_date_gteq_datetime'] = Date.current.strftime('%Y-12-16').to_date
-			else
-				params['q']['sale_date_gteq_datetime'] = "#{Date.current.year-1}-12-16".to_date
-			end
-		end
-		if params['q']['sale_date_lteq_datetime'].blank?
-			params['q']['sale_date_lteq_datetime'] = Date.today
-		end
+		if Date.current >= Date.current.strftime('%Y-12-16').to_date
+			params['q']['year'] = Date.current.year + 1
+		else
+			params['q']['year'] = Date.current.year
+		end	
+	end
+	if params['q']['month'].blank?
+		params['q']['sale_date_gteq_datetime'] = "#{params['q']['year'].to_i-1}-12-16".to_date
+		params['q']['sale_date_lteq_datetime'] = params['q']['sale_date_gteq_datetime'] + 1.year - 1.day
 	else
-		year = params['q']['year']
-		params['q']['sale_date_gteq_datetime'] = "#{year.to_i-1}-12-16"
-		params['q']['sale_date_lteq_datetime'] = "#{year}-12-15"
+		month = params['q']['month'].to_date.month
+		params['q']['sale_date_gteq_datetime'] = "#{params['q']['year']}-#{month}-1".to_date
+		params['q']['sale_date_lteq_datetime'] = params['q']['sale_date_gteq_datetime'] + 1.month - 1.day		
 	end
 
 end
@@ -172,8 +171,9 @@ end
 
 filter :user, label: 'REN', :collection => proc { current_user.pseudo_team_members.order('prefered_name').pluck(:prefered_name, :id) }
 filter :sale
-filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
-filter :sale_date, as: :date_range
+filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
+filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}
+# filter :sale_date, as: :date_range
 filter :sale_status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}, input_html: {multiple: true}
 filter :project, input_html: {multiple: true}
 filter :sale_unit_no, as: :string

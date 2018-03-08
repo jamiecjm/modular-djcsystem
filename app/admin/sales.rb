@@ -62,20 +62,19 @@ before_action only: :index do
 		params['q'] = {}
 	end
 	if params['q']['year'].blank?
-		if params['q']['date_gteq'].blank?
-			if Date.current >= Date.current.strftime('%Y-12-16').to_date
-				params['q']['date_gteq'] = Date.current.strftime('%Y-12-16').to_date
-			else
-				params['q']['date_gteq'] = "#{Date.current.year-1}-12-16".to_date
-			end
-		end
-		if params['q']['date_lteq'].blank?
-			params['q']['date_lteq'] = Date.today
-		end
+		if Date.current >= Date.current.strftime('%Y-12-16').to_date
+			params['q']['year'] = Date.current.year + 1
+		else
+			params['q']['year'] = Date.current.year
+		end	
+	end
+	if params['q']['month'].blank?
+		params['q']['date_gteq'] = "#{params['q']['year'].to_i-1}-12-16".to_date
+		params['q']['date_lteq'] = params['q']['date_gteq'] + 1.year - 1.day
 	else
-		year = params['q']['year']
-		params['q']['date_gteq'] = "#{year.to_i-1}-12-16"
-		params['q']['date_lteq'] = "#{year}-12-15"
+		month = params['q']['month'].to_date.month
+		params['q']['date_gteq'] = "#{params['q']['year']}-#{month}-1".to_date
+		params['q']['date_lteq'] = params['q']['date_gteq'] + 1.month - 1.day		
 	end
 	if params['q']['upline_eq'].blank?
 		params['q']['upline_eq'] = "[#{current_user.id}]"
@@ -253,8 +252,9 @@ form do |f|
 end
 
 filter :upline, as: :select, label: 'Upline', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
-filter :year, as: :select, :collection => proc { (1900..Date.current.year+1).to_a.reverse }
-filter :date
+filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
+filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}
+# filter :date
 # filter :teams, as: :select, collection: proc { Team.where(overriding: true) }
 filter :status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}, input_html: {multiple: true}
 filter :project, input_html: {multiple: true}

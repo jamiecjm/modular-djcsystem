@@ -15,11 +15,12 @@ class Salevalue < ApplicationRecord
 	scope :not_cancelled, -> { search(sale_status_not_eq: 2).result }
 	scope :cancelled, -> { search(sale_status_eq: 2).result }
 	scope :year, -> (year) {}
+	scope :month, -> (year) {}
 
 	before_save :calc_comm
 
 	def self.ransackable_scopes(_auth_object = nil)
-	  [:year]
+	  [:year, :month]
 	end
 
 	def calc_comm
