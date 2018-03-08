@@ -121,7 +121,7 @@ index title: 'Team Sales', pagination_total: false do
 	selectable_column
 	id_column
 	column :date
-	column :status
+	tag_column :status
 	column :project
 	column :unit_no
 	column :buyer
@@ -187,7 +187,7 @@ end
 show do
 	attributes_table do
 		row :date
-		row :status
+		tag_row :status
 		row :project
 		row :unit_no
 		row :buyer

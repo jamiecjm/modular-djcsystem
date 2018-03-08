@@ -107,7 +107,7 @@ index title: 'Individual Sales', pagination_total: false do |sv|
 	column :date, sortable: 'sales.date' do |sv|
 		sv.sale.date
 	end
-	column :status, sortable: 'sales.status' do |sv|
+	tag_column :status, sortable: 'sales.status' do |sv|
 		sv.sale.status
 	end
 	column :project, sortable: 'projects.name'

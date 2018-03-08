@@ -11,7 +11,7 @@ $(document).ready(function(){
   $(".col").each(function(){
     var attr = $(this).attr("class").replace(/col /, "");
     attr = attr.replace(/col-/, "");
-    var data_label = attr.replace(/_/, ' ');
+    var data_label = attr.replace(/_/g, ' ');
     $(this).attr("data-label", data_label);
   });
 

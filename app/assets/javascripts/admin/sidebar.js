@@ -27,7 +27,7 @@ function add_sort_order_form(){
     attrs = attrs.filter(onlyUnique);
     options = '';
     attrs.forEach(function(item){
-      var h_item = item.replace(/_/, ' ').replace(/\./,' ').toUpperCase();
+      var h_item = item.replace(/_/g, ' ').replace(/\./g,' ').toUpperCase();
       var item_asc = item+'_asc'
       var item_desc = item+'_desc'
       var default_val = getUrlParameter('order');

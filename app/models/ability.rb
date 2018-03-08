@@ -9,7 +9,7 @@ class Ability
     end
 
   	if current_user.leader?
-  		can [:create, :read, :update], Project
+      can [:create, :read, :update], Project
       can :destroy, Project, id: Project.where.not(id: Sale.pluck(:project_id)).ids
       can :manage, Commission
       can :create, User
@@ -17,7 +17,6 @@ class Ability
       can :destroy, User, id: User.where.not(id: Salevalue.pluck(:user_id)).ids
       can [:update], Team, id: current_user.pseudo_team.subtree.pluck(:id)
   	else
-  		can :read, Project
       can :update, current_user
   		can :read, User, id: current_user.pseudo_team_members.ids
   	end
