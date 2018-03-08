@@ -275,7 +275,7 @@ csv do
 	column :buyer
 	(1..controller.instance_variable_get(:@max_ren)).each do |x|
 		column("REN #{x}") {|sale|
-			sv = (sale.main_salevalues.order(:order) + sale.other_salevalues.order(:order)).flatten[x-1]
+			sv = (sale.main_salevalues + sale.other_salevalues).flatten[x-1]
 			if sv
 				if sv.user.nil?
 					sv.other_user
@@ -287,7 +287,7 @@ csv do
 			end
 		}
 		column("REN #{x} Comm Percentage (%)") {|sale|
-			sv = (sale.main_salevalues.order(:order) + sale.other_salevalues.order(:order)).flatten[x-1]
+			sv = (sale.main_salevalues + sale.other_salevalues).flatten[x-1]
 			if sv
 				sv.percentage
 			else

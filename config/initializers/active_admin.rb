@@ -304,6 +304,6 @@ ActiveAdmin.setup do |config|
   #
   # config.order_clause = MyOrderClause
 
-  config.disable_streaming_in = ['development', 'staging']
+  config.disable_streaming_in = ['production', 'development', 'staging']
 end
 
