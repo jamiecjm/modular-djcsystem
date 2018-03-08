@@ -1,6 +1,6 @@
 class Sale < ApplicationRecord
 
-	has_many :salevalues, dependent: :destroy
+	has_many :salevalues, dependent: :destroy, autosave: true
 	has_many :main_salevalues, -> {where(other_user: nil).order(:order)}, class_name: 'Salevalue', dependent: :destroy
 	has_many :other_salevalues, -> {other_team.order(:order)}, class_name: 'Salevalue', dependent: :destroy
 	has_many :users, -> {distinct}, through: :salevalues
@@ -44,10 +44,7 @@ class Sale < ApplicationRecord
 		comm = project.commissions.where('effective_date <= ?', date).order('effective_date DESC').limit(1).first
 		self.commission_id = comm.id
 		if !new_record? && (project_id_changed? || commission_id_changed?)
-			salevalues.each do |sv|
-				sv.calc_comm
-				sv.save
-			end
+			salevalues.map(&:calc_comm)
 		end
 	end
 

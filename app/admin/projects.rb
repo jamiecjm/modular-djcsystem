@@ -14,10 +14,13 @@ ActiveAdmin.register Project do
 
 menu parent: 'Projects', label: 'List'
 
+includes :commissions
+
 permit_params :name, commissions_attributes: [:percentage, :effective_date, :id, :project_id, :_destroy]
 
 scope :all, default: true do |projects|
-	@max_comms = (projects.map(&:commissions).map(&:length)).max
+	comms = Commission.where(project_id: projects.ids)
+	@max_comms = comms.joins(:project).group('projects.id').count.values.max
 	projects
 end
 
@@ -29,7 +32,7 @@ index pagination_total: false do
 	column :name
 	(1..controller.instance_variable_get(:@max_comms)).each do |x|
 		column "Commission #{x} (%)" do |p|
-			comm = p.commissions.order(:effective_date)[x-1]
+			comm = p.commissions[x-1]
 			if comm
 				"#{comm.percentage}%"
 			else
@@ -37,7 +40,7 @@ index pagination_total: false do
 			end
 		end
 		column "Commission #{x} Effective Date" do |p|
-			comm = p.commissions.order(:effective_date)[x-1]
+			comm = p.commissions[x-1]
 			if comm
 				"#{comm.effective_date}"
 			else

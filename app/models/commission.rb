@@ -1,9 +1,10 @@
 class Commission < ApplicationRecord
 
 	belongs_to :project
-	has_many :sales
+	has_many :sales, autosave: true
 
-	before_save :recalculate_sv
+	after_save :recalculate_sv
+	after_destroy :recalculate_sv
 
 	def display_name
 		percentage
