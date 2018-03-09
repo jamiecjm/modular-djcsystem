@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180309043913) do
+ActiveRecord::Schema.define(version: 20180309083939) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,17 @@ ActiveRecord::Schema.define(version: 20180309043913) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["id", "project_id"], name: "index_commissions_on_id_and_project_id"
+  end
+
+  create_table "positions", force: :cascade do |t|
+    t.string "title"
+    t.boolean "overriding", default: false
+    t.float "overriding_percentage"
+    t.string "ancestry"
+    t.boolean "default"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ancestry"], name: "index_positions_on_ancestry"
   end
 
   create_table "projects", id: :serial, force: :cascade do |t|
@@ -88,10 +99,21 @@ ActiveRecord::Schema.define(version: 20180309043913) do
     t.string "ancestry"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "overriding", default: false
+    t.boolean "overriding"
     t.float "overriding_percentage"
     t.index ["ancestry"], name: "index_teams_on_ancestry"
     t.index ["leader_id"], name: "index_teams_on_leader_id"
+  end
+
+  create_table "teams_positions", force: :cascade do |t|
+    t.integer "team_id"
+    t.integer "position_id"
+    t.date "effective_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position_id"], name: "index_teams_positions_on_position_id"
+    t.index ["team_id", "position_id"], name: "index_teams_positions_on_team_id_and_position_id", unique: true
+    t.index ["team_id"], name: "index_teams_positions_on_team_id"
   end
 
   create_table "units", id: :serial, force: :cascade do |t|
@@ -117,7 +139,6 @@ ActiveRecord::Schema.define(version: 20180309043913) do
     t.string "phone_no"
     t.date "birthday"
     t.integer "team_id"
-    t.string "position"
     t.string "ancestry"
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"

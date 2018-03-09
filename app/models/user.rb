@@ -14,11 +14,11 @@ class User < ApplicationRecord
 	has_many :sales, ->{distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
 	has_many :units, ->{distinct}, through: :sales
+	has_many :positions, ->{distinct}, through: :pseudo_team
 
 	has_ancestry orphan_strategy: :adopt
 
 	enumerize :location, in: ["KL","JB","Penang","Melaka"]
-  	enumerize :position, in: ["REN","Team Leader","Team Manager"]
 
   	scope :approved, -> { where(locked_at: nil, archived: false) }
   	scope :pending, -> { where.not(locked_at: nil).where(unconfirmed_email: nil, archived: false) }
@@ -61,7 +61,8 @@ class User < ApplicationRecord
 	end
 
 	def leader?
-		pseudo_team.overriding
+		positions.last.overriding
+		# pseudo_team.overriding
 	end
 
 	def pseudo_team_members

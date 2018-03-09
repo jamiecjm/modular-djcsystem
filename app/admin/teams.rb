@@ -152,24 +152,26 @@ show do
 	attributes_table do
 		row :name
 		row :leader
-		row 'Upline Team' do |team|
-			team.parent
+		row 'Parent Team' do |t|
+			t.parent
 		end
-		row :overriding
-		row :overriding_percentage
+		row :overriding do |t|
+			t.positions.last.overriding
+		end
+		row :overriding_percentage do |t|
+			t.positions.last.overriding_percentage
+		end
 	end
 
-    panel "Downlines" do
-      table_for team.descendants.where(overriding: true).includes(:leader) do
-        column :name
-        column :leader
-        column :overriding
-        column :overriding_percentage
-        column '' do |team|
-        	link_to 'Edit', edit_team_path(team), target: '_blank'
-        end
-      end
-    end
+    # panel "Downlines" do
+    #   table_for team.descendants.where(overriding: true).includes(:leader) do
+    #     column :name
+    #     column :leader
+    #     column '' do |team|
+    #     	link_to 'Edit', edit_team_path(team), target: '_blank'
+    #     end
+    #   end
+    # end
 
     # panel 'Organization Chart' do
     # 	teams = team.subtree.joins(:leader).map {|t|
@@ -184,8 +186,8 @@ form do |f|
 	f.semantic_errors *f.object.errors.keys
 	inputs do
 		input :name
-		input :leader
-		input :overriding_percentage
+		# input :leader
+		# input :overriding_percentage
 	end
 	actions
 end

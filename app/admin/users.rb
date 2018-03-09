@@ -3,7 +3,7 @@ ActiveAdmin.register User do
 
   menu parent: 'Teams', label: 'Members'
 
-  includes team: :leader
+  includes :positions, team: :leader
 
   scope :approved, default: true
 
@@ -50,6 +50,9 @@ ActiveAdmin.register User do
     id_column
     column :name
     column :prefered_name
+    column :position do |u|
+      u.positions.last
+    end
     column :ic_no
     column :email
     column :phone_no
@@ -86,6 +89,9 @@ ActiveAdmin.register User do
       row :id
       row :name
       row :prefered_name
+      row :position do |u|
+        u.positions.last
+      end
       row :ic_no
       row :email
       row :phone_no

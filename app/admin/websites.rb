@@ -14,7 +14,7 @@ ActiveAdmin.register Website, as: 'Company Profile' do
 
 permit_params :superteam_name, :email, :logo, :logo_cache, :remove_logo, :subdomain, :external_host
 
-menu label: 'Company Profile', priority: 99, if: proc { current_user.admin? }
+menu parent: 'Settings', label: 'Company Profile', priority: 2
 
 config.filters = false
 

@@ -6,6 +6,8 @@ class Team < ApplicationRecord
 	has_many :salevalues, -> {distinct}, through: :leader
 	has_many :sales, -> {distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
+	has_many :teams_positions
+	has_many :positions, through: :teams_positions
 
 	has_ancestry orphan_strategy: :adopt
 
@@ -31,6 +33,8 @@ class Team < ApplicationRecord
 	scope :year, ->(year) {}
 	scope :month, ->(month) {}
 
+	scope :current_position, -> {positions.last}
+
 	def members
 		# including subtree
 		user_ids = subtree.pluck(:leader_id)
@@ -38,7 +42,7 @@ class Team < ApplicationRecord
 	end
 
 	def display_name
-		name ||= leader.prefered_name
+		name ||= leader&.prefered_name
 	end
 
 	def self.ransackable_scopes(_auth_object = nil)
