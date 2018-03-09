@@ -133,7 +133,7 @@ index title: 'Team Sales', pagination_total: false do
 					[sv[x-1].other_user, "(#{sv[x-1].percentage}%)"]
 				else
 					if can? :read, sv[x-1].user
-						[(link_to sv[x-1].user.prefered_name, salevalues_path(q: {user_id_eq: sv[x-1].user.id, sale_id_eq: sale.id}), target: '_blank'), "(#{sv[x-1].percentage}%)"]
+						[(link_to sv[x-1].user.prefered_name, salevalues_path(q: {user_id_eq: sv[x-1].user.id, sale_id_eq: sale.id, year: sale.date.year}), target: '_blank'), "(#{sv[x-1].percentage}%)"]
 					else
 						[sv[x-1].user.prefered_name, "(#{sv[x-1].percentage}%)"]
 					end
