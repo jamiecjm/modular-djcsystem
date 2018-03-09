@@ -57,10 +57,8 @@ before_action only: :index do
 		params['q']['sales_date_gteq_datetime'] = "#{params['q']['year']}-#{month}-1".to_date
 		params['q']['sales_date_lteq_datetime'] = params['q']['sales_date_gteq_datetime'] + 1.month - 1.day
 	end
-	if params['q']['sales_status_eq'].nil?
-		params['q']['sales_status_in'] = [0,1]
-	else
-		params['q']['sales_status_in'] = nil
+	if params['q']['sales_status_in'].nil?
+		params['q']['sales_status_in'] = ["Booked","Done"]
 	end
 	if params['q']['upline_eq'].nil?
 		params['q']['upline_eq'] = "[#{current_user.id}]"

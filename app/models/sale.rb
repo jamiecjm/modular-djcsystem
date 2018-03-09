@@ -29,7 +29,7 @@ class Sale < ApplicationRecord
 		end
 		where(id: User.find(id).pseudo_team_sales.pluck(:id)) 
 	}
-	scope :not_cancelled, ->{search(status_not_eq: 2).result}
+	scope :not_cancelled, ->{search(status_not_eq: "Cancelled").result}
 	scope :year, ->(year) {}
 	scope :month, ->(month) {}
 

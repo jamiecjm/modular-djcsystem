@@ -35,7 +35,7 @@ scope 'Booked/Done', default: true, show_count: false do |sales|
 end
 
 scope :cancelled, show_count: false do |sales|
-	sales = sales.search(status_eq: 2).result
+	sales = sales.search(status_eq: "Cancelled").result
 	sv = Salevalue.where(sale_id: sales.ids)
 	@max_ren = sv.joins(:sale).group('sales.id').count.values.max
 	team_sv = sv.where(other_user: nil)
@@ -78,6 +78,9 @@ before_action only: :index do
 	end
 	if params['q']['upline_eq'].blank?
 		params['q']['upline_eq'] = "[#{current_user.id}]"
+	end
+	if params['q']['status_in'].blank?
+		params['q']['status_in'] = ["Booked","Done"]
 	end
 end
 

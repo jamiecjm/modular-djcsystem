@@ -12,8 +12,8 @@ class Salevalue < ApplicationRecord
 	validates :other_user, presence: true, if: proc { user_id.blank? }
 
 	scope :other_team, -> {where.not(other_user: nil)}
-	scope :not_cancelled, -> { search(sale_status_not_eq: 2).result }
-	scope :cancelled, -> { search(sale_status_eq: 2).result }
+	scope :not_cancelled, -> { search(sale_status_not_eq: 'Cancelled').result }
+	scope :cancelled, -> { search(sale_status_eq: 'Cancelled').result }
 	scope :year, -> (year) {}
 	scope :month, -> (year) {}
 
