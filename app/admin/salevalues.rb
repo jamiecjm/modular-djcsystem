@@ -87,6 +87,8 @@ batch_action :change_status_of, form: {
 		redirect_to collection_path, notice: "Sales with id #{sales.ids.join(', ')} marked as #{inputs[:status]}"
 end
 
+batch_action :destroy, false
+
 member_action :view do |sv|
 	redirect_to sale_path(sv.sale)
 end

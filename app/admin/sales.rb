@@ -93,6 +93,8 @@ batch_action :change_status_of, form: {
 		redirect_to collection_path, notice: "Sales with id #{ids.join(', ')} marked as #{inputs[:status]}"
 end
 
+batch_action :destroy, false
+
 member_action :email_report, method: :post do
 	@sale = resource
 	@user = current_user

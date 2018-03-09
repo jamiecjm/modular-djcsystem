@@ -20,6 +20,10 @@ body {
     min-height: 80vh;
 }
 
+body.logged_out{
+    min-height: 100vh;
+}
+
 img {
 	max-height: 100%;
 	max-width: 100%;
