@@ -11,7 +11,7 @@ class Team < ApplicationRecord
 
 	has_ancestry orphan_strategy: :adopt
 
-	validates :parent_id, presence: true
+	validates :parent_id, presence: true, unless: proc { root? }
 	validates :leader_id, presence: true
 
 	scope :upline_eq, ->(id) {
@@ -34,6 +34,11 @@ class Team < ApplicationRecord
 	scope :month, ->(month) {}
 
 	scope :current_position, -> {positions.last}
+
+	scope :main, -> {
+		team_id = User.pluck(:team_id).uniq.compact
+		find(team_id)
+	}
 
 	def members
 		# including subtree

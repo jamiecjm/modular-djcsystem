@@ -8,4 +8,8 @@ class Website < ApplicationRecord
 	validates :subdomain, uniqueness: true
 	validates :external_host, uniqueness: true
 
+	def display_name
+		superteam_name
+	end
+
 end

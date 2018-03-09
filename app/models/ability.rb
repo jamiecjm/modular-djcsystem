@@ -6,15 +6,9 @@ class Ability
       can :create, User
     else
       if current_user.admin?
-        can [:read, :update], Website
-        can :remove_logo, Website
-        can [:create, :read, :update], Project
-        can :destroy, Project, id: Project.where.not(id: Sale.pluck(:project_id)).ids
-        can :manage, Commission
-        can :manage, Position
-        can :update, Team
-        can :create, User
-        can :destroy, User
+        can :manage, :all
+        cannot :destroy, Project, id: Project.where(id: Sale.pluck(:project_id)).ids
+        cannot :destroy, User, id: User.where(id: Salevalue.pluck(:user_id)).ids
       end
     	if current_user.leader?     
     		can [:read, :update], User, id: current_user.pseudo_team_members.pluck(:id)
