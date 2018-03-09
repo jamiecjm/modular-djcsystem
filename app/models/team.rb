@@ -37,8 +37,10 @@ class Team < ApplicationRecord
 
 	scope :main, -> {
 		team_id = User.pluck(:team_id).uniq.compact
-		find(team_id)
+		where(id: team_id)
 	}
+
+	after_create :create_team_position
 
 	def members
 		# including subtree
@@ -52,6 +54,10 @@ class Team < ApplicationRecord
 
 	def self.ransackable_scopes(_auth_object = nil)
 	  [:upline_eq, :year, :month]
+	end
+
+	def create_team_position
+		TeamsPosition.create(team_id: team.id, position_id: 2, effective_date: Date.today)
 	end
 
 end

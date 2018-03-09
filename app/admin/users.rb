@@ -1,5 +1,5 @@
 ActiveAdmin.register User do
-  permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation
+  permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation, :admin
 
   menu parent: 'Teams', label: 'Members'
 
@@ -79,6 +79,9 @@ ActiveAdmin.register User do
           input :parent_id, label: 'Referrer', as: :select, collection: User.approved.order(:prefered_name).map {|u| [u.prefered_name, u.id ]}
           input :location
         end
+        if current_user.admin?
+          input :admin
+        end
     end
 
     actions
@@ -107,8 +110,8 @@ ActiveAdmin.register User do
   end
 
   filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
-  filter :team,as: :select, collection: proc { Team.accessible_by(current_ability).includes(:leader).main }, input_html: {multiple: true}
-  filter :referrer_eq, as: :select, label: 'Referrer', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
+  filter :team,as: :select, collection: proc { Team.includes(:leader).where(overriding: true) }, input_html: {multiple: true}
+  filter :referrer_eq, as: :select, label: 'Referrer', :collection => proc { User.order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
   filter :location, as: :select, collection: User.location.options, input_html: {multiple: true}
   filter :name
   filter :prefered_name
