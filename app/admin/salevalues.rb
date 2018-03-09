@@ -53,7 +53,7 @@ before_action only: :index do
 	if params['q']['user_id_eq'].blank?
 		params['q']['user_id_eq'] = current_user.id
 	else
-		unless current_user.pseudo_team_members.pluck(:id).include?(params['q']['user_id_eq'].to_i)
+		unless User.accessible_by(current_ability).pluck(:id).include?(params['q']['user_id_eq'].to_i)
 			redirect_to root_path, alert: 'You are not authorized to perform this action.'
 		end
 	end
@@ -175,7 +175,7 @@ sidebar :summary, only: :index, priority: 0 do
 
 end
 
-filter :user, label: 'REN', :collection => proc { current_user.pseudo_team_members.order('prefered_name').pluck(:prefered_name, :id) }
+filter :user, label: 'REN', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).pluck(:prefered_name, :id) }
 filter :sale
 filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}

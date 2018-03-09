@@ -106,9 +106,9 @@ ActiveAdmin.register User do
     end
   end
 
-  filter :upline_eq, as: :select, label: 'Upline', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
-  filter :team,as: :select, collection: proc { Team.includes(:leader).where(overriding: true) }, input_html: {multiple: true}
-  filter :referrer_eq, as: :select, label: 'Referrer', :collection => proc { current_user.pseudo_team_members.order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
+  filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
+  filter :team,as: :select, collection: proc { Team.accessible_by(current_ability).includes(:leader).main }, input_html: {multiple: true}
+  filter :referrer_eq, as: :select, label: 'Referrer', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
   filter :location, as: :select, collection: User.location.options, input_html: {multiple: true}
   filter :name
   filter :prefered_name

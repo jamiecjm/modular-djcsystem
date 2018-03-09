@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180309083939) do
+ActiveRecord::Schema.define(version: 20180309123741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,7 +71,7 @@ ActiveRecord::Schema.define(version: 20180309083939) do
     t.float "unit_size"
     t.float "spa_value"
     t.float "nett_value"
-    t.string "status"
+    t.string "status", default: "Booked"
     t.index ["commission_id"], name: "index_sales_on_commission_id"
     t.index ["date"], name: "index_sales_on_date"
     t.index ["project_id"], name: "index_sales_on_project_id"

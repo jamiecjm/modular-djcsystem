@@ -43,8 +43,8 @@ class User < ApplicationRecord
   	validates :prefered_name, uniqueness: true
   	validates :prefered_name, presence: true
   	validates :email, presence: true
-  	validates :parent_id, presence: true, unless: proc { is_root? }
-  	validates :location, presence: true
+  	validates :parent_id, presence: true, unless: proc { is_root? || admin? }
+  	validates :location, presence: true, unless: proc { admin? }
 
   	before_validation :titleize_name
   	before_validation :downcase_email
