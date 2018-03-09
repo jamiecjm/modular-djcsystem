@@ -139,7 +139,7 @@ index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_co
 end
 
 filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
-filter :main_team, label: 'Team',as: :select, collection: proc { Team.includes(:leader).where(overriding: true) }, input_html: {multiple: true}
+filter :main_team, label: 'Team',as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:leader).main + [current_user.team]).uniq }, input_html: {multiple: true}
 filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}, if: proc {params['as'] != 'column_chart'}
 # filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
