@@ -74,6 +74,9 @@ filter :commissions_effective_date, as: :date_range
 csv do
 	column :id
 	column :name
+	column(:sales_count) do |p|
+		p.sales.length
+	end
 	(1..controller.instance_variable_get(:@max_comms)).each do |x|
 		column("Commission #{x} (%)") do |p|
 			comm = p.commissions.order(:effective_date)[x-1]
