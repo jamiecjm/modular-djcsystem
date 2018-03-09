@@ -123,7 +123,7 @@ index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barch
 				image_tag current_website.logo.url
 			end
 		end
-		render partial: 'admin/charts/ren_sales_performance', :locals => {sales: @sales}
+		render partial: 'teams/ren_sales_performance', :locals => {sales: @sales}
 	end
 	a id: 'download_link', download: "barchart-#{Date.current}"
 end
@@ -147,7 +147,7 @@ index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_co
 		d2 = params['q']['sales_date_lteq_datetime'].to_date
 		months = (d1..d2).map {|d| [d.strftime('%B %Y'), 0]}.uniq
 		@sales = months.to_h.merge!(@sales){|k, old_v, new_v| old_v + new_v}
-		render partial: 'admin/charts/monthly_performance', :locals => {sales: @sales}
+		render partial: 'teams/monthly_performance', :locals => {sales: @sales}
 	end
 	a id: 'download_link', download: "column_chart-#{Date.current}"
 end
@@ -184,6 +184,14 @@ show do
         end
       end
     end
+
+    # panel 'Organization Chart' do
+    # 	teams = team.subtree.joins(:leader).map {|t|
+    # 		next if t.leader.nil?
+    # 		[t.leader&.prefered_name, t.parent&.leader&.prefered_name]
+    # 	}
+    # 	render partial: 'teams/org_chart', :locals => {teams: teams.to_json}
+    # end
 end
 
 form do |f|

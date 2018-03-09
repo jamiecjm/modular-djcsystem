@@ -14,7 +14,7 @@ ActiveAdmin.register Project do
 
 menu parent: 'Projects', label: 'List'
 
-includes :commissions
+includes :commissions, :sales
 
 permit_params :name, commissions_attributes: [:percentage, :effective_date, :id, :project_id, :_destroy]
 
@@ -30,23 +30,11 @@ index pagination_total: false do
 	selectable_column
 	id_column
 	column :name
-	(1..controller.instance_variable_get(:@max_comms)).each do |x|
-		column "Commission #{x} (%)" do |p|
-			comm = p.commissions[x-1]
-			if comm
-				"#{comm.percentage}%"
-			else
-				nil
-			end
-		end
-		column "Commission #{x} Effective Date" do |p|
-			comm = p.commissions[x-1]
-			if comm
-				"#{comm.effective_date}"
-			else
-				nil
-			end
-		end
+	column :sales_count do |p|
+		link_to pluralize(p.sales.length, 'sale'), sales_path(q: {project_id_eq: p.id})
+	end
+	list_column 'Commission(%) | Effective Date' do |p|
+		p.commissions.map {|c| "#{c.percentage}% | #{c.effective_date}" }
 	end
 	column :created_at
 	column :updated_at
@@ -56,7 +44,10 @@ end
 show do
 	attributes_table do
 		row :name
-		list_row :commissions do |p|
+		row :sales_count do |p|
+			link_to pluralize(p.sales.length, 'sale'), sales_path(q: {project_id_eq: p.id})
+		end
+		list_row 'Commission(%) | Effective Date' do |p|
 			p.commissions.map {|c| "#{c.percentage}% | #{c.effective_date}" }
 		end
 		row :created_at

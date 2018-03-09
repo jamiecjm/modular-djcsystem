@@ -42,7 +42,7 @@ class Sale < ApplicationRecord
 	end
 
 	def set_comm
-		comm = project.commissions.where('effective_date <= ?', date).order('effective_date DESC').limit(1).first
+		comm = project.commissions.where('effective_date <= ?', date).last
 		self.commission_id = comm.id
 		if !new_record? && (project_id_changed? || commission_id_changed?)
 			salevalues.map(&:calc_comm)
