@@ -1,4 +1,5 @@
 require 'subdomain'
+require 'host'
 Rails.application.routes.draw do
 	constraints(Subdomain) do
 	  devise_for :users, ActiveAdmin::Devise.config
@@ -10,7 +11,7 @@ Rails.application.routes.draw do
 	  get '*path' => redirect('/')
 	end
 
-	constraints subdomain: 'www' do
+	constraints(Host) do
 		root 'pages#main'
 		get '*path' => redirect('/')
 	end
