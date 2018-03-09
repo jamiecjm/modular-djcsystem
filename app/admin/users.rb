@@ -1,5 +1,5 @@
 ActiveAdmin.register User do
-  permit_params :name, :prefered_name, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation
+  permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation
 
   menu parent: 'Teams', label: 'Members'
 
@@ -50,6 +50,7 @@ ActiveAdmin.register User do
     id_column
     column :name
     column :prefered_name
+    column :ic_no
     column :email
     column :phone_no
     column :birthday
@@ -66,6 +67,7 @@ ActiveAdmin.register User do
     inputs do
         input :name
         input :prefered_name
+        input :ic_no, min: 1
         input :email
         input :phone_no
         input :birthday
@@ -84,6 +86,7 @@ ActiveAdmin.register User do
       row :id
       row :name
       row :prefered_name
+      row :ic_no
       row :email
       row :phone_no
       row :birthday
@@ -111,6 +114,7 @@ ActiveAdmin.register User do
     column :id
     column :name
     column :prefered_name
+    column :ic_no
     column :email
     column :phone_no
     column :birthday

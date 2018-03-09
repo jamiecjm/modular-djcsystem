@@ -69,7 +69,7 @@ module ActiveAdmin
 
       # Notice the name of the method
       def sign_up_params
-        params.require(:user).permit(:name, :prefered_name, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation)
+        params.require(:user).permit(:name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation)
       end
     end
 
