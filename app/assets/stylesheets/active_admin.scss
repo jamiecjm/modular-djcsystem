@@ -5,6 +5,16 @@
 @import "media-query-mixins";
 @import "admin/\*";
 
+$pending-color: #FF9900;
+$rejected-color: #FF0000;
+$approved-color: #08A510;
+
+.status_tag {
+  &.Booked { background: $pending-color; }
+  &.Cancelled { background: $rejected-color; }
+  &.Done { background: $approved-color; }
+}
+
 body {
     position: relative;
     min-height: 80vh;

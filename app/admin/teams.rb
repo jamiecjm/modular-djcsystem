@@ -108,7 +108,9 @@ index title: 'Sales Performance', default: true do
 	number_column :total_spa_value, as: :currency, seperator: ',', unit: '', sortable: :total_spa_value
 	number_column :total_nett_value, as: :currency, seperator: ',', unit: '', sortable: :total_nett_value
 	number_column :total_comm, as: :currency, seperator: ',', unit: '', sortable: :total_comm
-	column :total_sales, sortable: :total_sales
+	column :total_sales, sortable: :total_sales do |t|
+		link_to pluralize(t.total_sales, 'sale'), sales_path(q: {salevalues_user_id_in: t.leader.id, year: params['q']['year'], month: params['q']['month']})
+	end
 end
 
 index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barchart' do

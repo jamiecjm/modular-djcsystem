@@ -72,8 +72,10 @@ before_action only: :index do
 		params['q']['sale_date_gteq_datetime'] = "#{params['q']['year']}-#{month}-1".to_date
 		params['q']['sale_date_lteq_datetime'] = params['q']['sale_date_gteq_datetime'] + 1.month - 1.day		
 	end
-	if params['q']['sale_status_in'].blank?
-		params['q']['sale_status_in'] = ["Booked","Done"]
+	if params['scope'].nil? || params['scope'] == 'booked_done'
+		if params['q']['status_in'].blank?
+			params['q']['status_in'] = ["Booked","Done"]
+		end
 	end
 end
 

@@ -79,8 +79,10 @@ before_action only: :index do
 	if params['q']['upline_eq'].blank?
 		params['q']['upline_eq'] = "[#{current_user.id}]"
 	end
-	if params['q']['status_in'].blank?
-		params['q']['status_in'] = ["Booked","Done"]
+	if params['scope'].nil? || params['scope'] == 'booked_done'
+		if params['q']['status_in'].blank?
+			params['q']['status_in'] = ["Booked","Done"]
+		end
 	end
 end
 
