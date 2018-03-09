@@ -114,41 +114,27 @@ index title: 'Sales Performance', default: true do
 end
 
 index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barchart' do
-	div id: 'chart' do
-		@sales = teams.per(teams.length * teams.total_pages).order('SUM(salevalues.nett_value) DESC').sum('salevalues.nett_value')
-		@sales = @sales.map { |k,v| [k[0],v]}
-		@sales = @sales.to_h.sort_by{|k, v| v}.reverse
-		if current_website.logo?
-			div class: 'logo_div' do
-				image_tag current_website.logo.url
-			end
-		end
-		render partial: 'teams/ren_sales_performance', :locals => {sales: @sales}
-	end
+	@sales = teams.per(teams.length * teams.total_pages).order('SUM(salevalues.nett_value) DESC').sum('salevalues.nett_value')
+	@sales = @sales.map { |k,v| [k[0],v]}
+	@sales = @sales.to_h.sort_by{|k, v| v}.reverse
+	render partial: 'teams/ren_sales_performance', :locals => {sales: @sales, filters: params['q']}, layout: 'layouts/chart'
 	a id: 'download_link', download: "barchart-#{Date.current}"
 end
 
 index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_column_chart' do
-	div id: 'chart' do
-		if current_website.logo?
-			div class: 'logo_div' do
-				image_tag current_website.logo.url
-			end
-		end
-		@sales = teams.per(teams.length * teams.total_pages).group('teams.id').group_by_month('sales.date', format: "%B %Y").sum('salevalues.nett_value')
-		@sales.to_a.map do |k,v|
-			new_key = k[1]
-			@sales[new_key] ||= 0
-			@sales[new_key] += v
-			@sales.delete(k)
-		end
-		year = params['q']['year'] 
-		d1 = params['q']['sales_date_gteq_datetime'].to_date
-		d2 = params['q']['sales_date_lteq_datetime'].to_date
-		months = (d1..d2).map {|d| [d.strftime('%B %Y'), 0]}.uniq
-		@sales = months.to_h.merge!(@sales){|k, old_v, new_v| old_v + new_v}
-		render partial: 'teams/monthly_performance', :locals => {sales: @sales}
+	@sales = teams.per(teams.length * teams.total_pages).group('teams.id').group_by_month('sales.date', format: "%B %Y").sum('salevalues.nett_value')
+	@sales.to_a.map do |k,v|
+		new_key = k[1]
+		@sales[new_key] ||= 0
+		@sales[new_key] += v
+		@sales.delete(k)
 	end
+	year = params['q']['year'] 
+	d1 = params['q']['sales_date_gteq_datetime'].to_date
+	d2 = params['q']['sales_date_lteq_datetime'].to_date
+	months = (d1..d2).map {|d| [d.strftime('%B %Y'), 0]}.uniq
+	@sales = months.to_h.merge!(@sales){|k, old_v, new_v| old_v + new_v}
+	render partial: 'teams/monthly_performance', :locals => {sales: @sales}, layout: 'layouts/chart'
 	a id: 'download_link', download: "column_chart-#{Date.current}"
 end
 

@@ -122,6 +122,7 @@ index title: 'Team Sales', pagination_total: false do
 	id_column
 	column :date
 	tag_column :status
+	tag_column :status_string
 	column :project
 	column :unit_no
 	column :buyer

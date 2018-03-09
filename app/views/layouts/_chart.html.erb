@@ -1,0 +1,13 @@
+<div id='chart'>
+  <%if current_website.logo?%>
+    <div class='logo_div'>
+      <%=image_tag current_website.logo.url%>
+    </div>
+    <div class='description'>
+    	<h2></h2>
+    	<div class='filter'></div>
+    </div>
+    <div id='chart_div'></div>
+  <%end%>
+</div>
+<%= yield %>

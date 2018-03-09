@@ -1,5 +1,7 @@
 class Sale < ApplicationRecord
 
+	extend Enumerize
+
 	has_many :salevalues, dependent: :destroy
 	has_many :main_salevalues, -> {where(other_user: nil).order(:order)}, class_name: 'Salevalue', dependent: :destroy
 	has_many :other_salevalues, -> {other_team.order(:order)}, class_name: 'Salevalue', dependent: :destroy
@@ -20,6 +22,7 @@ class Sale < ApplicationRecord
 	validates :main_salevalues, :presence => true
 
 	enum status: ["Booked","Done","Cancelled"]
+	enumerize :status_string, in: ["Booked","Done","Cancelled"]
 
 	scope :upline_eq, ->(id) { 
 		if id.is_a? String
