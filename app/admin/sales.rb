@@ -122,7 +122,6 @@ index title: 'Team Sales', pagination_total: false do
 	id_column
 	column :date
 	tag_column :status
-	tag_column :status_string
 	column :project
 	column :unit_no
 	column :buyer
@@ -261,7 +260,7 @@ filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}
 # filter :date
 # filter :teams, as: :select, collection: proc { Team.where(overriding: true) }
-filter :status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}, input_html: {multiple: true}
+filter :status, as: :select, collection: Sale.status.options, input_html: {multiple: true}
 filter :project, input_html: {multiple: true}
 filter :unit_no
 filter :buyer

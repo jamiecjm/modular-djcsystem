@@ -5,6 +5,8 @@ class User < ApplicationRecord
 	       :recoverable, :rememberable, :trackable, :validatable, 
 	       :registerable, :confirmable, :lockable
 
+	extend Enumerize
+
     belongs_to :team, optional: true
     has_one :leader, through: :team
     has_one :pseudo_team, class_name: 'Team', foreign_key: :leader_id
@@ -15,8 +17,8 @@ class User < ApplicationRecord
 
 	has_ancestry orphan_strategy: :adopt
 
-	enum location: ["KL","JB","Penang","Melaka"]
-  	enum position: ["REN","Team Leader","Team Manager"]
+	enumerize :location, in: ["KL","JB","Penang","Melaka"]
+  	enumerize :position, in: ["REN","Team Leader","Team Manager"]
 
   	scope :approved, -> { where(locked_at: nil, archived: false) }
   	scope :pending, -> { where.not(locked_at: nil).where(unconfirmed_email: nil, archived: false) }

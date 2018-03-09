@@ -21,8 +21,7 @@ class Sale < ApplicationRecord
 	validates :buyer, presence: true
 	validates :main_salevalues, :presence => true
 
-	enum status: ["Booked","Done","Cancelled"]
-	enumerize :status_string, in: ["Booked","Done","Cancelled"]
+	enumerize :status, in: ["Booked","Done","Cancelled"]
 
 	scope :upline_eq, ->(id) { 
 		if id.is_a? String

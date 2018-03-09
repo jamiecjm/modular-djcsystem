@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180309024157) do
+ActiveRecord::Schema.define(version: 20180309043913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,7 +49,6 @@ ActiveRecord::Schema.define(version: 20180309024157) do
     t.string "buyer"
     t.integer "project_id"
     t.integer "unit_id"
-    t.integer "status", default: 0
     t.string "package"
     t.string "remark"
     t.date "spa_sign_date"
@@ -61,6 +60,7 @@ ActiveRecord::Schema.define(version: 20180309024157) do
     t.float "unit_size"
     t.float "spa_value"
     t.float "nett_value"
+    t.string "status"
     t.index ["commission_id"], name: "index_sales_on_commission_id"
     t.index ["date"], name: "index_sales_on_date"
     t.index ["project_id"], name: "index_sales_on_project_id"
@@ -117,8 +117,7 @@ ActiveRecord::Schema.define(version: 20180309024157) do
     t.string "phone_no"
     t.date "birthday"
     t.integer "team_id"
-    t.integer "location"
-    t.integer "position"
+    t.string "position"
     t.string "ancestry"
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -138,6 +137,7 @@ ActiveRecord::Schema.define(version: 20180309024157) do
     t.string "unconfirmed_email"
     t.datetime "locked_at"
     t.integer "ic_no"
+    t.string "location"
     t.index ["ancestry"], name: "index_users_on_ancestry"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true

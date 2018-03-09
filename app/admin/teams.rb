@@ -143,8 +143,8 @@ filter :main_team, label: 'Team',as: :select, collection: proc { Team.includes(:
 filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}, if: proc {params['as'] != 'column_chart'}
 # filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
-filter :sales_status, as: :select, collection: Sale.statuses.map {|k,v| [k,v]}, input_html: {multiple: true}
-filter :leader_location, as: :select, label: 'REN Location', :collection => User.locations.map {|k,v| [k,v]}, input_html: {multiple: true}
+filter :sales_status, as: :select, collection: Sale.status.options, input_html: {multiple: true}
+filter :leader_location, as: :select, label: 'REN Location', :collection => User.location.options, input_html: {multiple: true}
 filter :projects, input_html: {multiple: true}
 filter :leader, label: 'REN', input_html: {multiple: true}
 

@@ -174,7 +174,7 @@ filter :sale
 filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}
 # filter :sale_date, as: :date_range
-filter :sale_status, as: :select, collection: proc {Sale.statuses.map {|k,v| [k,v]}}, input_html: {multiple: true}
+filter :sale_status, as: :select, collection: Sale.status.options, input_html: {multiple: true}
 filter :project, input_html: {multiple: true}
 filter :sale_unit_no, as: :string
 filter :sale_buyer, as: :string
