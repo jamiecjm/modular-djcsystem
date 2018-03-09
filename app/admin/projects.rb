@@ -31,7 +31,7 @@ index pagination_total: false do
 	id_column
 	column :name
 	column :sales_count do |p|
-		link_to pluralize(p.sales.length, 'sale'), sales_path(q: {project_id_eq: p.id})
+		link_to pluralize(p.sales.length, 'sale'), sales_path(q: {project_id_in: p.id}), target: '_blank'
 	end
 	list_column 'Commission(%) | Effective Date' do |p|
 		p.commissions.map {|c| "#{c.percentage}% | #{c.effective_date}" }
