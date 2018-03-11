@@ -1,6 +1,6 @@
 class Commission < ApplicationRecord
 
-	belongs_to :project
+	belongs_to :project, optional: true
 	has_many :sales, autosave: true
 
 	after_save :recalculate_sv

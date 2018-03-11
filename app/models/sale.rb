@@ -7,7 +7,7 @@ class Sale < ApplicationRecord
 	has_many :other_salevalues, -> {other_team.order(:order)}, class_name: 'Salevalue', dependent: :destroy
 	has_many :users, -> {distinct}, through: :salevalues
 	has_many :teams, -> {distinct}, through: :salevalues
-	belongs_to :project
+	belongs_to :project, optional: true
 	has_one :unit
 	belongs_to :commission, optional: true
 

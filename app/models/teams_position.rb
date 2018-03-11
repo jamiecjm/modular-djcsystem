@@ -1,6 +1,6 @@
 class TeamsPosition < ApplicationRecord
 
-	belongs_to :team
-	belongs_to :position
+	belongs_to :team, optional: true
+	belongs_to :position, optional: true
 	
 end

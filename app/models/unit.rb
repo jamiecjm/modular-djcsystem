@@ -1,6 +1,6 @@
 class Unit < ApplicationRecord
 
-	belongs_to :project
+	belongs_to :project, optional: true
 	has_one :sale
 
 	def display_name

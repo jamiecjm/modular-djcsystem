@@ -1,7 +1,7 @@
 class Team < ApplicationRecord
 
 	has_many :users
-	belongs_to :leader, class_name: 'User'
+	belongs_to :leader, class_name: 'User', optional: true
 	has_one :main_team, class_name: 'Team', through: :leader, source: :team
 	has_many :salevalues, -> {distinct}, through: :leader
 	has_many :sales, -> {distinct}, through: :salevalues
