@@ -18,6 +18,8 @@ class Ability
       end
       if current_user.admin?
         can :manage, :all
+        cannot [:create, :destroy], Team
+        cannot [:create, :destroy], Website
         cannot :destroy, Project, id: Project.where(id: Sale.pluck(:project_id)).ids
         cannot :destroy, User, id: User.where(id: Salevalue.pluck(:user_id)).ids
       end
