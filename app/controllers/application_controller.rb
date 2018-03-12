@@ -37,6 +37,12 @@ class ApplicationController < ActionController::Base
 	def set_mailer_host
 		ActionMailer::Base.default_url_options[:host] = request.host_with_port
 	end
+
+	def configure_permitted_parameters
+		update_attrs = [:password, :password_confirmation, :current_password]
+		devise_parameter_sanitizer.permit :account_update, keys: update_attrs
+		devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation])
+	end
 	
 	private
 
@@ -48,4 +54,5 @@ class ApplicationController < ActionController::Base
 	def redirect_to_root
 	  redirect_to root_path
 	end
+
 end

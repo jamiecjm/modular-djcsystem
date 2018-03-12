@@ -1,5 +1,5 @@
 ActiveAdmin.register User do
-  permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation, :admin
+  permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :admin
 
   menu parent: 'Teams', label: 'Members'
 
@@ -44,6 +44,10 @@ ActiveAdmin.register User do
   end
 
   batch_action :destroy, false
+
+  action_item :change_password, only: :show do
+    link_to "Change password", edit_user_registration_path
+  end
 
   index pagination_total: false do
     selectable_column

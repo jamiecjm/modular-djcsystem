@@ -147,7 +147,7 @@ ActiveAdmin.setup do |config|
   #
   config.before_action :set_mailer_host
   config.before_action :set_raven_context, if: proc{ Rails.env.production? }
-  # config.before_action :configure_permitted_parameters, if: :devise_controller?
+  config.before_action :configure_permitted_parameters, if: proc{ devise_controller? }
 
   # == Localize Date/Time Format
   #

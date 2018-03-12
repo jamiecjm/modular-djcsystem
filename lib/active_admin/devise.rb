@@ -64,13 +64,6 @@ module ActiveAdmin
 
     class RegistrationsController < ::Devise::RegistrationsController
       include ::ActiveAdmin::Devise::Controller
-
-      private
-
-      # Notice the name of the method
-      def sign_up_params
-        params.require(:user).permit(:name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation)
-      end
     end
 
     class ConfirmationsController < ::Devise::ConfirmationsController
