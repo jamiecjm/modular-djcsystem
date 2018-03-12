@@ -107,7 +107,9 @@ end
 member_action :send_report do
 	sale = Sale.find(params[:id])
 	to = params[:to].gsub(/\s+/, '').split(',')
-	UserMailer.email_admin(user: current_user, sale: sale, to: to, subject: params['subject'], 
+	cc = params[:cc].gsub(/\s+/, '').split(',')
+	bcc = params[:bcc].gsub(/\s+/, '').split(',')
+	UserMailer.email_admin(user: current_user, sale: sale, to: to, cc: cc, bcc: bcc, subject: params['subject'], 
 		content: params['content'], company: current_website).deliver
 end
 

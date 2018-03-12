@@ -1,7 +1,6 @@
 var checkExist = setInterval(function() {
    if ($('.ui-dialog').length) {
       clearInterval(checkExist);
-      // $('.ui-dialog select').select2({});
       $('textarea[name=subject]').html('<%= j "#{@sale.project.name}(Unit No: #{@sale.unit_no}) [SPA and LA Signed]" %>');
       var content =   
       	'<p>Hi,</p>'+
@@ -35,7 +34,9 @@ var checkExist = setInterval(function() {
    }
 }, 100);
 ActiveAdmin.modal_dialog("Send report to: ", {
-	to: ['ksadiman@iqi-group.com', 'peiyen@iqi-group.com'],
+	to: ['ksadiman@iqi-group.com', 'peiyen@iqi-group.com', 'support@iqi-group.com'],
+	cc: 'text',
+	bcc: 'text',
 	subject: 'textarea',
 	content: 'textarea'
 }, 
@@ -45,6 +46,8 @@ function(inputs) {
 		data: {
 			id: '<%=@sale.id%>',
 			to: inputs.to,
+			cc: inputs.cc,
+			bcc: inputs.bcc,
 			subject: inputs.subject,
 			content: inputs.content
 		},

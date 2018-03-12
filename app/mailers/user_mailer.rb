@@ -35,8 +35,10 @@ class UserMailer < ApplicationMailer
     @sale = var[:sale]
     @company_name = var[:company].superteam_name
     @content = var[:content]
-    mail( :to      => var[:to],
-          :from   => @user.email,
+    mail( :to => var[:to],
+          :cc => var[:cc],
+          :bcc => var[:bcc],
+          :from => @user.email,
           :reply_to => @user.email,
           :subject => var[:subject]) do |format|
             format.html
