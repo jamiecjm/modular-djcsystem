@@ -7,7 +7,6 @@ Rails.application.routes.draw do
 	  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
 	  root 'dashboard#index'
-
 	  get '*path' => redirect('/')
 	end
 
@@ -15,5 +14,7 @@ Rails.application.routes.draw do
 		root 'pages#main'
 		get '*path' => redirect('/')
 	end
+
+	get '*unmatched_route', to: 'application#not_found'
 
 end
