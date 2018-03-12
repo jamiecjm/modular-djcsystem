@@ -65,7 +65,7 @@ class Salevalue < ApplicationRecord
 		teams.each do |t|
 			position = t.positions.where('effective_date <= ?', sale.date).last
 			comm = project.commissions.where('effective_date <= ?', sale.date).where(position_id: position.id).last	
-			o = Overriding.find_or_initialize_by(team_id: t.id, salevalue_id: id)
+			o = OverridingCommission.find_or_initialize_by(team_id: t.id, salevalue_id: id)
 			if !comm.blank?	
 				override = nett_value * (comm.percentage-base_comm)/100
 				o.override = override

@@ -62,7 +62,6 @@ form do |f|
 		has_many :commissions, allow_destroy: true do |c|
 			c.input :effective_date
 			c.input :position
-			c.input :percentage
 		end
 	end
 	actions

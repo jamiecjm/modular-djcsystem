@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: overridings
+# Table name: overriding_commissions
 #
 #  id           :integer          not null, primary key
 #  team_id      :integer
@@ -11,14 +11,14 @@
 #
 # Indexes
 #
-#  index_overridings_on_salevalue_id              (salevalue_id)
-#  index_overridings_on_team_id                   (team_id)
-#  index_overridings_on_team_id_and_salevalue_id  (team_id,salevalue_id) UNIQUE
+#  index_overriding_commissions_on_salevalue_id              (salevalue_id)
+#  index_overriding_commissions_on_team_id                   (team_id)
+#  index_overriding_commissions_on_team_id_and_salevalue_id  (team_id,salevalue_id) UNIQUE
 #
 
 require 'test_helper'
 
-class OverridingTest < ActiveSupport::TestCase
+class OverridingCommissionTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end
