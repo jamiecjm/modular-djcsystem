@@ -3,10 +3,13 @@ class ApplicationController < ActionController::Base
 
 	include LocalSubdomain
 
-	# before_action :define_website
 	helper_method :current_website
 	before_action :set_raven_context, if: proc{ Rails.env.production? }
-	# before_action :set_mailer_host
+	unless Rails.application.config.consider_all_requests_local
+		rescue_from ActionController::RoutingError, with: -> { redirect_to_root  }
+		rescue_from ActionController::UnknownController, with: -> { redirect_to_root  }
+		rescue_from ActiveRecord::RecordNotFound,        with: -> { redirect_to_root  }
+	end
 
 	protected
 
@@ -34,19 +37,15 @@ class ApplicationController < ActionController::Base
 	def set_mailer_host
 		ActionMailer::Base.default_url_options[:host] = request.host_with_port
 	end
-
-	def configure_permitted_parameters
-		devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :prefered_name, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :password, :password_confirmation])
-	end
 	
 	private
 
 	def set_raven_context
-		Raven.user_context(id: current_user&.id, email: current_user&.email) # or anything else in session
+		Raven.user_context(id: current_user&.id, email: current_user&.email, prefered_name: current_user&.prefered_name) # or anything else in session
 		Raven.extra_context(params: params.to_unsafe_h, url: request.url)
 	end
 
-	def not_found
+	def redirect_to_root
 	  redirect_to root_path
 	end
 end

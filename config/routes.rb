@@ -15,6 +15,4 @@ Rails.application.routes.draw do
 		get '*path' => redirect('/')
 	end
 
-	get '*unmatched_route', to: 'application#not_found'
-
 end
