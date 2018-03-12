@@ -13,3 +13,7 @@
 //= require rails-ujs
 //= require turbolinks
 //= require_tree .
+Raven.config('https://16953ced506c444d854b48cf17b09651@sentry.io/298281').install();
+Raven.context(function () {
+
+});

@@ -203,8 +203,13 @@ ActiveAdmin.setup do |config|
   #   config.register_stylesheet 'my_print_stylesheet.css', media: :print
   #
   # To load a javascript file:
-    config.register_javascript 'https://www.gstatic.com/charts/loader.js'
-    config.register_javascript 'https://use.fontawesome.com/releases/v5.0.8/js/all.js'
+  # config.register_javascript 'https://cdn.ravenjs.com/3.23.1/raven.min.js'
+  current_javascripts = config.javascripts.clone
+  config.clear_javascripts!
+  config.register_javascript 'https://cdn.ravenjs.com/3.23.1/raven.min.js'
+  current_javascripts.each{ |j| config.register_javascript j }
+  config.register_javascript 'https://www.gstatic.com/charts/loader.js'
+  config.register_javascript 'https://use.fontawesome.com/releases/v5.0.8/js/all.js'
 
   # == CSV options
   #
@@ -231,6 +236,7 @@ ActiveAdmin.setup do |config|
   #
     config.namespace nil do |admin|
       admin.build_menu :default do |menu|
+        menu.add label: ' ', priority: 0, url: '#', id: 'menu', class: 'mobile-only'
         menu.add label: 'Sales', priority: 1 do |s|
           s.add label: 'New', url: '/sales/new', priority: 0
         end
@@ -240,6 +246,8 @@ ActiveAdmin.setup do |config|
         menu.add label: 'Projects', priority: 3 do |p|
           p.add label: 'New', url: '/projects/new', priority: 0, if: proc { current_user.admin? }
         end
+        menu.add label: 'Profile', url: proc{ user_path(current_user) }, priority: 99
+        menu.add label: 'Logout', url: proc {destroy_user_session_path}, priority: 100
       end
     end
 

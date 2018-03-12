@@ -1,6 +1,15 @@
 @import "flexbox";
 @import "media-query-mixins";
 
+.logged_in #active_admin_content{
+    opacity: 0;
+    -webkit-transition: opacity 0.4s ease-in-out;
+    -moz-transition: opacity 0.4s ease-in-out;
+    -ms-transition: opacity 0.4s ease-in-out;
+    -o-transition: opacity 0.4s ease-in-out;
+    transition: opacity 0.4s ease-in-out;
+}
+
 @include mobile-only{
 	body.logged_out #content_wrapper #active_admin_content{
 		max-width: 500px;
@@ -28,6 +37,12 @@
 	    max-width: calc(100vw - 30px);
     	overflow-x: hidden;
 		padding: 30px 15px;
+	    opacity: 0;
+	    -webkit-transition: opacity 0.4s ease-in-out;
+	    -moz-transition: opacity 0.4s ease-in-out;
+	    -ms-transition: opacity 0.4s ease-in-out;
+	    -o-transition: opacity 0.4s ease-in-out;
+	    transition: opacity 0.4s ease-in-out;
 	}
 
 	.logged_in #active_admin_content #main_content_wrapper #main_content{

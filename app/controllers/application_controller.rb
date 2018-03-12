@@ -45,4 +45,8 @@ class ApplicationController < ActionController::Base
 		Raven.user_context(id: current_user&.id, email: current_user&.email) # or anything else in session
 		Raven.extra_context(params: params.to_unsafe_h, url: request.url)
 	end
+
+	def not_found
+	  redirect_to root_path
+	end
 end

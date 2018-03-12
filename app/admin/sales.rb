@@ -153,7 +153,7 @@ index title: 'Team Sales', pagination_total: false do
 	number_column :unit_size, as: :currency, seperator: ',', unit: ''
 	number_column :spa_value, as: :currency, seperator: ',', unit: ''
 	number_column :nett_value, as: :currency, seperator: ',', unit: ''
-	column 'Commission Percentage (%)', :commission
+	column 'Commission Percentage (%)', :commission, if: proc{current_user.admin?}
 	number_column :commission, as: :currency, seperator: ',', unit: '' do |sale|
 		sale.nett_value * sale.commission.percentage/100
 	end
@@ -214,7 +214,7 @@ show do
 		number_row :unit_size, as: :currency, seperator: ',', unit: ''
 		number_row :spa_value, as: :currency, seperator: ',', unit: ''
 		number_row :nett_value, as: :currency, seperator: ',', unit: ''
-		row 'Commission Percentage (%)' do |sale|
+		row 'Commission Percentage (%)', if: proc{current_user.admin?} do |sale|
 			sale.commission
 		end
 		number_row :commission, as: :currency, seperator: ',', unit: '' do |sale|
