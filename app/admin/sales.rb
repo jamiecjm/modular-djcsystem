@@ -220,6 +220,8 @@ show do
 		number_row :commission, as: :currency, seperator: ',', unit: '' do |sale|
 			sale.nett_value * sale.commission.percentage/100
 		end
+		row :package
+		row :remark
 	end
 
 	attributes_table title: 'SPA and LA Sign Date' do

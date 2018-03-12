@@ -70,7 +70,7 @@ ActiveAdmin.register User do
     inputs do
         input :name
         input :prefered_name
-        input :ic_no, min: 1
+        input :ic_no
         input :email
         input :phone_no
         input :birthday
