@@ -14,9 +14,10 @@ ActiveAdmin.register Project do
 
 menu parent: 'Projects', label: 'List'
 
-includes :commissions, :sales
+includes :sales, commissions: [position_commissions: :position]
 
-permit_params :name, commissions_attributes: [:percentage, :effective_date, :id, :project_id, :_destroy]
+permit_params :name, commissions_attributes: [:effective_date, :id, :project_id, :_destroy, 
+	position_commissions_attributes: [:position_id, :commission_id, :id, :percentage]]
 
 scope :all, default: true do |projects|
 	comms = Commission.where(project_id: projects.ids)
@@ -33,8 +34,15 @@ index pagination_total: false do
 	column :sales_count do |p|
 		link_to pluralize(p.sales.length, 'sale'), sales_path(q: {project_id_in: p.id}), target: '_blank'
 	end
-	list_column 'Commission(%) | Effective Date' do |p|
-		p.commissions.map {|c| "#{c.percentage}% | #{c.effective_date}" }
+	list_column 'Commission(%)' do |p|
+		comms = {}
+		p.commissions.each {|c| 
+			comms[c.effective_date] = {}
+			c.position_commissions.each do |pc|
+				comms[c.effective_date][pc.position.display_name] = "#{pc.percentage}%" 
+			end
+		}
+		comms
 	end
 	column :created_at
 	column :updated_at
@@ -61,7 +69,10 @@ form do |f|
 		input :name
 		has_many :commissions, allow_destroy: true do |c|
 			c.input :effective_date
-			c.input :position
+			c.has_many :position_commissions, allow_destroy: false, new_record: false do |pc|
+				pc.input :position, input_html: {readonly: "readonly"}
+				pc.input :percentage, min: 0
+			end
 		end
 	end
 	actions

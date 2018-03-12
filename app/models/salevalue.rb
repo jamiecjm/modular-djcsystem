@@ -53,7 +53,8 @@ class Salevalue < ApplicationRecord
 
 	def calc_comm
 		position = user.positions.where('effective_date <= ?', sale.date).last
-		comm = project.commissions.where('effective_date <= ?', sale.date).where(position_id: position.id).last
+		comm = project.commissions.where('effective_date <= ?', sale.date).last
+		comm = comm.position_commissions.find_by(position_id: position.id)
 		self.spa = sale.spa_value * percentage/100
 		self.nett_value = sale.nett_value * percentage/100
 		self.comm = nett_value * comm.percentage/100
@@ -64,9 +65,10 @@ class Salevalue < ApplicationRecord
 		teams = user.pseudo_team.ancestors
 		teams.each do |t|
 			position = t.positions.where('effective_date <= ?', sale.date).last
-			comm = project.commissions.where('effective_date <= ?', sale.date).where(position_id: position.id).last	
+			comm = project.commissions.where('effective_date <= ?', sale.date).last
+			comm = comm.position_commissions.find_by(position_id: position.id)
 			o = OverridingCommission.find_or_initialize_by(team_id: t.id, salevalue_id: id)
-			if !comm.blank?	
+			if comm && comm.percentage > base_comm
 				override = nett_value * (comm.percentage-base_comm)/100
 				o.override = override
 				o.save

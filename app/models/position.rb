@@ -21,6 +21,8 @@ class Position < ApplicationRecord
 
 	has_many :teams_positions
 	has_many :teams, -> {distinct}, through: :teams_positions
+	has_many :position_commissions
+	has_many :commissions, -> {distinct}, through: :position_commissions
 
 	accepts_nested_attributes_for :teams
 

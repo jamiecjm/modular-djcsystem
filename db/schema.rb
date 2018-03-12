@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180312111955) do
+ActiveRecord::Schema.define(version: 20180312115426) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,17 @@ ActiveRecord::Schema.define(version: 20180312111955) do
     t.index ["salevalue_id"], name: "index_overriding_commissions_on_salevalue_id"
     t.index ["team_id", "salevalue_id"], name: "index_overriding_commissions_on_team_id_and_salevalue_id", unique: true
     t.index ["team_id"], name: "index_overriding_commissions_on_team_id"
+  end
+
+  create_table "position_commissions", force: :cascade do |t|
+    t.integer "position_id"
+    t.integer "commission_id"
+    t.float "percentage"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["commission_id"], name: "index_position_commissions_on_commission_id"
+    t.index ["position_id", "commission_id"], name: "index_position_commissions_on_position_id_and_commission_id", unique: true
+    t.index ["position_id"], name: "index_position_commissions_on_position_id"
   end
 
   create_table "positions", force: :cascade do |t|

@@ -17,15 +17,16 @@ class Project < ApplicationRecord
 	accepts_nested_attributes_for :commissions
 
 	validates :name, presence: true
+	validates :name, uniqueness: true
 	validates :commissions, presence: true
 
-	after_initialize :initialize_comm
+	# after_initialize :initialize_comm
 
 	def titleize_name
 		self.name = name.upcase_first_word
 	end
 
 	def initialize_comm
-		commissions.build
+		commissions.build(project_id: id)
 	end
 end

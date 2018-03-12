@@ -70,7 +70,7 @@ class Sale < ApplicationRecord
 	}
 
 	before_save :set_comm
-	after_initialize :initialize_sv
+	# after_initialize :initialize_sv
 
 	def display_name
 		"Sale \##{id}"
@@ -81,8 +81,8 @@ class Sale < ApplicationRecord
 	end
 
 	def set_comm
-		comm = project.commissions.where('effective_date <= ?', date).last
-		self.commission_id = comm.id
+		# comm = project.commissions.where('effective_date <= ?', date).last
+		# self.commission_id = comm.id
 		salevalues.each do |sv|
 			sv.calc_comm
 			sv.save
