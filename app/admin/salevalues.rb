@@ -130,7 +130,9 @@ index title: 'Individual Sales', pagination_total: false do |sv|
 	number_column :unit_nett_value, sortable: 'sales.nett_price', as: :currency, seperator: ',', unit: '' do |sv|
 		sv.sale.nett_value
 	end	
-	column 'Project Commission', :commission, sortable: 'commissions.percentage', if: proc{current_user.admin?}
+	if current_user.admin?
+		column 'Project Commission', :commission, sortable: 'commissions.percentage'
+	end
 end
 
 sidebar :summary, only: :index, priority: 0 do
@@ -214,7 +216,9 @@ csv do
 	column(:unit_nett_value) do |sv|
 		sv.sale.nett_value
 	end	
-	column(:commission) {|sv| sv.commission.percentage}
+	if current_user.admin?
+		column(:commission) {|sv| sv.commission.percentage}
+	end
 end
 
 end

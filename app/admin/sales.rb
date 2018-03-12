@@ -149,7 +149,9 @@ index title: 'Team Sales', pagination_total: false do
 	number_column :unit_size, as: :currency, seperator: ',', unit: ''
 	number_column :spa_value, as: :currency, seperator: ',', unit: ''
 	number_column :nett_value, as: :currency, seperator: ',', unit: ''
-	column 'Commission Percentage (%)', :commission, if: proc{current_user.admin?}
+	if current_user.admin?
+		column 'Commission Percentage (%)', :commission
+	end
 	number_column :commission, as: :currency, seperator: ',', unit: '' do |sale|
 		sale.nett_value * sale.commission.percentage/100
 	end
@@ -210,8 +212,10 @@ show do
 		number_row :unit_size, as: :currency, seperator: ',', unit: ''
 		number_row :spa_value, as: :currency, seperator: ',', unit: ''
 		number_row :nett_value, as: :currency, seperator: ',', unit: ''
-		row 'Commission Percentage (%)', if: proc{current_user.admin?} do |sale|
-			sale.commission
+		if current_user.admin?
+			row 'Commission Percentage (%)' do |sale|
+				sale.commission
+			end
 		end
 		number_row :commission, as: :currency, seperator: ',', unit: '' do |sale|
 			sale.nett_value * sale.commission.percentage/100
@@ -307,7 +311,9 @@ csv do
 	column :unit_size
 	column :spa_value
 	column :nett_value
-	column(:commission_percentage) {|sale| sale.commission.percentage}
+	if current_user.admin?
+		column(:commission_percentage) {|sale| sale.commission.percentage}
+	end
 	column(:commission) {|sale| sale.nett_value * sale.commission.percentage/100 }
 end
 
