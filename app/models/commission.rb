@@ -8,12 +8,10 @@
 #  effective_date :date
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  position_id    :integer
 #
 # Indexes
 #
 #  index_commissions_on_id_and_project_id  (id,project_id)
-#  index_commissions_on_position_id        (position_id)
 #
 
 class Commission < ApplicationRecord

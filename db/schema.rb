@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180312115426) do
+ActiveRecord::Schema.define(version: 20180312140952) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,9 +35,7 @@ ActiveRecord::Schema.define(version: 20180312115426) do
     t.date "effective_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "position_id"
     t.index ["id", "project_id"], name: "index_commissions_on_id_and_project_id"
-    t.index ["position_id"], name: "index_commissions_on_position_id"
   end
 
   create_table "overriding_commissions", force: :cascade do |t|
@@ -82,7 +80,6 @@ ActiveRecord::Schema.define(version: 20180312115426) do
     t.date "date"
     t.string "buyer"
     t.integer "project_id"
-    t.integer "unit_id"
     t.string "package"
     t.string "remark"
     t.date "spa_sign_date"
@@ -98,7 +95,6 @@ ActiveRecord::Schema.define(version: 20180312115426) do
     t.index ["commission_id"], name: "index_sales_on_commission_id"
     t.index ["date"], name: "index_sales_on_date"
     t.index ["project_id"], name: "index_sales_on_project_id"
-    t.index ["unit_id"], name: "index_sales_on_unit_id"
   end
 
   create_table "salevalues", id: :serial, force: :cascade do |t|
@@ -122,8 +118,6 @@ ActiveRecord::Schema.define(version: 20180312115426) do
     t.string "ancestry"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "overriding"
-    t.float "overriding_percentage"
     t.index ["ancestry"], name: "index_teams_on_ancestry"
     t.index ["leader_id"], name: "index_teams_on_leader_id"
   end
@@ -137,21 +131,6 @@ ActiveRecord::Schema.define(version: 20180312115426) do
     t.index ["position_id"], name: "index_teams_positions_on_position_id"
     t.index ["team_id", "position_id"], name: "index_teams_positions_on_team_id_and_position_id", unique: true
     t.index ["team_id"], name: "index_teams_positions_on_team_id"
-  end
-
-  create_table "units", id: :serial, force: :cascade do |t|
-    t.string "unit_no"
-    t.integer "size"
-    t.float "nett_price"
-    t.float "spa_price"
-    t.float "comm"
-    t.float "comm_percentage"
-    t.integer "project_id"
-    t.integer "sale_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["id", "project_id"], name: "index_units_on_id_and_project_id"
-    t.index ["id", "sale_id"], name: "index_units_on_id_and_sale_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|

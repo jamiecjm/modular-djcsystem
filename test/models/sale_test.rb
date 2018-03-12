@@ -6,7 +6,6 @@
 #  date          :date
 #  buyer         :string
 #  project_id    :integer
-#  unit_id       :integer
 #  package       :string
 #  remark        :string
 #  spa_sign_date :date
@@ -25,7 +24,6 @@
 #  index_sales_on_commission_id  (commission_id)
 #  index_sales_on_date           (date)
 #  index_sales_on_project_id     (project_id)
-#  index_sales_on_unit_id        (unit_id)
 #
 
 require 'test_helper'

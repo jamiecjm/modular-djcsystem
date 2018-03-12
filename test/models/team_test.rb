@@ -2,14 +2,12 @@
 #
 # Table name: teams
 #
-#  id                    :integer          not null, primary key
-#  name                  :string
-#  leader_id             :integer
-#  ancestry              :string
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  overriding            :boolean
-#  overriding_percentage :float
+#  id         :integer          not null, primary key
+#  name       :string
+#  leader_id  :integer
+#  ancestry   :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 # Indexes
 #
