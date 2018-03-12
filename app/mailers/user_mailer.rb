@@ -5,7 +5,7 @@ class UserMailer < ApplicationMailer
     @company_name = website.superteam_name
     subject = "DJC Sales System: Approval Needed for Account Registration"
     recipients = User.where(admin: true).pluck(:email)
-    mail( :to      => recipients.map(&:email).uniq,
+    mail( :to      => recipients,
           :subject => subject) do |format|
             format.html
 	  end

@@ -57,7 +57,7 @@ class Team < ApplicationRecord
 	end
 
 	def create_team_position
-		TeamsPosition.create(team_id: team.id, position_id: 2, effective_date: Date.today)
+		TeamsPosition.create(team_id: id, position_id: 2, effective_date: Date.today)
 	end
 
 end
