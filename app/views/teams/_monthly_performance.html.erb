@@ -11,12 +11,12 @@
 
     data.addRows([
      <%sales.each do |x|%>
-      ["<%=x[0]%>", <%=x[1]%>, <%=x[1]%>],
+      ["<%=x[0]%>", <%=x[1].round%>, <%=x[1].round%>],
      <%end%>
     ]);
 
     var options = {
-      title: "Monthly Sales Figure - Total: <%= number_to_currency(sales.to_h.values.inject(:+), unit: 'RM ')%>",
+      title: "Monthly Sales Figure - Total: <%= number_to_currency(sales.to_h.values.inject(:+), unit: 'RM ', precision: 0)%>",
       height: 600,
       legend: {position: 'none'},
       vAxis: { title: 'Total Nett Value (RM)'
