@@ -13,9 +13,6 @@ class Ability
       can [:create], Sale
       can [:create], Salevalue
       can :read, ActiveAdmin::Page
-      if current_user.leader?     
-        can [:read, :update], User, id: current_user.pseudo_team_members.pluck(:id)
-      end
       if current_user.admin?
         can :manage, :all
         cannot [:create, :destroy], Team

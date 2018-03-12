@@ -7,7 +7,7 @@ ActiveAdmin.register User do
 
   scope :approved, default: true
 
-  scope :pending, if: proc { current_user.leader? }
+  scope :pending, if: proc { current_user.admin? }
 
   scope :archived, if: proc { current_user.admin? }, show_count: false do |users|
     users.where(archived: true)
@@ -22,13 +22,13 @@ ActiveAdmin.register User do
     end
   end
 
-  batch_action :approve, confirm: "Are you sure?", if: proc {current_user.leader? && params['scope']=='pending'} do |ids, inputs|
+  batch_action :approve, confirm: "Are you sure?", if: proc {current_user.admin? && params['scope']=='pending'} do |ids, inputs|
       User.where(id: ids).update_all(locked_at: nil)
       UserMailer.notify(User.where(id: ids), current_website).deliver
       redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been approved"
   end
 
-  batch_action :disapprove, confirm: "Are you sure?", if: proc {current_user.leader? && (params['scope']=='approved' || params['scope'].nil?) } do |ids, inputs|
+  batch_action :disapprove, confirm: "Are you sure?", if: proc {current_user.admin? && (params['scope']=='approved' || params['scope'].nil?) } do |ids, inputs|
     User.where(id: ids).update_all(locked_at: Time.now)
     redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been disapproved"
   end
