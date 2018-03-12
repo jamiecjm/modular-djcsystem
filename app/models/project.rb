@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: projects
+#
+#  id         :integer          not null, primary key
+#  name       :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
 class Project < ApplicationRecord
 
 	has_many :units, dependent: :destroy
@@ -9,7 +19,13 @@ class Project < ApplicationRecord
 	validates :name, presence: true
 	validates :commissions, presence: true
 
+	after_initialize :initialize_comm
+
 	def titleize_name
 		self.name = name.upcase_first_word
+	end
+
+	def initialize_comm
+		commissions.build
 	end
 end

@@ -70,6 +70,9 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     ancestry (3.0.1)
       activerecord (>= 3.2.0)
+    annotate (2.7.2)
+      activerecord (>= 3.2, < 6.0)
+      rake (>= 10.4, < 13.0)
     apartment (2.1.0)
       activerecord (>= 3.1.2, < 6.0)
       parallel (>= 0.7.1)
@@ -358,6 +361,7 @@ DEPENDENCIES
   activeadmin
   activeadmin_addons
   ancestry
+  annotate
   apartment
   better_errors
   binding_of_caller

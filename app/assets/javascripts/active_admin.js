@@ -1,15 +1,18 @@
 //= require active_admin/base
-//= require admin/header
 //= require activeadmin_addons/all
 //= require tinymce-jquery
 //= require html2canvas
+//= require admin/header
 //= require admin/sidebar
+//= require admin/projects
 
 $(window).on('load', function () {
   $('#active_admin_content').css('opacity', 1);
 });
 
-Raven.config('https://16953ced506c444d854b48cf17b09651@sentry.io/298281').install();
+Raven.config('https://16953ced506c444d854b48cf17b09651@sentry.io/298281', {
+    ignoreUrls: [/.+lvh\.me:3000.+/]
+}).install();
 Raven.context(function () {
 
   $(document).ready(function(){
