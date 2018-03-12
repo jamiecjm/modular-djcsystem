@@ -120,7 +120,8 @@ index title: 'Sales Performance', default: true do
 	number_column :total_nett_value, as: :currency, seperator: ',', unit: '', sortable: :total_nett_value
 	number_column :total_comm, as: :currency, seperator: ',', unit: '', sortable: :total_comm
 	column :total_sales, sortable: :total_sales do |t|
-		link_to pluralize(t.total_sales, 'sale'), sales_path(q: {salevalues_user_id_in: t.leader.id, year: params['q']['year'], month: params['q']['month']})
+		link_to pluralize(t.total_sales, 'sale'), sales_path(q: {salevalues_user_id_in: t.leader.id, 
+		date_gteq_datetime: params['q']['sales_date_gteq_datetime'], date_lteq_datetime: params['q']['sales_date_lteq_datetime']})
 	end
 end
 
