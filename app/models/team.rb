@@ -30,8 +30,14 @@ class Team < ApplicationRecord
 		search(id_in: subtree.map(&:id)).result
 	}
 
-	scope :year, ->(year) {}
-	scope :month, ->(month) {}
+	scope :year, ->(year) {
+		start_date = "#{year.to_i-1}-12-16".to_date
+		end_date = start_date + 1.year - 1.day
+		joins(:sales).where('sales.date >= ?', start_date).where('sales.date <= ?', end_date)
+	}
+	scope :month, ->(month) {
+		joins(:sales).where('extract(month from sales.date) = ?', month.to_date.month)
+	}
 
 	scope :current_position, -> {positions.last}
 

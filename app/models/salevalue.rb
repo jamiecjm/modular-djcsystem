@@ -14,8 +14,14 @@ class Salevalue < ApplicationRecord
 	scope :other_team, -> {where.not(other_user: nil)}
 	scope :not_cancelled, -> { search(sale_status_not_eq: 'Cancelled').result }
 	scope :cancelled, -> { search(sale_status_eq: 'Cancelled').result }
-	scope :year, -> (year) {}
-	scope :month, -> (year) {}
+	scope :year, -> (year) {
+		start_date = "#{year.to_i-1}-12-16".to_date
+		end_date = start_date + 1.year - 1.day
+		joins(:sale).where('sales.date >= ?', start_date).where('sales.date <= ?', end_date)
+	}
+	scope :month, -> (month) {
+		joins(:sale).where('extract(month from sales.date) = ?', month.to_date.month)
+	}
 
 	before_save :calc_comm
 

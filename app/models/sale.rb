@@ -30,8 +30,14 @@ class Sale < ApplicationRecord
 		where(id: User.find(id).pseudo_team_sales.pluck(:id)) 
 	}
 	scope :not_cancelled, ->{search(status_not_eq: "Cancelled").result}
-	scope :year, ->(year) {}
-	scope :month, ->(month) {}
+	scope :year, ->(year) {
+		start_date = "#{year.to_i-1}-12-16".to_date
+		end_date = start_date + 1.year - 1.day
+		where('date >= ?', start_date).where('date <= ?', end_date)
+	}
+	scope :month, ->(month) {
+		where('extract(month from date) = ?', month.to_date.month)
+	}
 
 	before_save :set_comm
 

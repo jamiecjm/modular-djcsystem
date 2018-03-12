@@ -39,23 +39,34 @@ before_action only: :index do
 	if params['q'].blank?
 		params['q'] = {}
 	end
-	if params['q']['year'].blank?
-		if Date.current >= Date.current.strftime('%Y-12-16').to_date
-			params['q']['year'] = Date.current.year + 1
-		else
-			params['q']['year'] = Date.current.year
-		end	
-	end
 	if params['as'] == 'column_chart'
-		params['q']['sales_date_gteq_datetime'] = "#{params['q']['year'].to_i-1}-12-16".to_date
-		params['q']['sales_date_lteq_datetime'] = params['q']['sales_date_gteq_datetime'] + 1.year - 1.day
-	else
-		if params['q']['month'].blank?
-			params['q']['month'] = Date::MONTHNAMES[Date.current.month]
+		params['q']['month'] = nil
+		params['q']['sales_date_gteq_datetime'] = nil
+		params['q']['sales_date_lteq_datetime'] = nil
+		if params['q']['year'].blank?
+			if Date.current >= Date.current.strftime('%Y-12-16').to_date
+				params['q']['year'] = Date.current.year + 1
+			else
+				params['q']['year'] = Date.current.year
+			end	
 		end
-		month = params['q']['month'].to_date.month
-		params['q']['sales_date_gteq_datetime'] = "#{params['q']['year']}-#{month}-1".to_date
-		params['q']['sales_date_lteq_datetime'] = params['q']['sales_date_gteq_datetime'] + 1.month - 1.day
+	else
+		if params['q']['year'].nil? && params['q']['month'].nil?
+			if params['q']['sales_date_gteq_datetime'].nil?
+				if Date.current >= Date.current.strftime('%Y-12-16').to_date
+					params['q']['sales_date_gteq_datetime'] = Date.current.strftime('%Y-12-16').to_date
+				else
+					params['q']['sales_date_gteq_datetime'] = Date.current.beginning_of_month
+				end
+			end
+			if params['q']['sales_date_lteq_datetime'].nil?
+				if Date.current.month == 12 && Date.current <= Date.current.strftime('%Y-12-15').to_date
+					params['q']['sales_date_lteq_datetime'] = Date.current.strftime('%Y-12-15').to_date
+				else
+					params['q']['sales_date_lteq_datetime'] = Date.current.end_of_month
+				end
+			end			
+		end
 	end
 	if params['q']['sales_status_in'].nil?
 		params['q']['sales_status_in'] = ["Booked","Done"]
@@ -130,8 +141,8 @@ index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_co
 		@sales.delete(k)
 	end
 	year = params['q']['year'] 
-	d1 = params['q']['sales_date_gteq_datetime'].to_date
-	d2 = params['q']['sales_date_lteq_datetime'].to_date
+	d1 = "#{year.to_i-1}-12-16".to_date
+	d2 = d1 + 1.year - 1.day
 	months = (d1..d2).map {|d| [d.strftime('%B %Y'), 0]}.uniq
 	@sales = months.to_h.merge!(@sales){|k, old_v, new_v| old_v + new_v}
 	render partial: 'teams/monthly_performance', :locals => {sales: @sales}, layout: 'layouts/chart'
@@ -142,7 +153,7 @@ filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.appr
 filter :main_team, label: 'Team',as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:leader).main + [current_user.team]).uniq }, input_html: {multiple: true}
 filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}, if: proc {params['as'] != 'column_chart'}
-# filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
+filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
 filter :sales_status, as: :select, collection: Sale.status.options, input_html: {multiple: true}
 filter :leader_location, as: :select, label: 'REN Location', :collection => User.location.options, input_html: {multiple: true}
 filter :projects, input_html: {multiple: true}

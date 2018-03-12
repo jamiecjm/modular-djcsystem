@@ -57,24 +57,18 @@ before_action only: :index do
 			redirect_to root_path, alert: 'You are not authorized to perform this action.'
 		end
 	end
-	if params['q']['year'].blank?
-		if Date.current >= Date.current.strftime('%Y-12-16').to_date
-			params['q']['year'] = Date.current.year + 1
-		else
-			params['q']['year'] = Date.current.year
-		end	
-	end
-	if params['q']['month'].blank?
-		params['q']['sale_date_gteq_datetime'] = "#{params['q']['year'].to_i-1}-12-16".to_date
-		params['q']['sale_date_lteq_datetime'] = params['q']['sale_date_gteq_datetime'] + 1.year - 1.day
-	else
-		month = params['q']['month'].to_date.month
-		params['q']['sale_date_gteq_datetime'] = "#{params['q']['year']}-#{month}-1".to_date
-		params['q']['sale_date_lteq_datetime'] = params['q']['sale_date_gteq_datetime'] + 1.month - 1.day		
-	end
 	if params['scope'].nil? || params['scope'] == 'booked_done'
 		if params['q']['status_in'].blank?
 			params['q']['status_in'] = ["Booked","Done"]
+		end
+	end
+	if params['q']['year'].nil? && params['q']['month'].nil?
+		if params['q']['sale_date_gteq_datetime'].nil?
+			if Date.current >= Date.current.strftime('%Y-12-16').to_date
+				params['q']['sale_date_gteq_datetime'] = Date.current.strftime('%Y-12-16').to_date
+			else
+				params['q']['sale_date_gteq_datetime'] = Date.current.strftime('%Y-12-16').to_date - 1.year
+			end	
 		end
 	end
 end
@@ -179,7 +173,7 @@ filter :user, label: 'REN', :collection => proc { User.approved.accessible_by(cu
 filter :sale
 filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}
-# filter :sale_date, as: :date_range
+filter :sale_date, as: :date_range
 filter :sale_status, as: :select, collection: Sale.status.options, input_html: {multiple: true}
 filter :project, input_html: {multiple: true}
 filter :sale_unit_no, as: :string
