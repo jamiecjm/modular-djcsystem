@@ -14,7 +14,7 @@ ActiveAdmin.register Position do
 
 menu parent: 'Settings', priority: 1
 
-permit_params :title, :overriding, :overriding_percentage, :default, :parent_id
+permit_params :title, :overriding, :default, :parent_id
 
 config.filters = false
 
@@ -23,7 +23,7 @@ config.filters = false
 		column :title
 		column 'Manager', :parent
 		column :overriding
-		column :overriding_percentage
+		column :default
 		actions
 	end
 
@@ -31,9 +31,7 @@ config.filters = false
 		inputs do
 			input :title
 			input :overriding
-			input :overriding_percentage
 			input :parent_id, label: 'Manager', as: :select, collection: Position.pluck(:title, :id)
-			# input :default
 		end
 
 		actions

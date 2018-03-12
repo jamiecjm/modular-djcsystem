@@ -170,9 +170,6 @@ show do
 		row :overriding do |t|
 			t.positions.last.overriding
 		end
-		row :overriding_percentage do |t|
-			t.positions.last.overriding_percentage
-		end
 	end
 
     # panel "Downlines" do
