@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180312140952) do
+ActiveRecord::Schema.define(version: 20180313073739) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -108,18 +108,20 @@ ActiveRecord::Schema.define(version: 20180312140952) do
     t.datetime "updated_at", null: false
     t.integer "order"
     t.string "other_user"
+    t.integer "team_id"
     t.index ["sale_id"], name: "index_salevalues_on_sale_id"
     t.index ["user_id"], name: "index_salevalues_on_user_id"
   end
 
   create_table "teams", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.integer "leader_id"
+    t.integer "user_id"
     t.string "ancestry"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.date "effective_date"
     t.index ["ancestry"], name: "index_teams_on_ancestry"
-    t.index ["leader_id"], name: "index_teams_on_leader_id"
+    t.index ["user_id"], name: "index_teams_on_user_id"
   end
 
   create_table "teams_positions", force: :cascade do |t|

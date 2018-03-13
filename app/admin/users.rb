@@ -80,7 +80,7 @@ ActiveAdmin.register User do
         input :email
         input :phone_no
         input :birthday
-        if current_user.leader?
+        if current_user.user?
           # input :team, as: :select, collection: Team.where(overriding: true)
           input :parent_id, label: 'Referrer', as: :select, collection: User.approved.order(:prefered_name).map {|u| [u.prefered_name, u.id ]}
           input :location
@@ -116,7 +116,7 @@ ActiveAdmin.register User do
   end
 
   filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
-  # filter :team,as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:leader).main + [current_user.team]).uniq }, input_html: {multiple: true}
+  # filter :team,as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:user).main + [current_user.team]).uniq }, input_html: {multiple: true}
   filter :referrer_eq, as: :select, label: 'Referrer', :collection => proc { User.order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
   filter :location, as: :select, collection: User.location.options, input_html: {multiple: true}
   filter :name

@@ -13,6 +13,7 @@
 #  updated_at :datetime         not null
 #  order      :integer
 #  other_user :string
+#  team_id    :integer
 #
 # Indexes
 #

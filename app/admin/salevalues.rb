@@ -50,10 +50,10 @@ before_action only: :index do
 	if params['q'].blank?
 		params['q'] = {}
 	end
-	if params['q']['user_id_eq'].blank?
-		params['q']['user_id_eq'] = current_user.id
+	if params['q']['team_user_id_eq'].blank?
+		params['q']['team_user_id_eq'] = current_user.id
 	else
-		unless User.accessible_by(current_ability).pluck(:id).include?(params['q']['user_id_eq'].to_i)
+		unless User.accessible_by(current_ability).pluck(:id).include?(params['q']['team_user_id_eq'].to_i)
 			redirect_to root_path, alert: 'You are not authorized to perform this action.'
 		end
 	end

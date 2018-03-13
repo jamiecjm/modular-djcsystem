@@ -13,8 +13,8 @@ ActiveAdmin.register Sale do
 # end
 
 permit_params :date, :project_id, :unit_no, :unit_size, :spa_value, :nett_value, :buyer, :package, :remark, :spa_sign_date, :la_date,
-main_salevalues_attributes: [:user_id, :other_user, :percentage, :id, :sale_id, :_destroy],
-other_salevalues_attributes: [:user_id, :other_user, :percentage, :id, :sale_id, :_destroy]
+main_salevalues_attributes: [:team_id, :percentage, :id, :sale_id, :_destroy],
+other_salevalues_attributes: [:other_user, :percentage, :id, :sale_id, :_destroy]
 
 menu label: 'Team', priority: 1, parent: 'Sales'
 
@@ -238,7 +238,7 @@ form do |f|
 	inputs do 
 		input :date
 		has_many :main_salevalues, :allow_destroy => true, new_record: 'Add REN', heading: 'REN', sortable: :order, sortable_start: 1 do |sv|
-			sv.input :user, label: 'Name', as: :select, collection: User.approved.order(:prefered_name).map {|u| [u.prefered_name, u.id ]}
+			sv.input :team, label: 'Name', as: :select, collection: User.approved.joins(:team).order(:prefered_name).map {|u| [u.prefered_name, u.team.id ]}
 			sv.input :percentage, min: 0, step: 'any'
 		end
 		has_many :other_salevalues, :allow_destroy => true, new_record: 'Add Other Team\'s REN', heading: 'Other Team\'s REN', sortable: :order, sortable_start: 1 do |sv|

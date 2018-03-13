@@ -2,7 +2,7 @@
     Full name: <%=@user.name%><br>
     Prefered name: <%=@user.prefered_name%><br>
     Referral: <%=@user.parent.prefered_name if @user.parent != nil%><br>
-    Leader: <%=@user.leader.prefered_name if @user.leader != nil%><br>
+    user: <%=@user.user.prefered_name if @user.user != nil%><br>
     Location: <%=@user.location%><br>
     Mobile number: <%=@user.phone_no%><br>
     Email: <%=@user.email%><br>

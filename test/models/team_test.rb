@@ -2,17 +2,18 @@
 #
 # Table name: teams
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  leader_id  :integer
-#  ancestry   :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id             :integer          not null, primary key
+#  name           :string
+#  user_id        :integer
+#  ancestry       :string
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  effective_date :date
 #
 # Indexes
 #
-#  index_teams_on_ancestry   (ancestry)
-#  index_teams_on_leader_id  (leader_id)
+#  index_teams_on_ancestry  (ancestry)
+#  index_teams_on_user_id   (user_id)
 #
 
 require 'test_helper'

@@ -14,18 +14,18 @@ ActiveAdmin.register Team do
 
 menu priority: 1, parent: 'Teams', label: 'Performance'
 
-includes :leader, main_team: :leader
+includes :user
 
-permit_params :name, :leader_id, :overriding, :overriding_percentage
+permit_params :name, :user_id
 
 controller do
     def scoped_collection
     	if params['action'] == 'index'
 	    	if params['as'].blank?
-			  	end_of_association_chain.group('leader_id', 'users.prefered_name', 'teams.id').select('SUM(salevalues.spa) as total_spa_value', 'SUM(salevalues.nett_value) as total_nett_value', 
-					'SUM(salevalues.comm) as total_comm', 'COUNT(salevalues.id) as total_sales', :leader_id)
+			  	end_of_association_chain.group('teams.id').select('SUM(salevalues.spa) as total_spa_value', 'SUM(salevalues.nett_value) as total_nett_value', 
+					'SUM(salevalues.comm) as total_comm', 'COUNT(salevalues.id) as total_sales', :user_id)
 			elsif params['as'] == 'barchart'
-				end_of_association_chain.group('users.prefered_name', 'teams.id')
+				end_of_association_chain.joins(:user).group('users.prefered_name', 'teams.id', 'users.id')
 			else
 				end_of_association_chain
 			end
@@ -106,11 +106,11 @@ index title: 'Sales Performance', default: true do
 			@no += 1
 		end
 	end
-	column 'Name', :leader, sortable: 'users.prefered_name' do |t|
-		link_to t.leader.prefered_name, salevalues_path(q: {user_id_eq: t.leader.id}), target: '_blank'
+	column 'Name', :user, sortable: 'users.prefered_name' do |t|
+		link_to t.user.prefered_name, salevalues_path(q: {team_user_id_eq: t.user.id}), target: '_blank'
 	end
 	column 'Location' do |t|
-		t.leader.location
+		t.user.location
 	end
 	# column 'Team', :main_team
 	# list_column :projects do |t|
@@ -120,7 +120,7 @@ index title: 'Sales Performance', default: true do
 	number_column :total_nett_value, as: :currency, seperator: ',', unit: '', sortable: :total_nett_value
 	number_column :total_comm, as: :currency, seperator: ',', unit: '', sortable: :total_comm
 	column :total_sales, sortable: :total_sales do |t|
-		link_to pluralize(t.total_sales, 'sale'), sales_path(q: {salevalues_user_id_in: t.leader.id, 
+		link_to pluralize(t.total_sales, 'sale'), sales_path(q: {salevalues_team_id_in: t.id, 
 		date_gteq_datetime: params['q']['sales_date_gteq_datetime'], date_lteq_datetime: params['q']['sales_date_lteq_datetime']})
 	end
 end
@@ -151,19 +151,19 @@ index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_co
 end
 
 filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
-# filter :main_team, label: 'Team',as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:leader).main + [current_user.team]).uniq }, input_html: {multiple: true}
+# filter :main_team, label: 'Team',as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:user).main + [current_user.team]).uniq }, input_html: {multiple: true}
 filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}, if: proc {params['as'] != 'column_chart'}
 filter :sales_date, as: :date_range, if: proc {params['as'] != 'column_chart'}
 filter :sales_status, as: :select, collection: Sale.status.options, input_html: {multiple: true}
-filter :leader_location, as: :select, label: 'REN Location', :collection => User.location.options, input_html: {multiple: true}
+filter :user_location, as: :select, label: 'REN Location', :collection => User.location.options, input_html: {multiple: true}
 filter :projects, input_html: {multiple: true}
-filter :leader, label: 'REN', input_html: {multiple: true}
+filter :user, label: 'REN', input_html: {multiple: true}
 
 show do
 	attributes_table do
 		row :name
-		row :leader
+		row :user
 		row 'Parent Team' do |t|
 			t.parent
 		end
@@ -173,9 +173,9 @@ show do
 	end
 
     # panel "Downlines" do
-    #   table_for team.descendants.where(overriding: true).includes(:leader) do
+    #   table_for team.descendants.where(overriding: true).includes(:user) do
     #     column :name
-    #     column :leader
+    #     column :user
     #     column '' do |team|
     #     	link_to 'Edit', edit_team_path(team), target: '_blank'
     #     end
@@ -183,9 +183,9 @@ show do
     # end
 
     # panel 'Organization Chart' do
-    # 	teams = team.subtree.joins(:leader).map {|t|
-    # 		next if t.leader.nil?
-    # 		[t.leader&.prefered_name, t.parent&.leader&.prefered_name]
+    # 	teams = team.subtree.joins(:user).map {|t|
+    # 		next if t.user.nil?
+    # 		[t.user&.prefered_name, t.parent&.user&.prefered_name]
     # 	}
     # 	render partial: 'teams/org_chart', :locals => {teams: teams.to_json}
     # end
@@ -195,7 +195,7 @@ form do |f|
 	f.semantic_errors *f.object.errors.keys
 	inputs do
 		input :name
-		# input :leader
+		# input :user
 		# input :overriding_percentage
 	end
 	actions
@@ -210,10 +210,10 @@ csv do
 		end
 	end
 	column('Name') do |t|
-		t.leader.prefered_name
+		t.user.prefered_name
 	end
 	column('Location') do |t|
-		t.leader.location
+		t.user.location
 	end
 	column('Team') { |t| t.main_team.display_name }
 	column :total_spa_value

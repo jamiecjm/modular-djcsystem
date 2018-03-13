@@ -33,12 +33,18 @@ class Sale < ApplicationRecord
 	has_many :salevalues, dependent: :destroy
 	has_many :main_salevalues, -> {where(other_user: nil).order(:order)}, class_name: 'Salevalue', dependent: :destroy
 	has_many :other_salevalues, -> {other_team.order(:order)}, class_name: 'Salevalue', dependent: :destroy
-	has_many :users, -> {distinct}, through: :salevalues
 	has_many :teams, -> {distinct}, through: :salevalues
+	has_many :users, -> {distinct}, through: :teams
 	belongs_to :project, optional: true
-	# has_one :unit
-	has_many :commissions, -> (sale){by_date(sale.date).limit(1)}, through: :project
-	has_many :position_commissions, through: :commissions
+	has_one :commission, primary_key: :commission_id, foreign_key: :id
+	has_many :commissions, -> (object){
+		if object.class.name == 'Sale'
+			by_date(object.date)
+		else
+			by_date(object.sale.date)
+		end
+	}, through: :project
+	has_many :position_commissions, through: :commission
 
 	accepts_nested_attributes_for :main_salevalues
 	accepts_nested_attributes_for :other_salevalues
@@ -84,8 +90,8 @@ class Sale < ApplicationRecord
 	end
 
 	def set_comm
-		# comm = project.commissions.where('effective_date <= ?', date).last
-		# self.commission_id = comm.id
+		comm = commissions.last
+		self.commission_id = comm.id
 		salevalues.each do |sv|
 			sv.calc_comm
 			sv.save

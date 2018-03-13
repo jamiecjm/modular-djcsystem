@@ -50,13 +50,11 @@ class User < ApplicationRecord
 
 	extend Enumerize
 
-    # belongs_to :team, optional: true
-    has_one :leader, through: :team
-    has_one :team, foreign_key: :leader_id
-	has_many :salevalues, dependent: :destroy
+    has_one :team
+	has_many :salevalues, dependent: :destroy, through: :team
 	has_many :sales, ->{distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
-	has_many :units, ->{distinct}, through: :sales
+	# has_many :units, ->{distinct}, through: :sales
 	has_many :positions, through: :team
 
 	has_ancestry orphan_strategy: :adopt
@@ -71,7 +69,7 @@ class User < ApplicationRecord
 		end
 		user = User.find(id)
 		teams = user.team.subtree
-		users = teams.pluck(:leader_id)
+		users = teams.pluck(:user_id)
 		search(id_in: users).result	
   	}
   	scope :referrer_eq, -> (id){
@@ -103,13 +101,13 @@ class User < ApplicationRecord
 	  [:upline_eq, :referrer_eq]
 	end
 
-	def leader?
+	def user?
 		positions.last.overriding
 		# team.overriding
 	end
 
 	def team_members
-		user_ids = team.subtree.pluck(:leader_id)
+		user_ids = team.subtree.pluck(:user_id)
 		User.where(id: user_ids)
 	end
 
@@ -131,7 +129,7 @@ class User < ApplicationRecord
 	end
 
 	def create_team
-		Team.create(leader_id: id, parent_id: parent.team.id)
+		Team.create(user_id: id, parent_id: parent.team.id)
 	end
 
 	def lock_user

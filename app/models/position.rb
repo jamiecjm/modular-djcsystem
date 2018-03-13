@@ -30,4 +30,8 @@ class Position < ApplicationRecord
 		title
 	end
 
+	def self.default
+		Position.find_by(default: true)
+	end
+
 end

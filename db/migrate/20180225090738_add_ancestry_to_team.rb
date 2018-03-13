@@ -4,8 +4,8 @@ class AddAncestryToTeam < ActiveRecord::Migration[5.1]
   	add_column :teams, :overriding_percentage, :float, if: column_exists?(:teams, :overriding_percentage)
     team = Team.search(id_in: User.pluck(:team_id)).result
   	team.update_all(overriding: true)
-    leaders = team.pluck(:leader_id)
-    User.where.not(id: leaders).each do |u|
+    users = team.pluck(:leader_id)
+    User.where.not(id: users).each do |u|
     	t = Team.new(leader_id: u.id)
       t.save(validation: false)
     end
@@ -19,9 +19,9 @@ class AddAncestryToTeam < ActiveRecord::Migration[5.1]
   def down
   	# remove_column :teams, :overriding
   	# remove_column :teams, :overriding_percentage
-   #  leaders = Team.pluck(:leader_id)
-   #  User.where.not(id: leaders).each do |u|
-   #  	t = Team.find_by(leader_id: u.id)
+   #  users = Team.pluck(:user_id)
+   #  User.where.not(id: users).each do |u|
+   #  	t = Team.find_by(user_id: u.id)
    #  	t.destroy
    #  end
   end
