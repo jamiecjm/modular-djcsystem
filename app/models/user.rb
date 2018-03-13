@@ -50,14 +50,14 @@ class User < ApplicationRecord
 
 	extend Enumerize
 
-    belongs_to :team, optional: true
+    # belongs_to :team, optional: true
     has_one :leader, through: :team
-    has_one :pseudo_team, class_name: 'Team', foreign_key: :leader_id
+    has_one :team, foreign_key: :leader_id
 	has_many :salevalues, dependent: :destroy
 	has_many :sales, ->{distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
 	has_many :units, ->{distinct}, through: :sales
-	has_many :positions, ->{distinct}, through: :pseudo_team
+	has_many :positions, through: :team
 
 	has_ancestry orphan_strategy: :adopt
 
@@ -70,7 +70,7 @@ class User < ApplicationRecord
 			id = id[/\d+/].to_i
 		end
 		user = User.find(id)
-		teams = user.pseudo_team.subtree
+		teams = user.team.subtree
 		users = teams.pluck(:leader_id)
 		search(id_in: users).result	
   	}
@@ -93,7 +93,7 @@ class User < ApplicationRecord
   	before_validation :downcase_email
   	before_create :set_team
   	before_create :lock_user
-  	after_create :create_pseudo_team
+  	after_create :create_team
 
 	def display_name
 		prefered_name
@@ -105,16 +105,16 @@ class User < ApplicationRecord
 
 	def leader?
 		positions.last.overriding
-		# pseudo_team.overriding
+		# team.overriding
 	end
 
-	def pseudo_team_members
-		user_ids = pseudo_team.subtree.pluck(:leader_id)
+	def team_members
+		user_ids = team.subtree.pluck(:leader_id)
 		User.where(id: user_ids)
 	end
 
-	def pseudo_team_sales
-		Sale.search(users_id_in: pseudo_team_members.ids).result
+	def team_sales
+		Sale.search(users_id_in: team_members.ids).result
 	end
 
 	def titleize_name
@@ -130,8 +130,8 @@ class User < ApplicationRecord
 		self.team_id = parent.team_id
 	end
 
-	def create_pseudo_team
-		Team.create(leader_id: id, parent_id: parent.pseudo_team.id)
+	def create_team
+		Team.create(leader_id: id, parent_id: parent.team.id)
 	end
 
 	def lock_user

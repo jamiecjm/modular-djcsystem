@@ -36,8 +36,9 @@ class Sale < ApplicationRecord
 	has_many :users, -> {distinct}, through: :salevalues
 	has_many :teams, -> {distinct}, through: :salevalues
 	belongs_to :project, optional: true
-	has_one :unit
-	belongs_to :commission, optional: true
+	# has_one :unit
+	has_many :commissions, -> (sale){by_date(sale.date).limit(1)}, through: :project
+	has_many :position_commissions, through: :commissions
 
 	accepts_nested_attributes_for :main_salevalues
 	accepts_nested_attributes_for :other_salevalues
@@ -55,7 +56,7 @@ class Sale < ApplicationRecord
 		if id.is_a? String
 			id = id[/\d+/].to_i
 		end
-		where(id: User.find(id).pseudo_team_sales.pluck(:id)) 
+		where(id: User.find(id).team_sales.pluck(:id)) 
 	}
 	scope :not_cancelled, ->{search(status_not_eq: "Cancelled").result}
 	scope :year, ->(year) {
@@ -76,6 +77,10 @@ class Sale < ApplicationRecord
 
 	def self.ransackable_scopes(_auth_object = nil)
 	  [:upline_eq, :year, :month]
+	end
+
+	def applicable_comm
+		commissions.last
 	end
 
 	def set_comm

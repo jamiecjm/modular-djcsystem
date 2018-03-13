@@ -24,10 +24,13 @@ class Salevalue < ApplicationRecord
 
 	belongs_to :user, optional: true
 	has_one :team, through: :user
+	has_one :team, through: :user
+	has_many :positions, through: :team
 	belongs_to :sale, optional: true
 	has_one :project, through: :sale
-	has_one :unit, through: :sale
-	has_one :commission, through: :sale
+	# has_one :unit, through: :sale
+	has_many :commissions, ->(salevalue){by_date(salevalue.sale.date).limit(1)}, through: :project
+	has_many :position_commissions, ->(salevalue){where(position_id: salevalue.positions.last.id)}, through: :commissions
 
 	validates :percentage, presence: true
 	validates :user_id, presence: true, if: proc { other_user.blank? }
@@ -52,9 +55,8 @@ class Salevalue < ApplicationRecord
 	end
 
 	def calc_comm
-		position = user.positions.where('effective_date <= ?', sale.date).last
-		comm = project.commissions.where('effective_date <= ?', sale.date).last
-		comm = comm.position_commissions.find_by(position_id: position.id)
+		position = user.team.positions.where('effective_date <= ?', sale.date).last
+		comm = position_commissions.find_by(position_id: position.id)
 		self.spa = sale.spa_value * percentage/100
 		self.nett_value = sale.nett_value * percentage/100
 		self.comm = nett_value * comm.percentage/100
@@ -62,11 +64,10 @@ class Salevalue < ApplicationRecord
 	end
 
 	def calc_override(base_comm)
-		teams = user.pseudo_team.ancestors
+		teams = user.team.ancestors
 		teams.each do |t|
 			position = t.positions.where('effective_date <= ?', sale.date).last
-			comm = project.commissions.where('effective_date <= ?', sale.date).last
-			comm = comm.position_commissions.find_by(position_id: position.id)
+			comm = position_commissions.find_by(position_id: position.id)
 			o = OverridingCommission.find_or_initialize_by(team_id: t.id, salevalue_id: id)
 			if comm && comm.percentage > base_comm
 				override = nett_value * (comm.percentage-base_comm)/100

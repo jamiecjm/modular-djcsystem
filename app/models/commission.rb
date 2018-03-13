@@ -29,6 +29,8 @@ class Commission < ApplicationRecord
 
 	accepts_nested_attributes_for :position_commissions
 
+	scope :by_date, ->(date){ where('effective_date <= ?', date) }
+
 	def display_name
 		percentage
 	end

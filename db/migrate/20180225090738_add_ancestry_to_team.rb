@@ -10,8 +10,8 @@ class AddAncestryToTeam < ActiveRecord::Migration[5.1]
       t.save(validation: false)
     end
     User.all.each do |u|
-    	t = u.pseudo_team
-    	t.update(parent_id: u.parent&.pseudo_team&.id)
+    	t = u.team
+    	t.update(parent_id: u.parent&.team&.id)
     end
 
   end

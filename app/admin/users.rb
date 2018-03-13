@@ -3,7 +3,7 @@ ActiveAdmin.register User do
 
   menu parent: 'Teams', label: 'Members'
 
-  includes :positions, team: :leader
+  includes :positions, :team
 
   scope :approved, default: true
 
@@ -61,7 +61,9 @@ ActiveAdmin.register User do
     column :email
     column :phone_no
     column :birthday
-    column :team
+    column 'Upline' do |u|
+      u.team.parent
+    end
     column 'Referrer', :parent
     column :location
     column :created_at
@@ -79,7 +81,7 @@ ActiveAdmin.register User do
         input :phone_no
         input :birthday
         if current_user.leader?
-          input :team, as: :select, collection: Team.where(overriding: true)
+          # input :team, as: :select, collection: Team.where(overriding: true)
           input :parent_id, label: 'Referrer', as: :select, collection: User.approved.order(:prefered_name).map {|u| [u.prefered_name, u.id ]}
           input :location
         end
@@ -103,7 +105,7 @@ ActiveAdmin.register User do
       row :email
       row :phone_no
       row :birthday
-      row :team
+      # row :team
       row 'Referrer' do
         user.parent
       end
@@ -114,7 +116,7 @@ ActiveAdmin.register User do
   end
 
   filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
-  filter :team,as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:leader).main + [current_user.team]).uniq }, input_html: {multiple: true}
+  # filter :team,as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:leader).main + [current_user.team]).uniq }, input_html: {multiple: true}
   filter :referrer_eq, as: :select, label: 'Referrer', :collection => proc { User.order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
   filter :location, as: :select, collection: User.location.options, input_html: {multiple: true}
   filter :name
@@ -131,7 +133,7 @@ ActiveAdmin.register User do
     column :email
     column :phone_no
     column :birthday
-    column(:team) { |u| u.team.display_name}
+    # column(:team) { |u| u.team.display_name}
     column('Referrer') { |u| u.parent&.prefered_name}
     column :location
     column :created_at

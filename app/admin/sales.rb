@@ -20,7 +20,7 @@ menu label: 'Team', priority: 1, parent: 'Sales'
 
 config.sort_order = 'date_desc'
 
-includes :commission, :project, :other_salevalues, main_salevalues: :user
+includes :project, :other_salevalues, main_salevalues: :user
 
 scope 'Booked/Done', default: true, show_count: false do |sales|
 	sales = sales.not_cancelled
@@ -150,12 +150,12 @@ index title: 'Team Sales', pagination_total: false do
 	number_column :unit_size, as: :currency, seperator: ',', unit: ''
 	number_column :spa_value, as: :currency, seperator: ',', unit: ''
 	number_column :nett_value, as: :currency, seperator: ',', unit: ''
-	if current_user.admin?
-		column 'Commission Percentage (%)', :commission
-	end
-	number_column :commission, as: :currency, seperator: ',', unit: '' do |sale|
-		sale.nett_value * sale.commission.percentage/100
-	end
+	# if current_user.admin?
+	# 	column 'Commission Percentage (%)', :commission
+	# end
+	# number_column :commission, as: :currency, seperator: ',', unit: '' do |sale|
+	# 	sale.nett_value * sale.commission.percentage/100
+	# end
 	actions
 end
 
@@ -213,14 +213,14 @@ show do
 		number_row :unit_size, as: :currency, seperator: ',', unit: ''
 		number_row :spa_value, as: :currency, seperator: ',', unit: ''
 		number_row :nett_value, as: :currency, seperator: ',', unit: ''
-		if current_user.admin?
-			row 'Commission Percentage (%)' do |sale|
-				sale.commission
-			end
-		end
-		number_row :commission, as: :currency, seperator: ',', unit: '' do |sale|
-			sale.nett_value * sale.commission.percentage/100
-		end
+		# if current_user.admin?
+		# 	row 'Commission Percentage (%)' do |sale|
+		# 		sale.commission
+		# 	end
+		# end
+		# number_row :commission, as: :currency, seperator: ',', unit: '' do |sale|
+		# 	sale.nett_value * sale.commission.percentage/100
+		# end
 		row :package
 		row :remark
 	end
@@ -312,10 +312,10 @@ csv do
 	column :unit_size
 	column :spa_value
 	column :nett_value
-	if current_user.admin?
-		column(:commission_percentage) {|sale| sale.commission.percentage}
-	end
-	column(:commission) {|sale| sale.nett_value * sale.commission.percentage/100 }
+	# if current_user.admin?
+	# 	column(:commission_percentage) {|sale| sale.commission.percentage}
+	# end
+	# column(:commission) {|sale| sale.nett_value * sale.commission.percentage/100 }
 end
 
 end

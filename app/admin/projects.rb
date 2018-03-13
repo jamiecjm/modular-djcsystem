@@ -34,7 +34,7 @@ index pagination_total: false do
 	column :sales_count do |p|
 		link_to pluralize(p.sales.length, 'sale'), sales_path(q: {project_id_in: p.id}), target: '_blank'
 	end
-	list_column 'Commission(%)' do |p|
+	list_column 'Commissions (%)' do |p|
 		comms = {}
 		p.commissions.each {|c| 
 			comms[c.effective_date] = {}
@@ -55,8 +55,15 @@ show do
 		row :sales_count do |p|
 			link_to pluralize(p.sales.length, 'sale'), sales_path(q: {project_id_eq: p.id})
 		end
-		list_row 'Commission(%) | Effective Date' do |p|
-			p.commissions.map {|c| "#{c.percentage}% | #{c.effective_date}" }
+		list_row 'Commissions (%)' do |p|
+			comms = {}
+			p.commissions.each {|c| 
+				comms[c.effective_date] = {}
+				c.position_commissions.each do |pc|
+					comms[c.effective_date][pc.position.display_name] = "#{pc.percentage}%" 
+				end
+			}
+			comms
 		end
 		row :created_at
 		row :updated_at

@@ -16,7 +16,7 @@ menu label: 'Individual', parent: 'Sales'
 
 config.sort_order = 'sales.date_desc'
 
-includes :sale, :project, :commission
+includes :sale, :project
 
 actions :index, :create, :update
 
@@ -58,8 +58,8 @@ before_action only: :index do
 		end
 	end
 	if params['scope'].nil? || params['scope'] == 'booked_done'
-		if params['q']['status_in'].blank?
-			params['q']['status_in'] = ["Booked","Done"]
+		if params['q']['sale_status_in'].blank?
+			params['q']['sale_status_in'] = ["Booked","Done"]
 		end
 	end
 	if params['q']['year'].nil? && params['q']['month'].nil?

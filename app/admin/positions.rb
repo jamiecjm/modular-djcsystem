@@ -12,7 +12,7 @@ ActiveAdmin.register Position do
 #   permitted
 # end
 
-menu parent: 'Settings', priority: 1
+menu false
 
 permit_params :title, :overriding, :default, :parent_id
 
@@ -21,7 +21,7 @@ config.filters = false
 	index do
 		id_column
 		column :title
-		column 'Manager', :parent
+		column 'Upline', :parent
 		column :overriding
 		column :default
 		actions
@@ -31,7 +31,7 @@ config.filters = false
 		inputs do
 			input :title
 			input :overriding
-			input :parent_id, label: 'Manager', as: :select, collection: Position.pluck(:title, :id)
+			input :parent_id, label: 'Upline', as: :select, collection: Position.pluck(:title, :id)
 		end
 
 		actions
