@@ -18,8 +18,10 @@ class Commission < ApplicationRecord
 
 	belongs_to :project, optional: true
 	has_many :positions_commissions
+	has_one :default_positions_commission, -> {where(position_id: Position.default.id)}, class_name: 'PositionsCommission'
 	has_many :positions, -> {distinct.ordered_by_ancestry.reverse}, through: :positions_commissions
-	has_many :sales, autosave: true
+	has_many :sales, through: :project
+	has_many :salevalues, through: :sales, autosave: true
 
 	after_save :recalculate_sv
 	after_destroy :recalculate_sv
@@ -36,17 +38,19 @@ class Commission < ApplicationRecord
 	end
 
 	def recalculate_sv
-		project.sales.each do |s|
-			s.set_comm
+		salevalues.each do |s|
+			s.calc_comm
 			s.save
 		end
 	end
 
 	def initialize_position_commission
-		if new_record?
-			Position.all.ordered_by_ancestry.reverse.each do |p| 
-				positions_commissions.build(position_id: p.id)
-			end
+		if new_record? && positions_commissions.blank?
+			positions_commissions.build(position_id: Position.default.id)
+		
+			# Position.all.ordered_by_ancestry.reverse.each do |p| 
+			# 	positions_commissions.build(position_id: p.id)
+			# end		
 		end
 	end
 

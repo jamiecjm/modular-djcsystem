@@ -17,7 +17,7 @@ menu parent: 'Projects', label: 'List'
 includes :sales, commissions: [positions_commissions: :position]
 
 permit_params :name, commissions_attributes: [:effective_date, :id, :project_id, :_destroy, 
-	positions_commissions_attributes: [:position_id, :commission_id, :id, :percentage]]
+	positions_commissions_attributes: [:position_id, :commission_id, :id, :percentage, :_destroy]]
 
 scope :all, default: true do |projects|
 	comms = Commission.where(project_id: projects.ids)
@@ -34,15 +34,20 @@ index pagination_total: false do
 	column :sales_count do |p|
 		link_to pluralize(p.sales.length, 'sale'), sales_path(q: {project_id_in: p.id}), target: '_blank'
 	end
-	list_column 'Commissions (%)' do |p|
-		comms = {}
-		p.commissions.each {|c| 
-			comms[c.effective_date] = {}
-			c.positions_commissions.each do |pc|
-				comms[c.effective_date][pc.position.display_name] = "#{pc.percentage}%" 
-			end
+	# list_column 'Commissions (%)' do |p|
+	# 	comms = {}
+	# 	p.commissions.each {|c| 
+	# 		comms[c.effective_date] = {}
+	# 		c.positions_commissions.each do |pc|
+	# 			comms[c.effective_date][pc.position.display_name] = "#{pc.percentage}%" 
+	# 		end
+	# 	}
+	# 	comms
+	# end
+	list_column 'Commissions (%) | Effective Date' do |p|
+		p.commissions.map {|c| 
+			"#{c.default_positions_commission.percentage}% | #{c.effective_date}"
 		}
-		comms
 	end
 	column :created_at
 	column :updated_at
@@ -55,15 +60,20 @@ show do
 		row :sales_count do |p|
 			link_to pluralize(p.sales.length, 'sale'), sales_path(q: {project_id_eq: p.id})
 		end
-		list_row 'Commissions (%)' do |p|
-			comms = {}
-			p.commissions.each {|c| 
-				comms[c.effective_date] = {}
-				c.positions_commissions.each do |pc|
-					comms[c.effective_date][pc.position.display_name] = "#{pc.percentage}%" 
-				end
+		# list_row 'Commissions (%)' do |p|
+		# 	comms = {}
+		# 	p.commissions.each {|c| 
+		# 		comms[c.effective_date] = {}
+		# 		c.positions_commissions.each do |pc|
+		# 			comms[c.effective_date][pc.position.display_name] = "#{pc.percentage}%" 
+		# 		end
+		# 	}
+		# 	comms
+		# end
+		list_row 'Commissions (%) | Effective Date' do |p|
+			p.commissions.map {|c| 
+				"#{c.default_positions_commission.percentage}% | #{c.effective_date}"
 			}
-			comms
 		end
 		row :created_at
 		row :updated_at
@@ -76,7 +86,7 @@ form do |f|
 		input :name
 		has_many :commissions, allow_destroy: true do |c|
 			c.input :effective_date
-			c.has_many :positions_commissions, allow_destroy: false, new_record: false do |pc|
+			c.has_many :positions_commissions, allow_destroy: false, new_record: false, heading: nil do |pc|
 				pc.input :position, input_html: {readonly: "readonly"}
 				pc.input :percentage, min: 0
 			end

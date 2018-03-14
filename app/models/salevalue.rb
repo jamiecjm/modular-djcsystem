@@ -28,11 +28,9 @@ class Salevalue < ApplicationRecord
 	has_one :current_position, through: :team, source: :position
 	belongs_to :sale, optional: true
 	has_one :project, through: :sale
-	# has_one :unit, through: :sale
-	has_one :commission, through: :sale
-	has_many :positions_commissions, through: :commission
-	has_one :default_commission, -> {where(position_id: Position.default.id)}, through: :commission, source: :positions_commissions
-	has_one :current_commission, -> (object){where(position_id: object.current_position.id)}, through: :commission, source: :positions_commissions
+	has_many :positions_commissions, through: :sale
+	# has_one :default_commission, -> {default}, through: :sale, source: :positions_commissions
+	# has_one :current_commission, -> (object){where(position_id: object.current_position.id)}, through: :sale, source: :positions_commissions
 
 	validates :percentage, presence: true
 	validates :team_id, presence: true, if: proc { other_user.blank? }
@@ -50,18 +48,26 @@ class Salevalue < ApplicationRecord
 		joins(:sale).where('extract(month from sales.date) = ?', month.to_date.month)
 	}
 
-	before_save :calc_comm
+	# before_save :calc_comm, prepend: true
+	before_save :adjust_team_id
 
 	def self.ransackable_scopes(_auth_object = nil)
 	  [:year, :month]
 	end
 
+	def default_commission
+		positions_commissions.default.first
+	end
+
+	def current_commission
+		positions_commissions.find_by(position_id: current_position.id)
+	end
+
 	def calc_comm
-		comm = default_commission.percentage
-		self.spa = sale.spa_value * percentage/100
-		self.nett_value = sale.nett_value * percentage/100
-		self.comm = nett_value * comm/100
-		calc_override(comm)
+		comm = default_commission&.percentage
+		self.spa = sale.spa_value * percentage/100 if sale.spa_value
+		self.nett_value = sale.nett_value * percentage/100 if sale.nett_value
+		self.comm = nett_value * comm/100 if comm
 	end
 
 	def calc_override(base_comm)
@@ -76,6 +82,13 @@ class Salevalue < ApplicationRecord
 			else
 				o.destroy
 			end
+		end
+	end
+
+	def adjust_team_id
+		if team_id
+			current_team = user.teams.where('teams.effective_date <= ?', sale.date).reorder('teams.effective_date DESC').first
+			self.team_id = current_team.id
 		end
 	end
 

@@ -50,14 +50,13 @@ class User < ApplicationRecord
 
 	extend Enumerize
 
-	has_many :salevalues, dependent: :destroy, through: :team
-	has_many :sales, ->{distinct}, through: :salevalues
-	has_many :projects, ->{distinct}, through: :sales
 	has_many :teams	
 	has_many :positions, through: :teams
 	has_one :current_team, ->{order('teams.effective_date DESC')}, class_name: 'Team'
 	has_one :current_position, through: :current_team, source: :position
-
+	has_many :salevalues, dependent: :destroy, through: :teams
+	has_many :sales, through: :salevalues
+	
 	has_ancestry orphan_strategy: :adopt
 
 	enumerize :location, in: ["KL","JB","Penang","Melaka"]
@@ -69,8 +68,8 @@ class User < ApplicationRecord
 			id = id[/\d+/].to_i
 		end
 		user = User.find(id)
-		teams = user.team.subtree
-		users = teams.pluck(:user_id)
+		subteams = user.current_team.subtree
+		users = subteams.pluck(:user_id)
 		search(id_in: users).result	
   	}
   	scope :referrer_eq, -> (id){
@@ -90,7 +89,7 @@ class User < ApplicationRecord
 
   	before_validation :titleize_name
   	before_validation :downcase_email
-  	before_create :set_team
+  	# before_create :set_team
   	before_create :lock_user
   	after_create :create_team
 
@@ -108,7 +107,7 @@ class User < ApplicationRecord
 	end
 
 	def team_members
-		user_ids = team.subtree.pluck(:user_id)
+		user_ids = current_team.subtree.pluck(:user_id)
 		User.where(id: user_ids)
 	end
 
@@ -130,7 +129,7 @@ class User < ApplicationRecord
 	end
 
 	def create_team
-		Team.create(user_id: id, parent_id: parent.team.id)
+		Team.create(user_id: id, parent_id: parent.current_team.id)
 	end
 
 	def lock_user

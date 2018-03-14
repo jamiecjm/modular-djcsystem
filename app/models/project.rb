@@ -12,6 +12,7 @@ class Project < ApplicationRecord
 
 	has_many :units, dependent: :destroy
 	has_many :commissions, -> {order(:effective_date)}, dependent: :destroy
+	has_many :positions_commissions, through: :commissions
 	has_many :sales, dependent: :destroy, autosave: true
 
 	accepts_nested_attributes_for :commissions
@@ -27,6 +28,6 @@ class Project < ApplicationRecord
 	end
 
 	def initialize_comm
-		commissions.build(project_id: id)
+		commissions.build(project_id: id) if name.nil? && commissions.blank?
 	end
 end

@@ -130,9 +130,9 @@ index title: 'Individual Sales', pagination_total: false do |sv|
 	number_column :unit_nett_value, sortable: 'sales.nett_price', as: :currency, seperator: ',', unit: '' do |sv|
 		sv.sale.nett_value
 	end	
-	if current_user.admin?
-		column 'Project Commission', :commission, sortable: 'commissions.percentage'
-	end
+	# if current_user.admin?
+	# 	column 'Project Commission', :commission, sortable: 'commissions.percentage'
+	# end
 end
 
 sidebar :summary, only: :index, priority: 0 do
