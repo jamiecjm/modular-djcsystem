@@ -56,7 +56,7 @@ class User < ApplicationRecord
 	has_one :current_position, through: :current_team, source: :position
 	has_many :salevalues, dependent: :destroy, through: :teams
 	has_many :sales, through: :salevalues
-	
+
 	has_ancestry orphan_strategy: :adopt
 
 	enumerize :location, in: ["KL","JB","Penang","Melaka"]
@@ -101,7 +101,7 @@ class User < ApplicationRecord
 	  [:upline_eq, :referrer_eq]
 	end
 
-	def user?
+	def leader?
 		positions.last.overriding
 		# team.overriding
 	end
