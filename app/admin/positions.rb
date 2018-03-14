@@ -12,29 +12,38 @@ ActiveAdmin.register Position do
 #   permitted
 # end
 
-menu false
+menu parent: 'Settings', priority: 1
 
 permit_params :title, :overriding, :default, :parent_id
 
+config.batch_actions = false
+
 config.filters = false
 
-	index do
-		id_column
-		column :title
-		column 'Upline', :parent
-		column :overriding
-		column :default
-		actions
+actions :all, except: :show
+
+before_action only: :index do
+	params['per_page'] = '1'
+end
+
+index as: :barchart do
+	positions = Position.all.map {|p|
+		phash = {
+			v: p.title,
+			f: p.title+'<br/>'+(link_to 'Edit', edit_position_path(p.id)).delete('\"')+'&nbsp;'+(link_to 'Delete', "/positions/#{p.id}", method: :delete, 'data-confirm': "Sure?").delete('\"')
+		}
+		[phash, p.parent&.title]
+	}
+	render partial: 'positions/org_chart', :locals => {positions: positions.to_json}, layout: 'layouts/chart'
+end
+
+form do |f|
+	inputs do
+		input :title
+		input :parent_id, label: 'Upline', as: :select, collection: Position.pluck(:title, :id)
 	end
 
-	form do |f|
-		inputs do
-			input :title
-			input :overriding
-			input :parent_id, label: 'Upline', as: :select, collection: Position.pluck(:title, :id)
-		end
-
-		actions
-	end
+	actions
+end
 
 end

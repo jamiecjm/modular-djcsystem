@@ -112,7 +112,18 @@ ActiveAdmin.register User do
       row :location
       row :created_at
       row :updated_at
+      list_row 'Tree View' do
+        User.arrange_serializable do |parent, children|
+          {
+             Name: parent.prefered_name,
+             Downline: children
+          }
+        end
+      end
     end
+
+    # panel 'Family Tree' do
+    # end
   end
 
   filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }

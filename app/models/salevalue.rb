@@ -58,21 +58,20 @@ class Salevalue < ApplicationRecord
 	end
 
 	def calc_comm
-		comm = position_commissions.find_by(position_id: Position.default.id)
+		comm = default_commission.percentage
 		self.spa = sale.spa_value * percentage/100
 		self.nett_value = sale.nett_value * percentage/100
-		self.comm = nett_value * comm.percentage/100
-		calc_override(comm.percentage)
+		self.comm = nett_value * comm/100
+		calc_override(comm)
 	end
 
 	def calc_override(base_comm)
-		teams = team.ancestors
-		teams.each do |t|
-			position = t.current_position
-			comm = position_commissions.find_by(position_id: position.id)
+		team.path.each do |t|
+			comm = current_commission&.percentage
 			o = OverridingCommission.find_or_initialize_by(team_id: t.id, salevalue_id: id)
-			if comm && comm.percentage > base_comm
-				override = nett_value * (comm.percentage-base_comm)/100
+			# TO BE DETERMINED
+			if comm && comm > base_comm
+				override = nett_value * (comm-base_comm)/100
 				o.override = override
 				o.save
 			else
