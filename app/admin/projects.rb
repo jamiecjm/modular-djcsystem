@@ -14,10 +14,10 @@ ActiveAdmin.register Project do
 
 menu parent: 'Projects', label: 'List'
 
-includes :sales, commissions: [position_commissions: :position]
+includes :sales, commissions: [positions_commissions: :position]
 
 permit_params :name, commissions_attributes: [:effective_date, :id, :project_id, :_destroy, 
-	position_commissions_attributes: [:position_id, :commission_id, :id, :percentage]]
+	positions_commissions_attributes: [:position_id, :commission_id, :id, :percentage]]
 
 scope :all, default: true do |projects|
 	comms = Commission.where(project_id: projects.ids)
@@ -38,7 +38,7 @@ index pagination_total: false do
 		comms = {}
 		p.commissions.each {|c| 
 			comms[c.effective_date] = {}
-			c.position_commissions.each do |pc|
+			c.positions_commissions.each do |pc|
 				comms[c.effective_date][pc.position.display_name] = "#{pc.percentage}%" 
 			end
 		}
@@ -59,7 +59,7 @@ show do
 			comms = {}
 			p.commissions.each {|c| 
 				comms[c.effective_date] = {}
-				c.position_commissions.each do |pc|
+				c.positions_commissions.each do |pc|
 					comms[c.effective_date][pc.position.display_name] = "#{pc.percentage}%" 
 				end
 			}
@@ -76,7 +76,7 @@ form do |f|
 		input :name
 		has_many :commissions, allow_destroy: true do |c|
 			c.input :effective_date
-			c.has_many :position_commissions, allow_destroy: false, new_record: false do |pc|
+			c.has_many :positions_commissions, allow_destroy: false, new_record: false do |pc|
 				pc.input :position, input_html: {readonly: "readonly"}
 				pc.input :percentage, min: 0
 			end

@@ -21,8 +21,8 @@ class Position < ApplicationRecord
 
 	has_many :teams_positions, dependent: :destroy
 	has_many :teams, -> {distinct}, through: :teams_positions
-	has_many :position_commissions, dependent: :destroy
-	has_many :commissions, -> {distinct}, through: :position_commissions
+	has_many :positions_commissions, dependent: :destroy
+	has_many :commissions, -> {distinct}, through: :positions_commissions
 
 	accepts_nested_attributes_for :teams
 

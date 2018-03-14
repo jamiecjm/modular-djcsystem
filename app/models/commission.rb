@@ -17,8 +17,8 @@
 class Commission < ApplicationRecord
 
 	belongs_to :project, optional: true
-	has_many :position_commissions
-	has_many :positions, -> {distinct.ordered_by_ancestry.reverse}, through: :position_commissions
+	has_many :positions_commissions
+	has_many :positions, -> {distinct.ordered_by_ancestry.reverse}, through: :positions_commissions
 	has_many :sales, autosave: true
 
 	after_save :recalculate_sv
@@ -27,7 +27,7 @@ class Commission < ApplicationRecord
 
 	validates :effective_date, presence: true
 
-	accepts_nested_attributes_for :position_commissions
+	accepts_nested_attributes_for :positions_commissions
 
 	scope :by_date, ->(date){ where('commissions.effective_date <= ?', date) }
 
@@ -45,7 +45,7 @@ class Commission < ApplicationRecord
 	def initialize_position_commission
 		if new_record?
 			Position.all.ordered_by_ancestry.reverse.each do |p| 
-				position_commissions.build(position_id: p.id)
+				positions_commissions.build(position_id: p.id)
 			end
 		end
 	end

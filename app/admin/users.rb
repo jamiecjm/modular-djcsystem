@@ -112,14 +112,17 @@ ActiveAdmin.register User do
       row :location
       row :created_at
       row :updated_at
-      list_row 'Tree View' do
-        User.arrange_serializable do |parent, children|
-          {
-             Name: parent.prefered_name,
-             Downline: children
-          }
-        end
-      end
+      # list_row 'Tree View' do
+      #   user.team.subtree.joins(:user).arrange_serializable(:order => 'users.prefered_name') do |parent, children|
+      #     tree_hash =
+      #     {
+      #        Name: parent.user.prefered_name,
+      #        Downline: children
+      #     }
+      #     tree_hash.slice!(:Name) if tree_hash[:Downline].blank?
+      #     tree_hash
+      #   end
+      # end
     end
 
     # panel 'Family Tree' do

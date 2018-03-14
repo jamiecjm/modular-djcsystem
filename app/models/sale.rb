@@ -44,7 +44,7 @@ class Sale < ApplicationRecord
 			by_date(object.sale.date)
 		end
 	}, through: :project
-	has_many :position_commissions, through: :commission
+	has_many :positions_commissions, through: :commission
 
 	accepts_nested_attributes_for :main_salevalues
 	accepts_nested_attributes_for :other_salevalues

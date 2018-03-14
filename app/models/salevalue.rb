@@ -31,9 +31,9 @@ class Salevalue < ApplicationRecord
 	has_one :project, through: :sale
 	# has_one :unit, through: :sale
 	has_one :commission, through: :sale
-	has_many :position_commissions, through: :commission
-	has_one :default_commission, -> {where(position_id: Position.default.id)}, through: :commission, source: :position_commissions
-	has_one :current_commission, -> (object){where(position_id: object.current_position.id)}, through: :commission, source: :position_commissions
+	has_many :positions_commissions, through: :commission
+	has_one :default_commission, -> {where(position_id: Position.default.id)}, through: :commission, source: :positions_commissions
+	has_one :current_commission, -> (object){where(position_id: object.current_position.id)}, through: :commission, source: :positions_commissions
 
 	validates :percentage, presence: true
 	validates :team_id, presence: true, if: proc { other_user.blank? }
