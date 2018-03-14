@@ -27,9 +27,9 @@ scope 'Booked/Done', default: true, show_count: false do |sales|
 	sv = Salevalue.where(sale_id: sales.ids)
 	@max_ren = sv.joins(:sale).group('sales.id').count.values.max
 	team_sv = sv.where(other_user: nil)
-	@total_spa = team_sv.pluck('spa').inject(:+)
-	@total_nett_value = team_sv.pluck('nett_value').inject(:+)
-	@total_comm = team_sv.pluck('comm').inject(:+)
+	@total_spa = team_sv.pluck('spa').compact.inject(:+)
+	@total_nett_value = team_sv.pluck('nett_value').compact.inject(:+)
+	@total_comm = team_sv.pluck('comm').compact.inject(:+)
 	@total_sales = sales.length
 	sales
 end
@@ -39,9 +39,9 @@ scope :cancelled, show_count: false do |sales|
 	sv = Salevalue.where(sale_id: sales.ids)
 	@max_ren = sv.joins(:sale).group('sales.id').count.values.max
 	team_sv = sv.where(other_user: nil)
-	@total_spa = team_sv.pluck('spa').inject(:+)
-	@total_nett_value = team_sv.pluck('nett_value').inject(:+)
-	@total_comm = team_sv.pluck('comm').inject(:+)
+	@total_spa = team_sv.pluck('spa').compact.inject(:+)
+	@total_nett_value = team_sv.pluck('nett_value').compact.inject(:+)
+	@total_comm = team_sv.pluck('comm').compact.inject(:+)
 	@total_sales = sales.length
 	sales
 end
@@ -50,9 +50,9 @@ scope :all, show_count: false do |sales|
 	sv = Salevalue.where(sale_id: sales.ids)
 	@max_ren = sv.joins(:sale).group('sales.id').count.values.max
 	team_sv = sv.where(other_user: nil)
-	@total_spa = team_sv.pluck('spa').inject(:+)
-	@total_nett_value = team_sv.pluck('nett_value').inject(:+)
-	@total_comm = team_sv.pluck('comm').inject(:+)
+	@total_spa = team_sv.pluck('spa').compact.inject(:+)
+	@total_nett_value = team_sv.pluck('nett_value').compact.inject(:+)
+	@total_comm = team_sv.pluck('comm').compact.inject(:+)
 	@total_sales = sales.length
 	sales
 end
@@ -136,7 +136,7 @@ index title: 'Team Sales', pagination_total: false do
 					[sv[x-1].other_user, "(#{sv[x-1].percentage}%)"]
 				else
 					if can? :read, sv[x-1].user
-						[(link_to sv[x-1].user.prefered_name, salevalues_path(q: {user_id_eq: sv[x-1].user.id, sale_id_eq: sale.id, 
+						[(link_to sv[x-1].user.prefered_name, salevalues_path(q: {team_id_eq: sv[x-1].team.id, sale_id_eq: sale.id, 
 							sale_date_gteq_datetime: sale.date, sale_date_lteq_datetime: sale.date}), target: '_blank'), "(#{sv[x-1].percentage}%)"]
 					else
 						[sv[x-1].user.prefered_name, "(#{sv[x-1].percentage}%)"]
@@ -218,9 +218,9 @@ show do
 		# 		sale.commission
 		# 	end
 		# end
-		# number_row :commission, as: :currency, seperator: ',', unit: '' do |sale|
-		# 	sale.nett_value * sale.commission.percentage/100
-		# end
+		number_row :commission, as: :currency, seperator: ',', unit: '' do |sale|
+			sale.nett_value * sale.commission.percentage/100
+		end
 		row :package
 		row :remark
 	end
@@ -238,7 +238,7 @@ form do |f|
 	inputs do 
 		input :date
 		has_many :main_salevalues, :allow_destroy => true, new_record: 'Add REN', heading: 'REN', sortable: :order, sortable_start: 1 do |sv|
-			sv.input :team, label: 'Name', as: :select, collection: User.approved.joins(:team).order(:prefered_name).map {|u| [u.prefered_name, u.team.id ]}
+			sv.input :team, label: 'Name', as: :select, collection: User.approved.joins(:current_team).order(:prefered_name).map {|u| [u.prefered_name, u.current_team.id ]}
 			sv.input :percentage, min: 0, step: 'any'
 		end
 		has_many :other_salevalues, :allow_destroy => true, new_record: 'Add Other Team\'s REN', heading: 'Other Team\'s REN', sortable: :order, sortable_start: 1 do |sv|
