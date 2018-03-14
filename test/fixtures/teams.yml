@@ -8,6 +8,7 @@
 #  ancestry       :string
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  position_id    :integer
 #  effective_date :date
 #
 # Indexes

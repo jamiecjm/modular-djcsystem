@@ -8,6 +8,7 @@
 #  ancestry       :string
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  position_id    :integer
 #  effective_date :date
 #
 # Indexes
@@ -22,10 +23,7 @@ class Team < ApplicationRecord
 	has_many :salevalues
 	has_many :sales, -> {distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
-	has_many :teams_positions, ->{order(:effective_date)}, dependent: :destroy
-	has_one :current_teams_position, ->{order('teams_positions.effective_date DESC')}, class_name: 'TeamsPosition'
-	has_many :positions, through: :teams_positions
-	has_one :current_position, through: :current_teams_position, source: :position
+	belongs_to :position
 
 	has_ancestry orphan_strategy: :adopt
 

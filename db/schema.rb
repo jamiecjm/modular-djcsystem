@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180313073739) do
+ActiveRecord::Schema.define(version: 20180314060210) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,17 +49,6 @@ ActiveRecord::Schema.define(version: 20180313073739) do
     t.index ["team_id"], name: "index_overriding_commissions_on_team_id"
   end
 
-  create_table "position_commissions", force: :cascade do |t|
-    t.integer "position_id"
-    t.integer "commission_id"
-    t.float "percentage"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["commission_id"], name: "index_position_commissions_on_commission_id"
-    t.index ["position_id", "commission_id"], name: "index_position_commissions_on_position_id_and_commission_id", unique: true
-    t.index ["position_id"], name: "index_position_commissions_on_position_id"
-  end
-
   create_table "positions", force: :cascade do |t|
     t.string "title"
     t.boolean "overriding", default: false
@@ -68,6 +57,17 @@ ActiveRecord::Schema.define(version: 20180313073739) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ancestry"], name: "index_positions_on_ancestry"
+  end
+
+  create_table "positions_commissions", force: :cascade do |t|
+    t.integer "position_id"
+    t.integer "commission_id"
+    t.float "percentage"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["commission_id"], name: "index_positions_commissions_on_commission_id"
+    t.index ["position_id", "commission_id"], name: "index_positions_commissions_on_position_id_and_commission_id", unique: true
+    t.index ["position_id"], name: "index_positions_commissions_on_position_id"
   end
 
   create_table "projects", id: :serial, force: :cascade do |t|
@@ -119,6 +119,7 @@ ActiveRecord::Schema.define(version: 20180313073739) do
     t.string "ancestry"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "position_id"
     t.date "effective_date"
     t.index ["ancestry"], name: "index_teams_on_ancestry"
     t.index ["user_id"], name: "index_teams_on_user_id"

@@ -19,8 +19,7 @@ class Position < ApplicationRecord
 
 	has_ancestry orphan_strategy: :adopt
 
-	has_many :teams_positions, dependent: :destroy
-	has_many :teams, -> {distinct}, through: :teams_positions
+	has_many :teams, dependent: :destroy
 	has_many :positions_commissions, dependent: :destroy
 	has_many :commissions, -> {distinct}, through: :positions_commissions
 

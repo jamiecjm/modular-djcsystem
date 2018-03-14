@@ -50,12 +50,13 @@ class User < ApplicationRecord
 
 	extend Enumerize
 
-    has_one :team
 	has_many :salevalues, dependent: :destroy, through: :team
 	has_many :sales, ->{distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
-	# has_many :units, ->{distinct}, through: :sales
-	has_many :positions, through: :team
+	has_many :teams	
+	has_many :positions, through: :teams
+	has_one :current_team, ->{order('teams.effective_date DESC')}, class_name: 'Team'
+	has_one :current_position, through: :current_team, source: :position
 
 	has_ancestry orphan_strategy: :adopt
 
