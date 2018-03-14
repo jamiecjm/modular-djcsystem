@@ -145,6 +145,7 @@ ActiveAdmin.setup do |config|
   # You can add before, after and around filters to all of your
   # Active Admin resources and pages from here.
   #
+  config.skip_before_action :verify_authenticity_token, if: proc{ controller_name == 'sessions' && action_name == 'create' }
   config.before_action :set_mailer_host
   config.before_action :set_raven_context, if: proc{ Rails.env.production? }
   config.before_action :configure_permitted_parameters, if: proc{ devise_controller? }
