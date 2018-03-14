@@ -1,6 +1,6 @@
 class Project < ApplicationRecord
 
-	has_many :units, dependent: :destroy
+	# has_many :units, dependent: :destroy
 	has_many :commissions, -> {order(:effective_date)}, dependent: :destroy
 	has_many :sales, dependent: :destroy, autosave: true
 
