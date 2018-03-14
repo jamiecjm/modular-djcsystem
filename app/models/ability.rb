@@ -6,10 +6,10 @@ class Ability
       can :create, User
     else
       can :update, current_user
-      can :read, User, id: current_user.team_members.ids
-      can :read, Team, id: current_user.current_team.subtree.pluck(:id)
-      can [:read, :update, :destroy, :email_report], Sale, id: current_user.team_sales.pluck(:id)
-      can [:read, :update, :destroy], Salevalue, sale: current_user.team_sales
+      can :read, User, id: current_user.current_team_members.ids
+      can :read, Team, id: current_user.all_team_subtree.pluck(:id)
+      can [:read, :update, :destroy, :email_report], Sale, id: current_user.all_team_sales.pluck(:id)
+      can [:read, :update, :destroy], Salevalue, sale: current_user.all_team_sales
       can [:create], Sale
       can [:create], Salevalue
       can :read, ActiveAdmin::Page

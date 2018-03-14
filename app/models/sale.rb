@@ -58,7 +58,7 @@ class Sale < ApplicationRecord
 		if id.is_a? String
 			id = id[/\d+/].to_i
 		end
-		where(id: User.find(id).team_sales.pluck(:id)) 
+		where(id: User.find(id).all_team_sales.pluck(:id)) 
 	}
 	scope :not_cancelled, ->{search(status_not_eq: "Cancelled").result}
 	scope :year, ->(year) {

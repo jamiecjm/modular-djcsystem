@@ -34,14 +34,21 @@ class Team < ApplicationRecord
 		if id.is_a? String
 			id = id[/\d+/].to_i
 		end
-		team = Team.find_by_sql "SELECT  \"teams\".* FROM \"teams\" WHERE \"teams\".\"user_id\" = #{id}"
-		team = team.first
-		if team.ancestry.nil?
-			ancestry = "#{team.id}"
-		else
-			ancestry = "#{team.ancestry}/#{team.id}"
+		teams = Team.find_by_sql "SELECT  \"teams\".* FROM \"teams\" WHERE \"teams\".\"user_id\" = #{id}"
+		ancestry = ''
+		teams.each do |t|
+			if t.ancestry.nil?
+				ancestry += "teams.ancestry LIKE '#{t.id}/%' OR teams.ancestry = '#{t.id}' OR teams.id = #{t.id}" 
+			else
+				combo = "#{team.ancestry}/#{team.id}"
+				ancestry += "teams.ancestry LIKE '#{combo}/%' OR teams.ancestry = '#{combo}' OR teams.id = #{t.id}" 
+			end		
+			if t != teams.last
+				ancestry += ' OR '
+			end	
 		end
-		subtree = Team.find_by_sql "SELECT \"teams\".id FROM \"teams\" WHERE ((\"teams\".\"ancestry\" LIKE '#{ancestry}/%' OR \"teams\".\"ancestry\" = '#{ancestry}') OR \"teams\".\"id\" = #{team.id})"
+
+		subtree = Team.find_by_sql "SELECT \"teams\".id FROM \"teams\" WHERE (#{ancestry})"
 		search(id_in: subtree.map(&:id)).result
 	}
 

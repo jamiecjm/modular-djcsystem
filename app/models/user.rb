@@ -106,13 +106,21 @@ class User < ApplicationRecord
 		# team.overriding
 	end
 
-	def team_members
+	def current_team_members
 		user_ids = current_team.subtree.pluck(:user_id)
 		User.where(id: user_ids)
 	end
 
-	def team_sales
-		Sale.search(users_id_in: team_members.ids).result
+	def all_team_subtree
+		teams.map(&:subtree).flatten
+	end
+
+	# def current_team_sales
+	# 	Sale.search(users_id_in: team_members.ids).result
+	# end
+
+	def all_team_sales
+		Sale.search(teams_id_in: all_team_subtree.pluck(:id)).result
 	end
 
 	def titleize_name
