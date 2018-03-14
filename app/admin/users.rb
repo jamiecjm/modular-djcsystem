@@ -3,7 +3,7 @@ ActiveAdmin.register User do
 
   menu parent: 'Teams', label: 'Members'
 
-  includes :positions, :team
+  includes :current_position, :current_team
 
   scope :approved, default: true
 
@@ -54,15 +54,13 @@ ActiveAdmin.register User do
     id_column
     column :name
     column :prefered_name
-    column :position do |u|
-      u.positions.last
-    end
+    column :current_position
     column :ic_no
     column :email
     column :phone_no
     column :birthday
     column 'Upline' do |u|
-      u.team.parent
+      u.current_team.parent
     end
     column 'Referrer', :parent
     column :location

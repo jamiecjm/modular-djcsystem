@@ -7,7 +7,7 @@ class Ability
     else
       can :update, current_user
       can :read, User, id: current_user.team_members.ids
-      can :read, Team, id: current_user.team.subtree.pluck(:id)
+      can :read, Team, id: current_user.current_team.subtree.pluck(:id)
       can [:read, :update, :destroy, :email_report], Sale, id: current_user.team_sales.pluck(:id)
       can [:read, :update, :destroy], Salevalue, sale: current_user.team_sales
       can [:create], Sale
@@ -18,7 +18,7 @@ class Ability
         cannot [:create, :destroy], Team
         cannot [:create, :destroy], Website
         cannot :destroy, Project, id: Project.where(id: Sale.pluck(:project_id)).ids
-        cannot :destroy, User, team: Team.where(id: Salevalue.pluck(:team_id))
+        cannot :destroy, User
       end
     end
   end

@@ -25,8 +25,7 @@ class Salevalue < ApplicationRecord
 
 	belongs_to :team, optional: true
 	has_one :user, through: :team
-	has_many :positions, through: :team
-	has_one :current_position, through: :team
+	has_one :current_position, through: :team, source: :position
 	belongs_to :sale, optional: true
 	has_one :project, through: :sale
 	# has_one :unit, through: :sale
