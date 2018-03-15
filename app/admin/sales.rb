@@ -20,8 +20,6 @@ menu label: 'Team', priority: 1, parent: 'Sales'
 
 config.sort_order = 'date_desc'
 
-includes :project, :other_salevalues, main_salevalues: :user
-
 scope 'Booked/Done', default: true, show_count: false do |sales|
 	sales = sales.not_cancelled
 	sv = Salevalue.where(sale_id: sales.ids)
@@ -238,7 +236,7 @@ form do |f|
 	inputs do 
 		input :date
 		has_many :main_salevalues, :allow_destroy => true, new_record: 'Add REN', heading: 'REN', sortable: :order, sortable_start: 1 do |sv|
-			sv.input :team, label: 'Name', as: :select, collection: User.approved.joins(:current_team).order(:prefered_name).map {|u| [u.prefered_name, u.current_team.id ]}
+			sv.input :team, label: 'Name', as: :select, collection: User.approved.order(:prefered_name).map {|u| [u.prefered_name, u.current_team.id ]}
 			sv.input :percentage, min: 0, step: 'any'
 		end
 		has_many :other_salevalues, :allow_destroy => true, new_record: 'Add Other Team\'s REN', heading: 'Other Team\'s REN', sortable: :order, sortable_start: 1 do |sv|

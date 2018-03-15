@@ -3,8 +3,6 @@ ActiveAdmin.register User do
 
   menu parent: 'Teams', label: 'Members'
 
-  includes :current_position, :current_team
-
   scope :approved, default: true
 
   scope :pending, if: proc { current_user.admin? }

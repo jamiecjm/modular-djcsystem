@@ -14,8 +14,6 @@ ActiveAdmin.register Project do
 
 menu parent: 'Projects', label: 'List'
 
-includes :sales, commissions: [positions_commissions: :position]
-
 permit_params :name, commissions_attributes: [:effective_date, :id, :project_id, :_destroy, 
 	positions_commissions_attributes: [:position_id, :commission_id, :id, :percentage, :_destroy]]
 

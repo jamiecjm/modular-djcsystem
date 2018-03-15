@@ -16,8 +16,6 @@ menu label: 'Individual', parent: 'Sales'
 
 config.sort_order = 'sales.date_desc'
 
-includes :sale, :project
-
 actions :index, :create, :update
 
 scope 'Booked/Done', default: true, show_count: false do |sv|

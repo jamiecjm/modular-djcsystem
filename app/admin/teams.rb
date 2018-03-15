@@ -14,8 +14,6 @@ ActiveAdmin.register Team do
 
 menu priority: 1, parent: 'Teams', label: 'Performance'
 
-includes :user
-
 permit_params :name, :user_id
 
 controller do
