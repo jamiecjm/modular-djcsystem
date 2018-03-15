@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180314060210) do
+ActiveRecord::Schema.define(version: 20180315073731) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,7 +121,9 @@ ActiveRecord::Schema.define(version: 20180314060210) do
     t.datetime "updated_at", null: false
     t.integer "position_id"
     t.date "effective_date"
+    t.integer "upline_id"
     t.index ["ancestry"], name: "index_teams_on_ancestry"
+    t.index ["upline_id"], name: "index_teams_on_upline_id"
     t.index ["user_id"], name: "index_teams_on_user_id"
   end
 
@@ -164,10 +166,12 @@ ActiveRecord::Schema.define(version: 20180314060210) do
     t.datetime "locked_at"
     t.string "ic_no"
     t.string "location"
+    t.integer "referrer_id"
     t.index ["ancestry"], name: "index_users_on_ancestry"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["prefered_name"], name: "index_users_on_prefered_name"
+    t.index ["referrer_id"], name: "index_users_on_referrer_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["team_id"], name: "index_users_on_team_id"
   end

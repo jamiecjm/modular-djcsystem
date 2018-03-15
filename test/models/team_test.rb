@@ -10,11 +10,13 @@
 #  updated_at     :datetime         not null
 #  position_id    :integer
 #  effective_date :date
+#  upline_id      :integer
 #
 # Indexes
 #
-#  index_teams_on_ancestry  (ancestry)
-#  index_teams_on_user_id   (user_id)
+#  index_teams_on_ancestry   (ancestry)
+#  index_teams_on_upline_id  (upline_id)
+#  index_teams_on_user_id    (user_id)
 #
 
 require 'test_helper'

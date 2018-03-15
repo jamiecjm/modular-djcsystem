@@ -30,6 +30,7 @@
 #  locked_at              :datetime
 #  ic_no                  :string
 #  location               :string
+#  referrer_id            :integer
 #
 # Indexes
 #
@@ -37,6 +38,7 @@
 #  index_users_on_confirmation_token    (confirmation_token) UNIQUE
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_prefered_name         (prefered_name)
+#  index_users_on_referrer_id           (referrer_id)
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_team_id               (team_id)
 #
@@ -56,12 +58,14 @@ class User < ApplicationRecord
 	has_one :current_position, through: :current_team, source: :position
 	has_many :salevalues, dependent: :destroy, through: :teams
 	has_many :sales, through: :salevalues
+	belongs_to :referrer, class_name: 'User', optional: true
+	has_one :upline, through: :current_team
 
 	has_ancestry orphan_strategy: :adopt
 
 	enumerize :location, in: ["KL","JB","Penang","Melaka"]
 
-  	scope :approved, -> { where(locked_at: nil, archived: false) }
+  	scope :approved, -> { order(:prefered_name).where(locked_at: nil, archived: false) }
   	scope :pending, -> { where.not(locked_at: nil).where(unconfirmed_email: nil, archived: false) }
   	scope :upline_eq, -> (id){
   		if id.is_a? String
@@ -89,7 +93,7 @@ class User < ApplicationRecord
 
   	before_validation :titleize_name
   	before_validation :downcase_email
-  	# before_create :set_team
+  	before_create :set_referrer_id
   	before_create :lock_user
   	after_create :create_team
 
@@ -142,6 +146,10 @@ class User < ApplicationRecord
 
 	def lock_user
 		self.locked_at = Time.now
+	end
+
+	def set_referrer_id
+		self.referrer_id = ancestry&.split('/')&.last if ancestry_changed?
 	end
 
 end

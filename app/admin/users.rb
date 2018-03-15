@@ -57,10 +57,8 @@ ActiveAdmin.register User do
     column :email
     column :phone_no
     column :birthday
-    column 'Upline' do |u|
-      u.current_team.parent
-    end
-    column 'Referrer', :parent
+    column :upline
+    column :referrer
     column :location
     column :created_at
     column :updated_at
@@ -108,26 +106,26 @@ ActiveAdmin.register User do
       row :location
       row :created_at
       row :updated_at
-      # list_row 'Tree View' do
-      #   user.team.subtree.joins(:user).arrange_serializable(:order => 'users.prefered_name') do |parent, children|
-      #     tree_hash =
-      #     {
-      #        Name: parent.user.prefered_name,
-      #        Downline: children
-      #     }
-      #     tree_hash.slice!(:Name) if tree_hash[:Downline].blank?
-      #     tree_hash
-      #   end
-      # end
+      list_row 'Tree View' do
+        user.current_team.subtree.joins(:user).arrange_serializable(:order => 'users.prefered_name') do |parent, children|
+          tree_hash =
+          {
+             Name: parent.user.prefered_name,
+             Downline: children
+          }
+          tree_hash.slice!(:Name) if tree_hash[:Downline].blank?
+          tree_hash
+        end
+      end
     end
 
     # panel 'Family Tree' do
     # end
   end
 
-  filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
+  filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).map { |u| [u.prefered_name, "[#{u.id}]"] } }
   # filter :team,as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:user).main + [current_user.team]).uniq }, input_html: {multiple: true}
-  filter :referrer_eq, as: :select, label: 'Referrer', :collection => proc { User.order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
+  filter :referrer
   filter :location, as: :select, collection: User.location.options, input_html: {multiple: true}
   filter :name
   filter :prefered_name

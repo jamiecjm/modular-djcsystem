@@ -10,11 +10,13 @@
 #  updated_at     :datetime         not null
 #  position_id    :integer
 #  effective_date :date
+#  upline_id      :integer
 #
 # Indexes
 #
-#  index_teams_on_ancestry  (ancestry)
-#  index_teams_on_user_id   (user_id)
+#  index_teams_on_ancestry   (ancestry)
+#  index_teams_on_upline_id  (upline_id)
+#  index_teams_on_user_id    (user_id)
 #
 
 class Team < ApplicationRecord
@@ -24,6 +26,7 @@ class Team < ApplicationRecord
 	has_many :sales, -> {distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
 	belongs_to :position
+	belongs_to :upline, class_name: 'Team', optional: true
 
 	has_ancestry orphan_strategy: :adopt
 
@@ -67,6 +70,7 @@ class Team < ApplicationRecord
 	# }
 
 	after_create :create_team_position
+	before_save :set_upline_id
 
 	def members
 		subtree
@@ -86,6 +90,10 @@ class Team < ApplicationRecord
 
 	def create_team_position
 		TeamsPosition.create(team_id: id, position_id: 2, effective_date: Date.today)
+	end
+
+	def set_upline_id
+		self.upline_id = ancestry&.split('/')&.last if ancestry_changed?
 	end
 
 end
