@@ -87,6 +87,7 @@ GEM
     bindex (0.5.0)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
+    brakeman (4.2.0)
     builder (3.2.3)
     byebug (10.0.0)
     cancancan (2.0.0)
@@ -361,6 +362,7 @@ DEPENDENCIES
   apartment
   better_errors
   binding_of_caller
+  brakeman
   byebug
   cancancan
   capybara (~> 2.13)
