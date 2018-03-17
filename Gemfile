@@ -60,6 +60,7 @@ group :development do
   gem 'pry-rails'
   gem 'awesome_print'
   gem 'meta_request'
+  gem 'brakeman', :require => false
 end
 
 group :production do
