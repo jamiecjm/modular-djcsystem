@@ -81,6 +81,7 @@ GEM
     arbre (1.1.1)
       activesupport (>= 3.0.0)
     arel (8.0.0)
+    awesome_print (1.8.0)
     aws_cf_signer (0.1.3)
     bcrypt (3.1.11)
     better_errors (2.4.0)
@@ -92,6 +93,7 @@ GEM
       debug_inspector (>= 0.0.1)
     builder (3.2.3)
     byebug (10.0.0)
+    callsite (0.0.11)
     cancancan (2.0.0)
     capybara (2.18.0)
       addressable
@@ -120,7 +122,9 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
     crass (1.0.3)
+    database_cleaner (1.6.2)
     debug_inspector (0.0.3)
+    diff-lcs (1.3)
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     enumerize (2.2.2)
@@ -128,6 +132,11 @@ GEM
     erubi (1.7.0)
     excon (0.60.0)
     execjs (2.7.0)
+    factory_bot (4.8.2)
+      activesupport (>= 3.0.0)
+    factory_bot_rails (4.8.2)
+      factory_bot (~> 4.8.2)
+      railties (>= 3.0.0)
     faraday (0.14.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.22)
@@ -159,6 +168,20 @@ GEM
       activesupport (>= 4.2, < 5.2)
     groupdate (3.2.0)
       activesupport (>= 3)
+    guard (2.14.2)
+      formatador (>= 0.2.4)
+      listen (>= 2.7, < 4.0)
+      lumberjack (>= 1.0.12, < 2.0)
+      nenv (~> 0.1)
+      notiffany (~> 0.0)
+      pry (>= 0.9.12)
+      shellany (~> 0.0)
+      thor (>= 0.18.1)
+    guard-compat (1.2.1)
+    guard-rspec (4.7.3)
+      guard (~> 2.1)
+      guard-compat (~> 1.1)
+      rspec (>= 2.99.0, < 4.0)
     has_scope (0.7.1)
       actionpack (>= 4.1, < 5.2)
       activesupport (>= 4.1, < 5.2)
@@ -204,8 +227,13 @@ GEM
     loofah (2.2.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
+    lumberjack (1.0.12)
     mail (2.7.0)
       mini_mime (>= 0.1.1)
+    meta_request (0.5.0)
+      callsite (~> 0.0, >= 0.0.11)
+      rack-contrib (>= 1.1, < 3)
+      railties (>= 3.0.0, < 6)
     method_source (0.9.0)
     mime-types (3.1)
       mime-types-data (~> 3.2015)
@@ -217,10 +245,14 @@ GEM
     minitest (5.11.3)
     multi_json (1.13.1)
     multipart-post (2.0.0)
+    nenv (0.3.0)
     netrc (0.11.0)
     nio4r (2.2.0)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
+    notiffany (0.1.1)
+      nenv (~> 0.1)
+      shellany (~> 0.0)
     orm_adapter (0.5.0)
     parallel (1.12.1)
     pg (1.0.0)
@@ -234,6 +266,8 @@ GEM
     public_suffix (3.0.2)
     puma (3.11.2)
     rack (2.0.4)
+    rack-contrib (2.0.1)
+      rack (~> 2.0)
     rack-test (0.8.2)
       rack (>= 1.0, < 3)
     rails (5.1.5)
@@ -283,6 +317,27 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    rspec (3.7.0)
+      rspec-core (~> 3.7.0)
+      rspec-expectations (~> 3.7.0)
+      rspec-mocks (~> 3.7.0)
+    rspec-core (3.7.1)
+      rspec-support (~> 3.7.0)
+    rspec-expectations (3.7.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.7.0)
+    rspec-mocks (3.7.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.7.0)
+    rspec-rails (3.7.2)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.7.0)
+      rspec-expectations (~> 3.7.0)
+      rspec-mocks (~> 3.7.0)
+      rspec-support (~> 3.7.0)
+    rspec-support (3.7.1)
     ruby_dep (1.5.0)
     rubyzip (1.2.1)
     sass (3.5.5)
@@ -310,6 +365,7 @@ GEM
       smtpapi (~> 0.1)
     sentry-raven (2.7.2)
       faraday (>= 0.7.6, < 1.0)
+    shellany (0.0.1)
     smtpapi (0.1.0)
     spring (2.0.2)
       activesupport (>= 4.2)
@@ -366,6 +422,7 @@ DEPENDENCIES
   ancestry
   annotate
   apartment
+  awesome_print
   better_errors
   binding_of_caller
   byebug
@@ -375,22 +432,28 @@ DEPENDENCIES
   chartkick
   cloudinary
   coffee-rails (~> 4.2)
+  database_cleaner
   devise!
   enumerize
+  factory_bot_rails
   figaro
   fog-aws
   goldiloader
   groupdate
+  guard
+  guard-rspec
   jbuilder (~> 2.5)
   letter_opener
   listen (>= 3.0.5, < 3.2)
   local-subdomain
+  meta_request
   mini_magick
   pg (>= 0.18, < 2.0)
   pry-rails
   puma (~> 3.7)
   rails (~> 5.1.5)
   rails_12factor
+  rspec-rails
   sass-rails (~> 5.0)
   selenium-webdriver
   sendgrid-actionmailer

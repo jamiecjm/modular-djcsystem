@@ -26,7 +26,7 @@ before_action only: :index do
 	params['per_page'] = '1'
 end
 
-index as: :barchart do
+index as: :barchart, download_links: false do
 	positions = Position.all.map {|p|
 		phash = {
 			v: p.title,

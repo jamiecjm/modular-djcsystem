@@ -25,9 +25,6 @@ Raven.context(function () {
       $(this).attr("data-label", data_label);
     });
 
-    if ($(".index_as_column_chart").length || $(".index_as_barchart").length){
-      $("#index_footer").hide();
-    }
   });
 
   $(window).resize(scale_chart);

@@ -141,7 +141,7 @@ class User < ApplicationRecord
 	end
 
 	def create_team
-		Team.create(user_id: id, parent_id: parent.current_team.id)
+		Team.create(user_id: id, parent_id: parent&.current_team&.id)
 	end
 
 	def lock_user

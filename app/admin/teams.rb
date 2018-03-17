@@ -123,7 +123,7 @@ index title: 'Sales Performance', default: true do
 	end
 end
 
-index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barchart' do
+index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barchart', download_links: false do
 	@sales = teams.per(teams.length * teams.total_pages).order('SUM(salevalues.nett_value) DESC').sum('salevalues.nett_value')
 	@sales = @sales.map { |k,v| [k[0],v]}
 	@sales = @sales.to_h.sort_by{|k, v| v}.reverse
@@ -131,7 +131,7 @@ index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barch
 	a id: 'download_link', download: "barchart-#{Date.current}"
 end
 
-index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_column_chart' do
+index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_column_chart', download_links: false do
 	@sales = teams.per(teams.length * teams.total_pages).group('teams.id').group_by_month('sales.date', format: "%B %Y").sum('salevalues.nett_value')
 	@sales.to_a.map do |k,v|
 		new_key = k[1]

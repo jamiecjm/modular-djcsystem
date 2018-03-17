@@ -17,6 +17,7 @@ permit_params :superteam_name, :email, :logo, :logo_cache, :remove_logo, :subdom
 menu parent: 'Settings', label: 'Company Profile', priority: 2
 
 config.filters = false
+config.current_filters = false
 
 before_action only: :index do
 	if params['q'].blank?
@@ -31,6 +32,12 @@ before_action only: :index do
 	end
 end
 
+before_action except: :index do
+	if params[:id].to_i != current_website.id
+		redirect_to root_path, alert: 'You are not authorized to perform this action.'
+	end
+end
+
 member_action :remove_logo do
 	resource.remove_logo!
 	respond_to do |format|
@@ -38,7 +45,7 @@ member_action :remove_logo do
 	end
 end
 
-index title: 'Company Profile', pagination_total: false do
+index title: 'Company Profile', pagination_total: false, download_links: false do
 	column 'Company Name', :superteam_name
 	column :email
 	column :logo do |w|
