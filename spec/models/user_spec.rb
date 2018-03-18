@@ -48,7 +48,7 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
 	context 'created' do
 		it 'is not valid without a name' do
-			# expect(FactoryBot.new(:user_without_name)).to be_invalid
+			expect(FactoryBot.build(:user_without_name)).to be_invalid
 		end
 
 		it 'automatically creates a team' do

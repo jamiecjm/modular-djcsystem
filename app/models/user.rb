@@ -88,11 +88,11 @@ class User < ApplicationRecord
   	validates :prefered_name, uniqueness: true
   	validates :prefered_name, presence: true
   	validates :email, presence: true
-  	validates :parent_id, presence: true, if: proc{ new_record? && !admin? }
+  	# validates :parent_id, presence: true, if: proc{ new_record? && !admin? }
   	validates :location, presence: true, unless: proc { admin? }
 
   	before_validation :titleize_name
-  	before_validation :downcase_email, if: {email}
+  	before_validation :downcase_email, unless: proc {email.nil?}
   	before_create :set_referrer_id
   	before_create :lock_user, unless: proc {admin?}
   	after_create :set_team
