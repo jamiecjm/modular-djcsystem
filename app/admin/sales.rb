@@ -59,9 +59,6 @@ before_action only: :index do
 	if params['q'].blank?
 		params['q'] = {}
 	end
-	if params['q']['upline_eq'].blank?
-		params['q']['upline_eq'] = "[#{current_user.id}]"
-	end
 	if params['scope'].nil? || params['scope'] == 'booked_done'
 		if params['q']['status_in'].blank?
 			params['q']['status_in'] = ["Booked","Done"]
@@ -134,7 +131,7 @@ index title: 'Team Sales', pagination_total: false do
 					[sv[x-1].other_user, "(#{sv[x-1].percentage}%)"]
 				else
 					if can? :read, sv[x-1].user
-						[(link_to sv[x-1].user.prefered_name, salevalues_path(q: {team_id_eq: sv[x-1].team.id, sale_id_eq: sale.id, 
+						[(link_to sv[x-1].user.prefered_name, salevalues_path(q: {team_user_id_eq: sv[x-1].user.id, sale_id_eq: sale.id, 
 							sale_date_gteq_datetime: sale.date, sale_date_lteq_datetime: sale.date}), target: '_blank'), "(#{sv[x-1].percentage}%)"]
 					else
 						[sv[x-1].user.prefered_name, "(#{sv[x-1].percentage}%)"]

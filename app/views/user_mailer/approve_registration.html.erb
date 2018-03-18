@@ -1,8 +1,8 @@
     The following member requested for a DJC Sales System - <%=@company_name%> account:<br><br>
     Full name: <%=@user.name%><br>
     Prefered name: <%=@user.prefered_name%><br>
-    Referral: <%=@user.parent.prefered_name if @user.parent != nil%><br>
-    user: <%=@user.user.prefered_name if @user.user != nil%><br>
+    Referrer: <%=@user.parent&.prefered_name%><br>
+    Upline: <%=@user.current_team.upline&.display_name%><br>
     Location: <%=@user.location%><br>
     Mobile number: <%=@user.phone_no%><br>
     Email: <%=@user.email%><br>

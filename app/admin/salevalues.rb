@@ -169,7 +169,7 @@ sidebar :summary, only: :index, priority: 0 do
 
 end
 
-filter :user, label: 'REN', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).pluck(:prefered_name, :id) }
+filter :user, label: 'REN', :collection => proc { User.approved.accessible_by(current_ability).order('users.prefered_name').pluck('users.prefered_name', :id) }
 filter :sale
 filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}

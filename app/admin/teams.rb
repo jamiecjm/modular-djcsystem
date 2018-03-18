@@ -69,9 +69,6 @@ before_action only: :index do
 	if params['q']['sales_status_in'].nil?
 		params['q']['sales_status_in'] = ["Booked","Done"]
 	end
-	if params['q']['upline_eq'].nil?
-		params['q']['upline_eq'] = "[#{current_user.id}]"
-	end
 	if !params['as'].nil? && params['as'] != 'table'
 		params['per_page'] = '1'
 		params['order'] = nil

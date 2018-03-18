@@ -43,7 +43,7 @@ class Team < ApplicationRecord
 			if t.ancestry.nil?
 				ancestry += "teams.ancestry LIKE '#{t.id}/%' OR teams.ancestry = '#{t.id}' OR teams.id = #{t.id}" 
 			else
-				combo = "#{team.ancestry}/#{team.id}"
+				combo = "#{t.ancestry}/#{t.id}"
 				ancestry += "teams.ancestry LIKE '#{combo}/%' OR teams.ancestry = '#{combo}' OR teams.id = #{t.id}" 
 			end		
 			if t != teams.last
@@ -69,7 +69,7 @@ class Team < ApplicationRecord
 	# 	where(id: team_id)
 	# }
 
-	after_create :create_team_position
+	# after_create :create_team_position
 	before_save :set_upline_id
 
 	def members

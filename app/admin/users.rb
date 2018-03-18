@@ -11,15 +11,6 @@ ActiveAdmin.register User do
     users.where(archived: true)
   end
 
-  before_action only: :index do
-    if params['q'].blank?
-      params['q'] = {}
-    end
-    if params['q']['upline_eq'].blank?
-      params['q']['upline_eq'] = "[#{current_user.id}]"
-    end
-  end
-
   batch_action :approve, confirm: "Are you sure?", if: proc {current_user.admin? && params['scope']=='pending'} do |ids, inputs|
       User.where(id: ids).update_all(locked_at: nil)
       UserMailer.notify(User.where(id: ids), current_website).deliver

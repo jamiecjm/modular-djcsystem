@@ -137,15 +137,17 @@ class User < ApplicationRecord
 	end
 
 	def set_team
-		Team.create(user_id: id, parent_id: parent&.current_team&.id, position_id: Position.default.id)
+		Team.create(user_id: id, parent_id: parent&.current_team&.id, position_id: Position.default.id, effective_date: Date.today)
 	end
 
 	def lock_user
-		self.locked_at = Time.now
+		self.locked_at = Time.now unless admin?
 	end
 
 	def set_referrer_id
-		self.referrer_id = ancestry&.split('/')&.last if ancestry_changed?
+		unless admin?
+			self.referrer_id = ancestry&.split('/')&.last if ancestry_changed?
+		end
 	end
 
 end
