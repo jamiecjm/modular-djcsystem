@@ -88,13 +88,13 @@ class User < ApplicationRecord
   	validates :prefered_name, uniqueness: true
   	validates :prefered_name, presence: true
   	validates :email, presence: true
-  	validates :parent_id, presence: true, unless: proc { is_root? || admin? }
+  	validates :parent_id, presence: true, if: proc{ new_record? && !admin? }
   	validates :location, presence: true, unless: proc { admin? }
 
   	before_validation :titleize_name
-  	before_validation :downcase_email
+  	before_validation :downcase_email, if: {email}
   	before_create :set_referrer_id
-  	before_create :lock_user
+  	before_create :lock_user, unless: proc {admin?}
   	after_create :set_team
 
 	def display_name
@@ -133,7 +133,7 @@ class User < ApplicationRecord
 	end
 
 	def downcase_email
-		self.email = email.downcase if email
+		self.email = email.downcase
 	end
 
 	def set_team
@@ -141,7 +141,7 @@ class User < ApplicationRecord
 	end
 
 	def lock_user
-		self.locked_at = Time.now unless admin?
+		self.locked_at = Time.now
 	end
 
 	def set_referrer_id
