@@ -1,0 +1,1 @@
+ActiveRecord::Base.connection.schema_search_path = 2

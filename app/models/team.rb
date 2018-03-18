@@ -6,7 +6,7 @@ class Team < ApplicationRecord
 	has_many :salevalues, -> {distinct}, through: :leader
 	has_many :sales, -> {distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
-	has_many :teams_positions
+	has_many :teams_positions, dependent: :destroy
 	has_many :positions, through: :teams_positions
 
 	has_ancestry orphan_strategy: :adopt

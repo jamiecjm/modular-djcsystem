@@ -88,8 +88,9 @@ class User < ApplicationRecord
 	end
 
 	def create_pseudo_team
-		pseudo_team ||= Team.new
-		pseudo_team.update(leader_id: id, parent_id: parent&.pseudo_team&.id)
+		team = pseudo_team
+		team ||= Team.new
+		team.update(leader_id: id, parent_id: parent&.pseudo_team&.id)
 	end
 
 	def lock_user
