@@ -43,13 +43,13 @@ class User < ApplicationRecord
   	validates :prefered_name, uniqueness: true
   	validates :prefered_name, presence: true
   	validates :email, presence: true
-  	validates :parent_id, presence: true, unless: proc { is_root? || admin? }
+  	validates :parent_id, presence: true, if: proc{ new_record? && !admin? }
   	validates :location, presence: true, unless: proc { admin? }
 
   	before_validation :titleize_name
-  	before_validation :downcase_email
-  	before_create :set_team
-  	before_create :lock_user
+  	before_validation :downcase_email, unless: proc {email.nil?}
+  	before_create :set_team, unless: proc {parent_id.nil?}
+  	before_create :lock_user, unless: proc {admin?}
   	after_create :create_pseudo_team
 
 	def display_name
@@ -80,11 +80,11 @@ class User < ApplicationRecord
 	end
 
 	def downcase_email
-		self.email = email.downcase if email
+		self.email = email.downcase
 	end
 
 	def set_team
-		self.team_id = parent.team_id
+		self.team_id = parent.team_id 
 	end
 
 	def create_pseudo_team
