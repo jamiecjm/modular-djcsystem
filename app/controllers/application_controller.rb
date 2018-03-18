@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
 
 	include LocalSubdomain
 
-	helper_method :current_website
+	helper_method :current_website, :find_website
 	before_action :set_raven_context, if: proc{ Rails.env.production? }
 	unless Rails.application.config.consider_all_requests_local
 		rescue_from ActionController::RoutingError, with: -> { redirect_to_root  }
@@ -21,11 +21,27 @@ class ApplicationController < ActionController::Base
 		redirect_to root_path, alert: 'You are not authorized to perform this action.'
 	end
 
+	def find_website
+		if ['djcsystem.com', 'lvh.me'].include?(request.domain)
+			if request.subdomain == 'www'
+		  		return 'public'
+			else
+			  	website = Website.find_by(subdomain: request.subdomain)
+			end
+		else
+			website = Website.find_by(external_host: request.host)
+		end
+	end
+
 	def current_website
 		if Rails.env.test?
 			Website.first
 		else
-			Website.find(Apartment::Tenant.current) 
+			begin
+		  		website = Website.find(Apartment::Tenant.current)
+		  	rescue
+		  		find_website
+		  	end
 		end
 	end
 

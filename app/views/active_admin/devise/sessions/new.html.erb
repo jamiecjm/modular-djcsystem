@@ -2,7 +2,7 @@
 <div id="login">
 
   <% scope = Devise::Mapping.find_scope!(resource_name) %>
-  <%if current_website.logo? %>
+  <%if current_website&.logo? %>
   <div class='login_logo_div' style="background-image: url(<%=current_website.logo.url%>)">
   </div>
   <%end%>

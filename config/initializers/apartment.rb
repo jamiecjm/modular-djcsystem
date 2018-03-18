@@ -90,15 +90,17 @@ end
 # Setup a custom Tenant switching middleware. The Proc should return the name of the Tenant that
 # you want to switch to.
 Rails.application.config.middleware.use Apartment::Elevators::Generic, lambda { |request|
-  website = Website.find_by(external_host: request.host)
-  if website.nil?
-    subdomain = request.host.split('.')[0]
+  domain = request.host.split('.')[1..-1].join('.')
+  subdomain = request.host.split('.')[0]
+  if ['djcsystem.com', 'lvh.me'].include?(domain)
     if subdomain == 'www'
       return 'public'
     else
       website = Website.find_by(subdomain: subdomain)
     end
-  end  
+  else
+    website = Website.find_by(external_host: request.host)
+  end
   return website.id
 }
 
