@@ -43,7 +43,7 @@ class User < ApplicationRecord
   	validates :prefered_name, uniqueness: true
   	validates :prefered_name, presence: true
   	validates :email, presence: true
-  	validates :parent_id, presence: true, if: proc{ new_record? && !admin? }
+  	# validates :parent_id, presence: true, if: proc{ new_record? && !admin? }
   	validates :location, presence: true, unless: proc { admin? }
 
   	before_validation :titleize_name
@@ -84,7 +84,7 @@ class User < ApplicationRecord
 	end
 
 	def set_team
-		self.team_id = parent.team_id 
+		self.team_id = parent&.team_id 
 	end
 
 	def create_pseudo_team
