@@ -10,3 +10,4 @@ begin
 rescue LoadError => err
   puts "no awesome_print :("
 end
+
