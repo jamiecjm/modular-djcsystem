@@ -264,7 +264,13 @@ form do |f|
 end
 
 filter :upline, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
-filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
+filter :year, as: :select, :collection => proc { 
+	start_year = Sale.order('date asc').first&.date&.year
+	start_year ||= Date.current.year
+	start_year -= 1
+	end_year = Date.current.year+1
+	(start_year..end_year).to_a.reverse 
+}
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}
 filter :date
 # filter :teams, as: :select, collection: proc { Team.where(overriding: true) }

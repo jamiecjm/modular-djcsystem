@@ -22,7 +22,7 @@
 class Team < ApplicationRecord
 
 	belongs_to :user, optional: true
-	has_many :salevalues
+	has_many :salevalues, dependent: :destroy
 	has_many :sales, -> {distinct}, through: :salevalues
 	has_many :projects, ->{distinct}, through: :sales
 	belongs_to :position

@@ -2,8 +2,8 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
-    Website.create!(subdomain: 'eliteone', superteam_name: 'Eliteone', logo: 'image/upload/v1520436779/wwkyta9njde1rjh0wpn7.png', external_host: 'www.eliteonegroup.com', email: 'website@email.com')
-
+    FactoryBot.create(:website)
+    FactoryBot.create(:default_position)
   end
 
   config.before(:each) do

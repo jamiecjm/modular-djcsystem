@@ -52,11 +52,11 @@ class User < ApplicationRecord
 
 	extend Enumerize
 
-	has_many :teams	
+	has_many :teams, dependent: :destroy
 	has_many :positions, through: :teams
 	has_one :current_team, ->{order('teams.effective_date DESC')}, class_name: 'Team'
 	has_one :current_position, through: :current_team, source: :position
-	has_many :salevalues, dependent: :destroy, through: :teams
+	has_many :salevalues, through: :teams
 	has_many :sales, through: :salevalues
 	belongs_to :referrer, class_name: 'User', optional: true
 	has_one :upline, through: :current_team
@@ -95,7 +95,7 @@ class User < ApplicationRecord
   	before_validation :downcase_email
   	before_create :set_referrer_id
   	before_create :lock_user
-  	after_create :create_team
+  	after_create :set_team
 
 	def display_name
 		prefered_name
@@ -137,11 +137,7 @@ class User < ApplicationRecord
 	end
 
 	def set_team
-		self.team_id = parent.team_id
-	end
-
-	def create_team
-		Team.create(user_id: id, parent_id: parent&.current_team&.id)
+		Team.create(user_id: id, parent_id: parent&.current_team&.id, position_id: Position.default.id)
 	end
 
 	def lock_user
