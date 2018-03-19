@@ -50,7 +50,7 @@ class User < ApplicationRecord
   	before_validation :downcase_email, unless: proc {email.nil?}
   	before_save :set_team, unless: proc {parent_id.nil?}
   	before_create :lock_user, unless: proc {admin?}
-  	before_save :create_pseudo_team
+  	after_save :create_pseudo_team
 
 	def display_name
 		prefered_name
@@ -89,8 +89,8 @@ class User < ApplicationRecord
 
 	def create_pseudo_team
 		team = pseudo_team
-		team ||= Team.new
-		team.update(leader_id: id, parent_id: parent&.pseudo_team&.id)
+		team ||= build_pseudo_team
+		team.update(parent_id: parent&.pseudo_team&.id)
 	end
 
 	def lock_user
