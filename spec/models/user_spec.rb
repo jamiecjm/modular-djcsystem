@@ -47,8 +47,26 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
 	context 'created' do
+
+		it 'is not valid without an email' do
+			expect(FactoryBot.build(:user_without_email)).to be_invalid
+		end
+
 		it 'is not valid without a name' do
 			expect(FactoryBot.build(:user_without_name)).to be_invalid
+		end
+
+		it 'is not valid without a prefered_name' do
+			expect(FactoryBot.build(:user_without_prefered_name)).to be_invalid
+		end
+
+		it 'must have unique prefered_name' do
+			FactoryBot.create(:root)
+			expect(FactoryBot.build(:root)).to be_invalid
+		end
+
+		it 'is not valid without a location' do
+			expect(FactoryBot.build(:user_without_location)).to be_invalid
 		end
 
 		it 'automatically creates a team' do

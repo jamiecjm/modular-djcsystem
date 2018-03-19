@@ -95,7 +95,7 @@ class User < ApplicationRecord
   	before_validation :downcase_email, unless: proc {email.nil?}
   	before_save :set_referrer_id
   	before_create :lock_user, unless: proc {admin?}
-  	before_create :set_team
+  	after_create :set_team
 
 	def display_name
 		prefered_name
