@@ -1,5 +1,6 @@
 ActiveAdmin.register User do
-  permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :admin
+  permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :admin,
+  teams_attributes: [:title, :user_id, :id, :position_id, :effective_date, :_destroy]
 
   menu parent: 'Teams', label: 'Members'
 
@@ -65,14 +66,20 @@ ActiveAdmin.register User do
         input :email
         input :phone_no
         input :birthday
-        if current_user.user?
+        if current_user.admin?
           # input :team, as: :select, collection: Team.where(overriding: true)
           input :parent_id, label: 'Referrer', as: :select, collection: User.approved.order(:prefered_name).map {|u| [u.prefered_name, u.id ]}
           input :location
-        end
-        if current_user.admin?
           input :admin
         end
+    end
+
+    inputs do
+      f.has_many :teams, scope: :visible, heading: 'Position', new_record: 'Add New Position', allow_destroy: true do |t|
+        t.input :position, label: 'Title'
+        t.input :upline
+        t.input :effective_date
+      end
     end
 
     actions
@@ -83,31 +90,27 @@ ActiveAdmin.register User do
       row :id
       row :name
       row :prefered_name
-      row :position do |u|
-        u.positions.last
-      end
+      row :current_position
       row :ic_no
       row :email
       row :phone_no
       row :birthday
-      # row :team
-      row 'Referrer' do
-        user.parent
-      end
+      row :upline
+      row :referrer
       row :location
       row :created_at
       row :updated_at
-      list_row 'Tree View' do
-        user.current_team.subtree.joins(:user).arrange_serializable(:order => 'users.prefered_name') do |parent, children|
-          tree_hash =
-          {
-             Name: parent.user.prefered_name,
-             Downline: children
-          }
-          tree_hash.slice!(:Name) if tree_hash[:Downline].blank?
-          tree_hash
-        end
-      end
+      # list_row 'Tree View' do
+      #   user.current_team.subtree.joins(:user).arrange_serializable(:order => 'users.prefered_name') do |parent, children|
+      #     tree_hash =
+      #     {
+      #        Name: parent.user.prefered_name,
+      #        Downline: children
+      #     }
+      #     tree_hash.slice!(:Name) if tree_hash[:Downline].blank?
+      #     tree_hash
+      #   end
+      # end
     end
 
     # panel 'Family Tree' do
@@ -128,12 +131,13 @@ ActiveAdmin.register User do
     column :id
     column :name
     column :prefered_name
+    column (:current_position) {|user| user.current_position&.title }
     column :ic_no
     column :email
     column :phone_no
     column :birthday
-    # column(:team) { |u| u.team.display_name}
-    column('Referrer') { |u| u.parent&.prefered_name}
+    column(:upline) {|user| user.upline&.user&.prefered_name}
+    column(:referrer) {|user| user.referrer&.prefered_name}
     column :location
     column :created_at
     column :updated_at

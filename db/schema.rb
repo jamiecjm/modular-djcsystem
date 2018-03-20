@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180318061908) do
+ActiveRecord::Schema.define(version: 20180320071057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(version: 20180318061908) do
     t.date "effective_date"
     t.integer "position_id"
     t.integer "upline_id"
+    t.boolean "hidden", default: false
     t.index ["ancestry"], name: "index_teams_on_ancestry"
     t.index ["upline_id"], name: "index_teams_on_upline_id"
     t.index ["user_id"], name: "index_teams_on_user_id"

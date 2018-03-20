@@ -52,7 +52,7 @@ class User < ApplicationRecord
 
 	extend Enumerize
 
-	has_many :teams, dependent: :destroy
+	has_many :teams, ->{order('teams.effective_date asc')}, dependent: :destroy
 	has_many :positions, through: :teams
 	has_one :current_team, ->{where('teams.effective_date <= ?', Date.today).order('teams.effective_date DESC')}, class_name: 'Team'
 	has_one :current_position, through: :current_team, source: :position
@@ -60,6 +60,8 @@ class User < ApplicationRecord
 	has_many :sales, through: :salevalues
 	belongs_to :referrer, class_name: 'User', optional: true
 	has_one :upline, through: :current_team
+
+	accepts_nested_attributes_for :teams
 
 	has_ancestry orphan_strategy: :adopt
 

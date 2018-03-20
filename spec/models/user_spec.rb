@@ -206,8 +206,7 @@ RSpec.describe User, type: :model do
 			grandchildren4 = FactoryBot.build(:grandchildren4)
 			grandchildren4.parent = children2
 			grandchildren4.save
-			root.current_team.children.each {|t| t.update(parent_id: nil)}
-			Team.create(user_id: root.id, position_id: Position.default.id, effective_date: Date.today)
+			Team.create(user_id: root.id, position_id: nil, effective_date: Date.today)
 		end
 
 		it 'has 1 current_team_members' do
@@ -217,6 +216,7 @@ RSpec.describe User, type: :model do
 
 		it 'has 8 all_team_subtree' do
 			root = User.find_by(name: 'Root')
+			byebug
 			expect(root.all_team_subtree.length).to eq(8)
 		end
 	end
