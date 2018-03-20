@@ -8,8 +8,8 @@
 #  ancestry       :string
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  position_id    :integer
 #  effective_date :date
+#  position_id    :integer
 #  upline_id      :integer
 #
 # Indexes

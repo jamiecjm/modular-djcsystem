@@ -50,7 +50,7 @@ FactoryBot.define do
     prefered_name 'admin'
     phone_no '123'
     ancestry nil
-    location 'KL'
+    admin true
     password 123456
   end
 

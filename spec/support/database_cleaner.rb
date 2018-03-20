@@ -2,12 +2,13 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
+    # Apartment::Tenant.drop('app') rescue nil
     FactoryBot.create(:website)
-    FactoryBot.create(:default_position)
   end
 
   config.before(:each) do
     DatabaseCleaner.strategy = :transaction
+    FactoryBot.create(:default_position)
   end
 
   config.before(:each, :js => true) do
@@ -19,6 +20,7 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
+    # Apartment::Tenant.reset
     DatabaseCleaner.clean
   end
 

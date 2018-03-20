@@ -54,7 +54,7 @@ class User < ApplicationRecord
 
 	has_many :teams, dependent: :destroy
 	has_many :positions, through: :teams
-	has_one :current_team, ->{order('teams.effective_date DESC')}, class_name: 'Team'
+	has_one :current_team, ->{where('teams.effective_date <= ?', Date.today).order('teams.effective_date DESC')}, class_name: 'Team'
 	has_one :current_position, through: :current_team, source: :position
 	has_many :salevalues, through: :teams
 	has_many :sales, through: :salevalues
@@ -145,9 +145,7 @@ class User < ApplicationRecord
 	end
 
 	def set_referrer_id
-		unless admin?
-			self.referrer_id = ancestry&.split('/')&.last if ancestry_changed?
-		end
+		self.referrer_id = ancestry&.split('/')&.last
 	end
 
 end
