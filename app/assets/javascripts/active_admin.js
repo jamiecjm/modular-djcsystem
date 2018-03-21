@@ -5,6 +5,7 @@
 //= require admin/header
 //= require admin/sidebar
 //= require admin/projects
+//= require admin/users
 
 $(window).on('load', function () {
   $('#active_admin_content').css('opacity', 1);

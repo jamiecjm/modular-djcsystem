@@ -52,7 +52,7 @@ RSpec.describe Team, type: :model do
 	end
 
 	context 'on destroy' do
-		it 'does not destroy record' do
+		it 'does not destroy the record' do
 			t = Team.last
 			t.destroy
 			expect(t.destroyed?).to be_falsy
@@ -72,6 +72,14 @@ RSpec.describe Team, type: :model do
 			t = Team.last
 			t.destroy
 			expect(t.hidden).to be_truthy
+		end
+	end
+
+	context 'on force destroy' do
+		it 'destroy the record' do
+			t = Team.last.dup
+			t.parent_id = nil
+			expect(t.save).to be_falsy
 		end
 	end
 
@@ -216,20 +224,20 @@ RSpec.describe Team, type: :model do
 		end
 	end
 
-	context 'after ancestry tree is built' do
-		it 'resets skip_build_root' do
-			t = Team.first.dup
-			t.effective_date = Date.current + 1.month
-			t.save
-			expect(t.skip_build_root).to eq(nil)
-		end
-		it 'resets skip_create_new_time point' do
-			t = Team.first.dup
-			t.effective_date = Date.current + 1.month
-			t.save
-			expect(t.skip_create_new_timepoint).to eq(nil)
-		end
-	end
+	# context 'after ancestry tree is built' do
+	# 	it 'resets skip_build_root' do
+	# 		t = Team.first.dup
+	# 		t.effective_date = Date.current + 1.month
+	# 		t.save
+	# 		expect(t.skip_build_root).to eq(nil)
+	# 	end
+	# 	it 'resets skip_create_new_time point' do
+	# 		t = Team.first.dup
+	# 		t.effective_date = Date.current + 1.month
+	# 		t.save
+	# 		expect(t.skip_create_new_timepoint).to eq(nil)
+	# 	end
+	# end
 
 	context 'ancestry changed' do
 		it 'does not create a new ancestry tree' do

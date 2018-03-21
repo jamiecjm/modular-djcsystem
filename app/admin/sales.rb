@@ -142,7 +142,7 @@ index title: 'Team Sales', pagination_total: false do
 			end
 		end
 	end
-	number_column :unit_size, as: :currency, seperator: ',', unit: ''
+	number_column :unit_size, as: :currency, seperator: ',', unit: '', precision: 0
 	number_column :spa_value, as: :currency, seperator: ',', unit: ''
 	number_column :nett_value, as: :currency, seperator: ',', unit: ''
 	# if current_user.admin?
@@ -205,7 +205,7 @@ show do
 				end
 			}
 		end
-		number_row :unit_size, as: :currency, seperator: ',', unit: ''
+		number_row :unit_size, as: :currency, seperator: ',', unit: '', precision: 0
 		number_row :spa_value, as: :currency, seperator: ',', unit: ''
 		number_row :nett_value, as: :currency, seperator: ',', unit: ''
 		# if current_user.admin?
@@ -260,7 +260,7 @@ form do |f|
 	actions
 end
 
-filter :upline, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
+filter :upline, as: :select, label: 'Upline', :collection => proc { User.accessible_by(current_ability).order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
 filter :year, as: :select, :collection => proc { 
 	start_year = Sale.order('date asc').first&.date&.year
 	start_year ||= Date.current.year

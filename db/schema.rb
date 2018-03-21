@@ -49,6 +49,17 @@ ActiveRecord::Schema.define(version: 20180320071057) do
     t.index ["team_id"], name: "index_overriding_commissions_on_team_id"
   end
 
+  create_table "position_commissions", force: :cascade do |t|
+    t.integer "position_id"
+    t.integer "commission_id"
+    t.float "percentage"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["commission_id"], name: "index_position_commissions_on_commission_id"
+    t.index ["position_id", "commission_id"], name: "index_position_commissions_on_position_id_and_commission_id", unique: true
+    t.index ["position_id"], name: "index_position_commissions_on_position_id"
+  end
+
   create_table "positions", force: :cascade do |t|
     t.string "title"
     t.boolean "overriding", default: false

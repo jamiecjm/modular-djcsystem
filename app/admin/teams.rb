@@ -145,7 +145,7 @@ index title: 'Monthly Sales Performance', as: :column_chart, class: 'index_as_co
 	a id: 'download_link', download: "column_chart-#{Date.current}"
 end
 
-filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.approved.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
+filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.accessible_by(current_ability).order(:prefered_name).map { |u| [u.prefered_name, "[#{u.id}]"] } }
 # filter :main_team, label: 'Team',as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:user).main + [current_user.team]).uniq }, input_html: {multiple: true}
 filter :year, as: :select, :collection => proc { 
 	start_year = Sale.order('date asc').first&.date&.year

@@ -7,11 +7,11 @@ class CreateOverridingCommissions < ActiveRecord::Migration[5.1]
 	    	t.float	:override
 	      t.timestamps
 	    end
-	end
+    end
 
     add_index :overriding_commissions, :team_id unless index_exists?(:overriding_commissions, :team_id)
     add_index :overriding_commissions, :salevalue_id unless index_exists?(:overriding_commissions, :salevalue_id)
-    add_index :overriding_commissions, [:team_id, :salevalue_id], unique: true
+    add_index :overriding_commissions, [:team_id, :salevalue_id], unique: true unless index_exists?(:overriding_commissions, [:team_id, :salevalue_id])
   end
 
   def down

@@ -16,7 +16,7 @@ menu label: 'Individual', parent: 'Sales'
 
 config.sort_order = 'sales.date_desc'
 
-actions :index, :create, :update
+# actions :index, :create, :update
 
 scope 'Booked/Done', default: true, show_count: false do |sv|
 	sv = sv.not_cancelled
@@ -119,7 +119,7 @@ index title: 'Individual Sales', pagination_total: false do |sv|
 	number_column 'REN SPA Value', :spa, as: :currency, seperator: ',', unit: ''
 	number_column 'REN Nett Value', :nett_value, as: :currency, seperator: ',', unit: ''
 	number_column 'REN Commission', :comm, as: :currency, seperator: ',', unit: ''
-	number_column :unit_size, sortable: 'sales.unit_size', as: :currency, seperator: ',', unit: '' do |sv|
+	number_column :unit_size, sortable: 'sales.unit_size', as: :currency, seperator: ',', unit: '', precision: 0 do |sv|
 		sv.sale.unit_size
 	end
 	number_column :unit_spa_value, sortable: 'sales.spa_price', as: :currency, seperator: ',', unit: '' do |sv|
@@ -169,7 +169,7 @@ sidebar :summary, only: :index, priority: 0 do
 
 end
 
-filter :user, label: 'REN', :collection => proc { User.approved.accessible_by(current_ability).order('users.prefered_name').pluck('users.prefered_name', :id) }
+filter :user, label: 'REN', :collection => proc { User.accessible_by(current_ability).order('users.prefered_name').pluck('users.prefered_name', :id) }
 filter :sale
 filter :year, as: :select, :collection => proc { ((Sale.order('date asc').first.date.year-1)..Date.current.year+1).to_a.reverse }
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}
