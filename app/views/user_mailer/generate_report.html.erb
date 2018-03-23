@@ -8,7 +8,7 @@ REN <%=index+1%>: <%=sv.other_user%> (<%=sv.percentage%>%)<br>
 <%end%>
 Project: <%=@sale.project.name%><br>
 Unit No: <%=@sale.unit_no%><br>
-Size: <%=number_with_delimiter(@sale.unit_size.round)%> sqft<br>
+Size: <%=number_with_delimiter(@sale.unit_size, precision: 0)%> sqft<br>
 Buyer: <%=@sale.buyer%><br>
 SPA Price: RM <%=number_with_delimiter('%.2f' % @sale.spa_value)%><br>
 Nett Price: RM <%=number_with_delimiter('%.2f' % @sale.nett_value)%><br>
