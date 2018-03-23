@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180312085319) do
+ActiveRecord::Schema.define(version: 20180323071433) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,28 @@ ActiveRecord::Schema.define(version: 20180312085319) do
     t.index ["id", "project_id"], name: "index_commissions_on_id_and_project_id"
   end
 
+  create_table "overriding_commissions", force: :cascade do |t|
+    t.integer "team_id"
+    t.integer "salevalue_id"
+    t.float "override"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["salevalue_id"], name: "index_overriding_commissions_on_salevalue_id"
+    t.index ["team_id", "salevalue_id"], name: "index_overriding_commissions_on_team_id_and_salevalue_id", unique: true
+    t.index ["team_id"], name: "index_overriding_commissions_on_team_id"
+  end
+
+  create_table "position_commissions", force: :cascade do |t|
+    t.integer "position_id"
+    t.integer "commission_id"
+    t.float "percentage"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["commission_id"], name: "index_position_commissions_on_commission_id"
+    t.index ["position_id", "commission_id"], name: "index_position_commissions_on_position_id_and_commission_id", unique: true
+    t.index ["position_id"], name: "index_position_commissions_on_position_id"
+  end
+
   create_table "positions", force: :cascade do |t|
     t.string "title"
     t.boolean "overriding", default: false
@@ -46,6 +68,17 @@ ActiveRecord::Schema.define(version: 20180312085319) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ancestry"], name: "index_positions_on_ancestry"
+  end
+
+  create_table "positions_commissions", force: :cascade do |t|
+    t.integer "position_id"
+    t.integer "commission_id"
+    t.float "percentage"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["commission_id"], name: "index_positions_commissions_on_commission_id"
+    t.index ["position_id", "commission_id"], name: "index_positions_commissions_on_position_id_and_commission_id", unique: true
+    t.index ["position_id"], name: "index_positions_commissions_on_position_id"
   end
 
   create_table "projects", id: :serial, force: :cascade do |t|
@@ -58,7 +91,6 @@ ActiveRecord::Schema.define(version: 20180312085319) do
     t.date "date"
     t.string "buyer"
     t.integer "project_id"
-    t.integer "unit_id"
     t.string "package"
     t.string "remark"
     t.date "spa_sign_date"
@@ -67,14 +99,13 @@ ActiveRecord::Schema.define(version: 20180312085319) do
     t.datetime "updated_at", null: false
     t.integer "commission_id"
     t.string "unit_no"
-    t.float "unit_size"
+    t.integer "unit_size"
     t.float "spa_value"
     t.float "nett_value"
     t.string "status", default: "Booked"
     t.index ["commission_id"], name: "index_sales_on_commission_id"
     t.index ["date"], name: "index_sales_on_date"
     t.index ["project_id"], name: "index_sales_on_project_id"
-    t.index ["unit_id"], name: "index_sales_on_unit_id"
   end
 
   create_table "salevalues", id: :serial, force: :cascade do |t|
@@ -88,20 +119,24 @@ ActiveRecord::Schema.define(version: 20180312085319) do
     t.datetime "updated_at", null: false
     t.integer "order"
     t.string "other_user"
+    t.integer "team_id"
     t.index ["sale_id"], name: "index_salevalues_on_sale_id"
     t.index ["user_id"], name: "index_salevalues_on_user_id"
   end
 
   create_table "teams", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.integer "leader_id"
+    t.integer "user_id"
     t.string "ancestry"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "overriding"
-    t.float "overriding_percentage"
+    t.date "effective_date"
+    t.integer "position_id"
+    t.integer "upline_id"
+    t.boolean "hidden", default: true
     t.index ["ancestry"], name: "index_teams_on_ancestry"
-    t.index ["leader_id"], name: "index_teams_on_leader_id"
+    t.index ["upline_id"], name: "index_teams_on_upline_id"
+    t.index ["user_id"], name: "index_teams_on_user_id"
   end
 
   create_table "teams_positions", force: :cascade do |t|
@@ -113,21 +148,6 @@ ActiveRecord::Schema.define(version: 20180312085319) do
     t.index ["position_id"], name: "index_teams_positions_on_position_id"
     t.index ["team_id", "position_id"], name: "index_teams_positions_on_team_id_and_position_id", unique: true
     t.index ["team_id"], name: "index_teams_positions_on_team_id"
-  end
-
-  create_table "units", id: :serial, force: :cascade do |t|
-    t.string "unit_no"
-    t.integer "size"
-    t.float "nett_price"
-    t.float "spa_price"
-    t.float "comm"
-    t.float "comm_percentage"
-    t.integer "project_id"
-    t.integer "sale_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["id", "project_id"], name: "index_units_on_id_and_project_id"
-    t.index ["id", "sale_id"], name: "index_units_on_id_and_sale_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
@@ -158,10 +178,12 @@ ActiveRecord::Schema.define(version: 20180312085319) do
     t.datetime "locked_at"
     t.string "ic_no"
     t.string "location"
+    t.integer "referrer_id"
     t.index ["ancestry"], name: "index_users_on_ancestry"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["prefered_name"], name: "index_users_on_prefered_name"
+    t.index ["referrer_id"], name: "index_users_on_referrer_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["team_id"], name: "index_users_on_team_id"
   end
