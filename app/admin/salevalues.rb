@@ -121,7 +121,7 @@ index title: 'Individual Sales', pagination_total: false do |sv|
 	number_column 'REN SPA Value', :spa, as: :currency, seperator: ',', unit: ''
 	number_column 'REN Nett Value', :nett_value, as: :currency, seperator: ',', unit: ''
 	number_column 'REN Commission', :comm, as: :currency, seperator: ',', unit: ''
-	number_column :unit_size, sortable: 'sales.unit_size', as: :currency, seperator: ',', unit: '' do |sv|
+	number_column :unit_size, sortable: 'sales.unit_size', as: :currency, seperator: ',', unit: '', precision: 0 do |sv|
 		sv.sale.unit_size
 	end
 	number_column :unit_spa_value, sortable: 'sales.spa_price', as: :currency, seperator: ',', unit: '' do |sv|
