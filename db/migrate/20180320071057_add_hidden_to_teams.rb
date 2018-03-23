@@ -1,6 +1,6 @@
 class AddHiddenToTeams < ActiveRecord::Migration[5.1]
   def up
-  	add_column :teams, :hidden, :boolean, default: false unless column_exists?(:teams, :hidden)
+  	add_column :teams, :hidden, :boolean, default: true unless column_exists?(:teams, :hidden)
   end
 
   def down

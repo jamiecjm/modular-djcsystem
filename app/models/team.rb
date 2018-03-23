@@ -11,7 +11,7 @@
 #  effective_date :date
 #  position_id    :integer
 #  upline_id      :integer
-#  hidden         :boolean          default(FALSE)
+#  hidden         :boolean          default(TRUE)
 #
 # Indexes
 #
@@ -34,6 +34,7 @@ class Team < ApplicationRecord
 
 	# validates :parent_id, presence: true, unless: proc { user.admin? }
 	validates :user_id, presence: true
+	validate :must_be_less_than_first_sale_date
 	# validates_uniqueness_of :user_id, :scope => [:effective_date]
 
 	scope :visible, ->{where(hidden: false)}
@@ -68,6 +69,14 @@ class Team < ApplicationRecord
 		joins(:sales).where('extract(month from sales.date) = ?', month.to_date.month)
 	}
 
+	scope :at_timepoint, ->(date){
+		where(effective_date: date)
+	}
+
+	scope :lteq_timepoint, ->(date){
+		reorder('effective_date DESC').where('effective_date <= ?', date)
+	}
+
 	# scope :main, -> {
 	# 	team_id = User.pluck(:team_id).uniq.compact
 	# 	where(id: team_id)
@@ -75,14 +84,14 @@ class Team < ApplicationRecord
 
 	# after_create :create_team_position
 	
-	before_save :check_effective_date, unless: proc { skip_callbacks }
-	after_rollback :update_existing_team
-	before_save :create_new_timepoint, unless: proc { skip_callbacks }
+	before_save :change_parent_id
+	before_save :check_for_existing_record, unless: proc { skip_callbacks }
+	after_rollback :update_existing_record
+	after_create :build_ancestry, unless: proc { skip_callbacks || previous_team.nil? }
+	before_save :update_children_date, unless: proc {new_record? || !effective_date_changed?}
 	before_save :set_upline_id
-	after_create :build_root, unless: proc { skip_callbacks || previous_team.nil? }
-	# after_save :reset_attr_accessor
-	after_save :reset_sv_team_id
 	before_destroy :prevent_destroy
+	after_save :reset_sv_team_id
 
 
 	attr_accessor :skip_callbacks, :call_after_rollback
@@ -103,8 +112,12 @@ class Team < ApplicationRecord
 	  [:upline_eq, :year, :month]
 	end
 
-	def other_teams
-		Team.where(user_id: user_id)
+	def other_teams(include_self=true)
+		if include_self
+			Team.where(user_id: user_id)
+		else
+			Team.where(user_id: user_id).where.not(id: id)
+		end
 	end
 
 	def team_at_timepoint(date, include_self=true)
@@ -115,102 +128,110 @@ class Team < ApplicationRecord
 		end
 	end
 
+	def parent_lteq_timepoint(effective_date)
+		Team.where(user_id: parent&.user_id)&.lteq_timepoint(effective_date)&.first
+	end
+
+	def other_teams_lteq_timepoint(effective_date, include_self=true)
+		other_teams(include_self)&.lteq_timepoint(effective_date)&.first
+	end
+
 	protected
 
-	def check_effective_date
+	def must_be_less_than_first_sale_date
+		first_sale_date = user.sales&.order(:date)&.first&.date
+		unless first_sale_date.present? && effective_date > first_sale_date
+			errors.add(:effective_date, "must be earlier than first sale date (#{first_sale_date})")
+		end
+	end
+
+	def change_parent_id
+		self.parent_id = upline_id if upline_id_changed?
+		self.parent_id = self.parent_lteq_timepoint(effective_date)&.id
+	end
+
+	def check_for_existing_record
 		team = team_at_timepoint(effective_date, false)
+		# if present -> update_existing_team
+		# if not present -> build_ancestry (new record)
 		if team.present?
 			if new_record?
 				throw :abort
 			else
-				update_existing_team
-				attributes = Team.attribute_names.map {|attr| [attr, send(:"#{attr}_was")]} 
-				self.skip_callbacks = true
-				self.attributes = attributes.to_h
+				update_existing_record
+				previous = other_teams_lteq_timepoint(effective_date_was, false)
+				if previous
+					# adapt previous time point settings unless previous time point is the new team
+					unless effective_date < effective_date_was && previous == team
+						self.parent_id = previous.parent_lteq_timepoint(effective_date)&.id
+						self.attributes = previous.attributes.except('id', 'effective_date', 'ancestry', 'hidden', 'created_at', 'updated_at')
+					end
+				end
+				self.hidden = true
+				self.effective_date = effective_date_was
 			end
 		end
 	end
 
-	def update_existing_team
+	def update_existing_record
 		team = team_at_timepoint(effective_date, false)
 		if team.present?
-			parent = self.parent&.team_at_timepoint(self.effective_date)
+			team.parent_id = parent_id if parent&.other_teams&.include?(team.parent)
+			team.upline_id = team.parent_id
 			team.hidden = false
-			team.parent_id = parent&.id
 			team.attributes = self.attributes.except('id', 'effective_date', 'ancestry', 'hidden', 'created_at', 'updated_at')
 			team.skip_callbacks = true
 			team.save
 		end
 	end
 
-	def set_upline_id
-		self.upline_id = ancestry&.split('/')&.last
-	end
-
-	def build_root
-		# assume ancestry is not nil
-		if previous_team.root?
-			build_ancestry
-		else
-			team = previous_team.root.dup
-			team.effective_date = effective_date
-			team.skip_callbacks = true
-			team.save
-			team.build_ancestry			
-		end
-	end
-
 	def build_ancestry
 		previous_team&.children&.each do |t|
-			team = t.team_at_timepoint(effective_date, false)
-			if team.nil?
-				if t.effective_date != effective_date
-					team = t.dup
-					team.effective_date = effective_date
-				else
-					team = t
-				end
-				if team.parent_id
-					team.parent_id = id
-				end
-				team.skip_callbacks = true
-				team.save
-			end
-			team.build_ancestry
+			team = t.dup
+			team.effective_date = effective_date
+			team.upline_id = id
+			team.parent_id = id
+			team.save
 		end
 	end
 
-	def create_new_timepoint
-		unless new_record?
-			previous = other_teams.where('teams.effective_date < ?', effective_date_was).reorder('teams.effective_date DESC').first
-			if effective_date_changed? && previous.present?
-				new_team = self.dup
-				self.effective_date = effective_date_was
-				self.hidden = true
-				# adapt previous time point settings unless previous time point is the new team
-				unless new_team.effective_date < effective_date_was && previous.effective_date < new_team.effective_date
-					self.parent_id = previous.parent&.team_at_timepoint(effective_date_was)&.id
-					self.attributes = previous.attributes.except('id', 'effective_date', 'ancestry', 'hidden', 'created_at', 'updated_at')
-				end
-				self.save
-				new_team.save
-			end
+	def update_children_date
+		self.children.find_each do |t|
+			t.skip_callbacks = true
+			t.effective_date = effective_date unless t.hidden
 		end
 	end
+
+	# def create_new_timepoint
+	# 	unless new_record?
+	# 		previous = other_teams.where('teams.effective_date < ?', effective_date_was).reorder('teams.effective_date DESC').first
+	# 		if effective_date_changed? && previous.present?
+	# 			new_team = self.dup
+	# 			self.effective_date = effective_date_was
+	# 			self.hidden = true
+	# 			# adapt previous time point settings unless previous time point is the new team
+	# 			unless new_team.effective_date < effective_date_was && previous.effective_date < new_team.effective_date
+	# 				self.parent_id = previous.parent&.team_at_timepoint(effective_date_was)&.id
+	# 				self.attributes = previous.attributes.except('id', 'effective_date', 'ancestry', 'hidden', 'created_at', 'updated_at')
+	# 			end
+	# 			self.save
+	# 			new_team.save
+	# 		end
+	# 	end
+	# end
 
 	def prevent_destroy
-		self.hidden = true
 		if previous_team
-			self.parent_id = previous_team.parent&.team_at_timepoint(effective_date_was)&.id
-			self.attributes = previous_team.attributes.except('id', 'effective_date', 'ancestry', 'created_at', 'updated_at')
-			save
+			self.parent_id = previous_team.parent_lteq_timepoint(effective_date)&.id
+			self.attributes = previous_team.attributes.except('id', 'effective_date', 'ancestry', 'hidden', 'created_at', 'updated_at')
 		end
+		self.hidden = true
+		save
 		throw :abort
 	end
 
-	def reset_attr_accessor
-		skip_build_root = nil
-		skip_create_new_timepoint = nil
+	def set_upline_id
+		self.upline_id = parent_id
 	end
 
 	def reset_sv_team_id

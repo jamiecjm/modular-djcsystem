@@ -32,6 +32,12 @@
 	}
 }
 
+#header ul.tabs > li.current > a{
+	@include mobile-only{
+		background-color: #6F757A !important;
+	}
+}
+
 #header{
 	position: fixed;
     top: 0;

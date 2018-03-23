@@ -1,6 +1,6 @@
 ActiveAdmin.register User do
   permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :admin,
-  teams_attributes: [:title, :user_id, :id, :position_id, :effective_date, :_destroy]
+  teams_attributes: [:id, :title, :user_id, :position_id, :parent_id, :effective_date, :locked, :_destroy, :upline_id]
 
   menu parent: 'Teams', label: 'Members'
 
@@ -41,7 +41,7 @@ ActiveAdmin.register User do
         upline = User.find(inputs[:upline]).current_team
         User.where(id: ids).find_each do |u|
           new_team = u.current_team.dup
-          new_team.attributes = {parent_id: upline.id, effective_date: inputs[:effective_date]}
+          new_team.attributes = {parent_id: upline.id, upline_id: upline.id, effective_date: inputs[:effective_date], hidden: false}
           new_team.save
         end
         redirect_to collection_path
@@ -94,10 +94,14 @@ ActiveAdmin.register User do
     end
 
     inputs do
-      f.has_many :teams, scope: :visible, heading: 'Position', new_record: 'Add New Position', allow_destroy: true do |t|
+      f.has_many :teams, scope: :visible, heading: 'Position', new_record: 'Add New Position' do |t|
         t.input :position, label: 'Title'
         t.input :upline
         t.input :effective_date
+        unless t.object.new_record? || t.object == f.object.teams.first
+          t.input :_destroy, label: 'Delete', as: :boolean
+        end
+        t.input :hidden, as: :hidden, value: false
       end
     end
 
@@ -138,7 +142,7 @@ ActiveAdmin.register User do
 
   filter :upline_eq, as: :select, label: 'Upline', :collection => proc { User.accessible_by(current_ability).map { |u| [u.prefered_name, "[#{u.id}]"] } }
   # filter :team,as: :select, collection: proc { (Team.accessible_by(current_ability).includes(:user).main + [current_user.team]).uniq }, input_html: {multiple: true}
-  filter :referrer
+  filter :upline
   filter :location, as: :select, collection: User.location.options, input_html: {multiple: true}
   filter :name
   filter :prefered_name

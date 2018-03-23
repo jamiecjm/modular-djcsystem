@@ -11,7 +11,7 @@
 #  effective_date :date
 #  position_id    :integer
 #  upline_id      :integer
-#  hidden         :boolean          default(FALSE)
+#  hidden         :boolean          default(TRUE)
 #
 # Indexes
 #
@@ -43,6 +43,10 @@ RSpec.describe Team, type: :model do
 		grandchildren4 = FactoryBot.build(:grandchildren4)
 		grandchildren4.parent = children2
 		grandchildren4.save
+		t = Team.third.dup
+		t.effective_date = Date.current + 1.month
+		t.hidden = false
+		t.save
 	end
 
 	context 'on create' do
@@ -59,13 +63,11 @@ RSpec.describe Team, type: :model do
 		end
 
 		it 'adapt previous time point settings' do
-			t = Team.third.dup
-			t.parent_id = nil
-			t.effective_date = Date.current + 1.month
-			t.save
 			team = User.third.teams.last
 			team.destroy
-			expect(team.parent_id).to eq(User.first.teams.second.id)
+			last_attributes = team.attributes.except('id', 'effective_date', 'hidden', 'created_at', 'updated_at')
+			previous_attributes = User.third.teams.first.attributes.except('id', 'effective_date', 'hidden', 'created_at', 'updated_at')
+			expect(last_attributes).to eq(previous_attributes)
 		end
 
 		it 'hides the record' do
@@ -75,169 +77,100 @@ RSpec.describe Team, type: :model do
 		end
 	end
 
-	context 'on force destroy' do
-		it 'destroy the record' do
-			t = Team.last.dup
-			t.parent_id = nil
-			expect(t.save).to be_falsy
-		end
-	end
+	# context 'on force destroy' do
+	# 	it 'destroy the record' do
+	# 		t = Team.last.dup
+	# 		t.parent_id = nil
+	# 		expect(t.save).to be_falsy
+	# 	end
+	# end
 
 	context 'user creates another team' do
+
+		it 'connects to the original ancestry tree' do
+			expect(User.third.teams.last.parent_id).to eq(Team.first.id)
+		end
 		it 'creates a new ancestry tree' do
-			total_team = Team.count
-			t = Team.first.dup
-			t.effective_date = Date.current + 1.month
-			t.save
-			expect(Team.count).to eq(total_team*2)
+			expect(Team.count).to eq(10)
 		end
 	end
 
-	context 'effective_date changed to future' do
-		it 'hides the record' do
-			total_team = Team.count
-			t = Team.third.dup
-			t.parent_id = nil
-			t.effective_date = Date.current + 1.month
-			t.save
-			t.update(effective_date: Date.current + 2.month)
-			team = User.third.teams.second
-			expect(team.hidden).to be_truthy
-		end
 
-		it 'does not create a new ancestry tree if there is no previous_team' do
-			total_team = Team.count
-			Team.first.update(effective_date: 1.month.ago)
-			expect(Team.count).to eq(total_team)
-		end
+	context 'effective_date changed' do
 
-		it 'creates a new ancestry tree if there is a previous_team' do
-			total_team = Team.count
-			t = Team.third.dup
-			t.parent_id = nil
-			t.effective_date = Date.current + 1.month
-			t.save
-			t.update(effective_date: Date.current + 2.month)
-			expect(Team.count).to eq(total_team*3)
-		end
+		it 'updates all hidden subtree effective_date' do
+			team = User.third.teams.last
+			expect(team.subtree.pluck(:effective_date).uniq.first).to eq(team.effective_date)
+		end	
 
-		it 'revert current team changes if there is a previous_team' do
-			total_team = Team.count
-			t = Team.third.dup
-			t.parent_id = nil
-			t.effective_date = Date.current + 1.month
-			t.save
-			id1 = t.id
-			t.update(effective_date: Date.current + 2.month)
-			expect(Team.find(id1).root?).to be_falsy
-		end
-
-		it 'remain other team changes if there is a previous_team' do
-			total_team = Team.count
-			t = Team.third.dup
-			t.parent_id = nil
-			t.effective_date = Date.current + 1.month
-			t.save
-			id2 = Team.last.id
-			Team.last.update(parent_id: nil)
-			t.update(effective_date: Date.current + 2.month)
-			expect(Team.find(id2).parent_id).to eq(nil)
+		it 'does not update visible subtree' do
+			team = User.third.teams.last
+			children = team.children.first
+			children.update(hidden: false)
+			team.update(effective_date: Date.current + 5.days)
+			expect(children.effective_date).not_to eq(Date.current + 5.days)
 		end
 	end
 
-	context 'effective_date changed to the past with another time point in between' do
+	context 'effective_date changed to an existed time point in the past' do
 		before do
 			t = Team.third.dup
-			t.parent_id = nil
-			t.effective_date = Date.current + 1.month
-			t.save
-			Team.last.update(parent_id: nil, effective_date: Date.current + 2.month)
-			User.last.teams.last.update(effective_date: Date.current + 5.days)
-		end
-
-		it 'revert other team changes if there is a previous_team' do
-			team = User.third.teams.find_by(effective_date:  Date.current + 5.days)
-			parent = User.first.teams.find_by(effective_date:  Date.current + 5.days)
-			expect(team.parent_id).to eq(parent.id)
-		end
-
-		it 'remain current team changes if there is a previous_team' do
-			team = User.last.teams.find_by(effective_date:  Date.current + 5.days)
-			expect(team.parent_id).to eq(nil)
-		end
-
-		it 'revert original time point to be inline with previous time point changes' do
-			team = User.last.teams.find_by(effective_date: Date.current + 2.month)
-			parent = User.third.teams.find_by(effective_date:  Date.current + 2.month)
-			expect(team.parent_id).to eq(parent.id)
-		end
-	end
-
-	context 'effective_date changed to the past without changes in between' do
-		before do
-			t = Team.third.dup
-			t.parent_id = nil
-			t.effective_date = Date.current + 1.month
-			t.save
-			Team.last.update(parent_id: nil, effective_date: Date.current + 2.month)
-			User.last.teams.last.update(effective_date: Date.current + 1.month + 5.days)
-		end
-
-		it 'remain all original changes' do
-			team = User.last.teams.find_by(effective_date: Date.current + 1.month + 5.days)
-			expect(team.parent_id).to eq(nil)
-		end
-
-		it 'original time point has current changes' do
-			team = User.last.teams.find_by(effective_date: Date.current + 2.month)
-			expect(team.parent_id).to eq(nil)
-		end
-	end
-
-	context 'effective_date changed to first time point' do
-		it 'does not create ancestry tree' do
-			t = Team.third.dup
-			t.parent_id = nil
-			t.effective_date = Date.current + 1.month
-			t.save
-			User.third.teams.second.update(effective_date: Date.current - 1.month)
-			expect(Team.where(effective_date: Date.current - 1.month).length).to eq(1)
-		end
-	end
-
-	context 'effective_date changed to an existed time point' do
-		before do
-			t = Team.third.dup
-			t.parent_id = nil
-			t.effective_date = Date.current + 1.month
+			t.effective_date = Date.current + 2.months
+			t.hidden = false
 			t.save
 			@total_team = Team.count
-			t.update(effective_date: Date.current, parent_id: nil)
+			
 		end
 
 		it 'update the existed time point' do
+			User.third.teams.last.update(effective_date: Date.current, upline_id: nil)
 			expect(Team.third.parent_id).to eq(nil)
+		end
+
+		it 'does not create new ancestry tree' do
+			User.third.teams.last.update(effective_date: Date.current, upline_id: nil)
+			expect(Team.count).to eq(@total_team)
+		end
+
+		it 'original timepoint adapt previous timepoint settings (1 timepoint in between)' do
+			User.third.teams.last.update(effective_date: Date.current, upline_id: nil)
+			last_attributes = User.third.teams.last.attributes.except('id', 'effective_date', 'hidden', 'created_at', 'updated_at')
+			previous_attributes = User.third.teams.second.attributes.except('id', 'effective_date', 'hidden', 'created_at', 'updated_at')
+			expect(last_attributes).to eq(previous_attributes)
+		end
+
+		it 'original timepoint adapt previous timepoint settings (no timepoint in between)' do
+			User.third.teams.last.update(effective_date: Date.current+1.month, upline_id: nil)
+			last_attributes = User.third.teams.last.attributes.except('id', 'effective_date', 'hidden', 'created_at', 'updated_at')
+			previous_attributes = User.third.teams.second.attributes.except('id', 'effective_date', 'hidden', 'created_at', 'updated_at')
+			expect(last_attributes).to eq(previous_attributes)
+		end
+	end
+
+	context 'effective_date changed to an existed time point in the future' do
+		before do
+			t = Team.third.dup
+			t.effective_date = Date.current + 2.months
+			t.hidden = false
+			t.save
+			@total_team = Team.count
+			User.third.teams.second.update(effective_date: Date.current + 2.months, upline_id: nil)
+		end
+
+		it 'update the existed time point' do
+			expect(User.third.teams.last.parent_id).to eq(nil)
 		end
 
 		it 'does not create new ancestry tree' do
 			expect(Team.count).to eq(@total_team)
 		end
-	end
 
-	# context 'after ancestry tree is built' do
-	# 	it 'resets skip_build_root' do
-	# 		t = Team.first.dup
-	# 		t.effective_date = Date.current + 1.month
-	# 		t.save
-	# 		expect(t.skip_build_root).to eq(nil)
-	# 	end
-	# 	it 'resets skip_create_new_time point' do
-	# 		t = Team.first.dup
-	# 		t.effective_date = Date.current + 1.month
-	# 		t.save
-	# 		expect(t.skip_create_new_timepoint).to eq(nil)
-	# 	end
-	# end
+		it 'original timepoint adapt previous timepoint settings (1 timepoint in between)' do
+			last_attributes = User.third.teams.second.attributes.except('id', 'effective_date', 'hidden', 'created_at', 'updated_at')
+			previous_attributes = User.third.teams.first.attributes.except('id', 'effective_date', 'hidden', 'created_at', 'updated_at')
+			expect(last_attributes).to eq(previous_attributes)
+		end
+	end
 
 	context 'ancestry changed' do
 		it 'does not create a new ancestry tree' do

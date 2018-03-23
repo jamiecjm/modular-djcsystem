@@ -54,7 +54,7 @@ class User < ApplicationRecord
 
 	has_many :teams, ->{order('teams.effective_date asc')}, dependent: :destroy
 	has_many :positions, through: :teams
-	has_one :current_team, ->{where('teams.effective_date <= ?', Date.today).order('teams.effective_date DESC')}, class_name: 'Team'
+	has_one :current_team, ->{where('teams.effective_date <= ?', Date.today).reorder('teams.effective_date DESC')}, class_name: 'Team'
 	has_one :current_position, through: :current_team, source: :position
 	has_many :salevalues, through: :teams
 	has_many :sales, through: :salevalues

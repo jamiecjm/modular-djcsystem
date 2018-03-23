@@ -133,7 +133,7 @@ ActiveRecord::Schema.define(version: 20180320071057) do
     t.date "effective_date"
     t.integer "position_id"
     t.integer "upline_id"
-    t.boolean "hidden", default: false
+    t.boolean "hidden", default: true
     t.index ["ancestry"], name: "index_teams_on_ancestry"
     t.index ["upline_id"], name: "index_teams_on_upline_id"
     t.index ["user_id"], name: "index_teams_on_user_id"
