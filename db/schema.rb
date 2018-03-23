@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180320071057) do
+ActiveRecord::Schema.define(version: 20180323071433) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -99,7 +99,7 @@ ActiveRecord::Schema.define(version: 20180320071057) do
     t.datetime "updated_at", null: false
     t.integer "commission_id"
     t.string "unit_no"
-    t.float "unit_size"
+    t.integer "unit_size"
     t.float "spa_value"
     t.float "nett_value"
     t.string "status", default: "Booked"

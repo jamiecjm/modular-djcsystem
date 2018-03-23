@@ -14,7 +14,7 @@
 #  updated_at    :datetime         not null
 #  commission_id :integer
 #  unit_no       :string
-#  unit_size     :float
+#  unit_size     :integer
 #  spa_value     :float
 #  nett_value    :float
 #  status        :string           default("Booked")
