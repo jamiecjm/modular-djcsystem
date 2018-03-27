@@ -93,15 +93,17 @@ ActiveAdmin.register User do
         end
     end
 
-    inputs do
-      f.has_many :teams, scope: :visible, heading: 'Position', new_record: 'Add New Position' do |t|
-        t.input :position, label: 'Title'
-        t.input :upline
-        t.input :effective_date
-        unless t.object.new_record? || t.object == f.object.teams.first
-          t.input :_destroy, label: 'Delete', as: :boolean
+    if current_user.admin?
+      inputs do
+        f.has_many :teams, scope: :visible, heading: 'Position', new_record: 'Add New Position' do |t|
+          t.input :position, label: 'Title'
+          t.input :upline
+          t.input :effective_date
+          unless t.object.new_record? || t.object == f.object.teams.first
+            t.input :_destroy, label: 'Delete', as: :boolean
+          end
+          t.input :hidden, as: :hidden, value: false
         end
-        t.input :hidden, as: :hidden, value: false
       end
     end
 
@@ -123,17 +125,17 @@ ActiveAdmin.register User do
       row :location
       row :created_at
       row :updated_at
-      list_row 'Tree View' do
-        user.current_team.subtree.joins(:user).arrange_serializable(:order => 'users.prefered_name') do |parent, children|
-          tree_hash =
-          {
-             Name: parent.user.prefered_name,
-             Downline: children
-          }
-          tree_hash.slice!(:Name) if tree_hash[:Downline].blank?
-          tree_hash
-        end
-      end
+      # list_row 'Tree View' do
+      #   user.current_team.subtree.joins(:user).arrange_serializable(:order => 'users.prefered_name') do |parent, children|
+      #     tree_hash =
+      #     {
+      #        Name: parent.user.prefered_name,
+      #        Downline: children
+      #     }
+      #     tree_hash.slice!(:Name) if tree_hash[:Downline].blank?
+      #     tree_hash
+      #   end
+      # end
     end
 
     # panel 'Family Tree' do

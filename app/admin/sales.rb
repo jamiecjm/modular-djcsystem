@@ -145,12 +145,12 @@ index title: 'Team Sales', pagination_total: false do
 	number_column :unit_size, as: :currency, seperator: ',', unit: '', precision: 0
 	number_column :spa_value, as: :currency, seperator: ',', unit: ''
 	number_column :nett_value, as: :currency, seperator: ',', unit: ''
-	# if current_user.admin?
-	# 	column 'Commission Percentage (%)', :commission
-	# end
-	# number_column :commission, as: :currency, seperator: ',', unit: '' do |sale|
-	# 	sale.nett_value * sale.commission.percentage/100
-	# end
+	if current_user.admin?
+		column 'Commission Percentage (%)', :default_positions_commission
+	end
+	number_column :commission, as: :currency, seperator: ',', unit: '' do |sale|
+		sale.nett_value * sale.default_positions_commission.percentage/100
+	end
 	actions
 end
 
@@ -208,13 +208,13 @@ show do
 		number_row :unit_size, as: :currency, seperator: ',', unit: '', precision: 0
 		number_row :spa_value, as: :currency, seperator: ',', unit: ''
 		number_row :nett_value, as: :currency, seperator: ',', unit: ''
-		# if current_user.admin?
-		# 	row 'Commission Percentage (%)' do |sale|
-		# 		sale.commission
-		# 	end
-		# end
+		if current_user.admin?
+			row 'Commission Percentage (%)' do |sale|
+				sale.default_positions_commission
+			end
+		end
 		number_row :commission, as: :currency, seperator: ',', unit: '' do |sale|
-			sale.nett_value * sale.commission.percentage/100
+			sale.nett_value * sale.default_positions_commission.percentage/100
 		end
 		row :package
 		row :remark

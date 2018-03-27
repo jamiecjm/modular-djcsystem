@@ -20,19 +20,22 @@ class PositionsCommission < ApplicationRecord
 	belongs_to :position
 	belongs_to :commission, optional: true
 	has_many :sales, through: :commission
-	has_many :salevalues, through: :sales, autosave: true
+	has_many :salevalues, through: :sales
 
 	validates :percentage, :presence => true
 
 	scope :default, ->{where(position_id: Position.default.id)}
 
-	after_save :recalculate_sv
+	after_save :recalculate_sv, if: proc {percentage_changed?}
 	after_destroy :recalculate_sv
+
+	def display_name
+		percentage
+	end
 
 	def recalculate_sv
 		salevalues.each do |s|
-			s.calc_comm
-			s.save
+			s.recalc_comm
 		end
 	end
 end

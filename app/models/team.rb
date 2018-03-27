@@ -35,6 +35,7 @@ class Team < ApplicationRecord
 	# validates :parent_id, presence: true, unless: proc { user.admin? }
 	validates :user_id, presence: true
 	validate :must_be_less_than_first_sale_date
+	validate :check_subtree
 	# validates_uniqueness_of :user_id, :scope => [:effective_date]
 
 	scope :visible, ->{where(hidden: false)}
@@ -84,14 +85,15 @@ class Team < ApplicationRecord
 
 	# after_create :create_team_position
 	
-	before_save :change_parent_id
-	before_save :check_for_existing_record, unless: proc { skip_callbacks }
+	before_save :change_parent_id, unless: proc { skip_callbacks }
+	before_save :check_for_existing_record, unless: proc { skip_callbacks || !effective_date_changed? }
 	after_rollback :update_existing_record
 	after_create :build_ancestry, unless: proc { skip_callbacks || previous_team.nil? }
-	before_save :update_children_date, unless: proc {new_record? || !effective_date_changed?}
-	before_save :set_upline_id
+	before_save :update_children_date, unless: proc {skip_callbacks || new_record? || !effective_date_changed?}
+	before_save :set_upline_id, unless: proc { skip_callbacks }
 	before_destroy :prevent_destroy
-	after_save :reset_sv_team_id
+	after_save :reset_sv_team_id, if: proc {effective_date_changed? || !skip_callbacks}
+	after_save :update_children_ancestry, if: proc {ancestry_changed?}
 
 
 	attr_accessor :skip_callbacks, :call_after_rollback
@@ -140,14 +142,26 @@ class Team < ApplicationRecord
 
 	def must_be_less_than_first_sale_date
 		first_sale_date = user.sales&.order(:date)&.first&.date
-		unless first_sale_date.present? && effective_date > first_sale_date
+		first_effective_date = other_teams.order(:effective_date).first.effective_date
+		unless first_sale_date.nil? || (first_sale_date.present? && first_effective_date <= first_sale_date)
 			errors.add(:effective_date, "must be earlier than first sale date (#{first_sale_date})")
 		end
 	end
 
+	def check_subtree
+		if subtree.pluck(:id).include?(upline_id)
+			errors.add(:upline_id, "must not be yourself or downline at the same time")
+		end
+	end
+
 	def change_parent_id
-		self.parent_id = upline_id if upline_id_changed?
-		self.parent_id = self.parent_lteq_timepoint(effective_date)&.id
+		if upline_id_changed?
+			self.parent_id = upline_id 
+		end
+		new_parent_id = self.parent_lteq_timepoint(effective_date)&.id
+		if parent_id != new_parent_id
+			self.parent_id = new_parent_id
+		end
 	end
 
 	def check_for_existing_record
@@ -198,14 +212,14 @@ class Team < ApplicationRecord
 	def update_children_date
 		self.children.find_each do |t|
 			t.skip_callbacks = true
-			t.effective_date = effective_date unless t.hidden
+			t.effective_date = effective_date if t.hidden
 		end
 	end
 
 	# def create_new_timepoint
 	# 	unless new_record?
 	# 		previous = other_teams.where('teams.effective_date < ?', effective_date_was).reorder('teams.effective_date DESC').first
-	# 		if effective_date_changed? && previous.present?
+	# 		if saved_change_to_effective_date? && previous.present?
 	# 			new_team = self.dup
 	# 			self.effective_date = effective_date_was
 	# 			self.hidden = true
@@ -231,7 +245,15 @@ class Team < ApplicationRecord
 	end
 
 	def set_upline_id
-		self.upline_id = parent_id
+		if ancestry_changed?
+			self.upline_id = parent_id
+		end
+	end
+
+	def update_children_ancestry
+		children.each do |t|
+			t.update(ancestry: ancestry + "/#{id}", skip_callbacks: true)
+		end
 	end
 
 	def reset_sv_team_id

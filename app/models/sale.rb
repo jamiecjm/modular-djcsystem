@@ -30,7 +30,7 @@ class Sale < ApplicationRecord
 
 	extend Enumerize
 
-	has_many :salevalues, dependent: :destroy, autosave: true
+	has_many :salevalues, dependent: :destroy
 	has_many :main_salevalues, -> {where(other_user: nil).order(:order)}, class_name: 'Salevalue', dependent: :destroy
 	has_many :other_salevalues, -> {other_team.order(:order)}, class_name: 'Salevalue', dependent: :destroy
 	has_many :teams, through: :main_salevalues
@@ -39,6 +39,7 @@ class Sale < ApplicationRecord
 	# has_many :commissions, through: :project
 	belongs_to :commission, optional: true
 	has_many :positions_commissions, through: :commission
+	has_one :default_positions_commission, through: :commission
 
 	accepts_nested_attributes_for :main_salevalues
 	accepts_nested_attributes_for :other_salevalues
@@ -69,6 +70,7 @@ class Sale < ApplicationRecord
 	}
 
 	before_save :set_comm
+	after_save :recalculate_sv, unless: proc {id_changed?}
 	# after_initialize :initialize_sv
 
 	def display_name
@@ -80,10 +82,14 @@ class Sale < ApplicationRecord
 	end
 
 	def set_comm
-		self.commission_id = project.commissions.last.id
+		self.commission_id = project.commissions.where('commissions.effective_date <= ?', date).reorder('commissions.effective_date').last.id
+	end
+
+	def recalculate_sv
 		salevalues.each do |s|
-			s.calc_comm
-			s.save
+			s.calc_spa if spa_value_changed?
+			s.calc_nett_value if nett_value_changed?
+			s.recalc_comm if commission_id_changed?
 		end
 	end
 

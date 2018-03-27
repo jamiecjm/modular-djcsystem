@@ -28,7 +28,9 @@ class Salevalue < ApplicationRecord
 	has_one :current_position, through: :team, source: :position
 	belongs_to :sale, optional: true
 	has_one :project, through: :sale
-	has_many :positions_commissions, through: :sale
+	has_one :commission, through: :sale
+	has_many :positions_commissions, through: :commission
+	has_one :default_positions_commission, through: :commission
 	# has_one :default_commission, -> {default}, through: :sale, source: :positions_commissions
 	# has_one :current_commission, -> (object){where(position_id: object.current_position.id)}, through: :sale, source: :positions_commissions
 
@@ -48,26 +50,40 @@ class Salevalue < ApplicationRecord
 		joins(:sale).where('extract(month from sales.date) = ?', month.to_date.month)
 	}
 
-	# before_save :calc_comm, prepend: true
+	before_create :calc_value
 	before_save :adjust_team_id
 
 	def self.ransackable_scopes(_auth_object = nil)
 	  [:year, :month]
 	end
 
-	def default_commission
-		positions_commissions.default.first
-	end
-
 	def current_commission
 		positions_commissions.find_by(position_id: current_position.id)
 	end
 
-	def calc_comm
-		comm = default_commission&.percentage
+	def calc_value
+		calc_spa
+		calc_nett_value
+		calc_comm
+	end
+
+	def calc_spa
 		self.spa = sale.spa_value * percentage/100 if sale.spa_value
+	end
+
+	def calc_nett_value
 		self.nett_value = sale.nett_value * percentage/100 if sale.nett_value
-		self.comm = nett_value * comm/100 if comm
+	end
+
+	def calc_comm
+		d_comm = default_positions_commission&.percentage
+		self.comm = nett_value * d_comm/100 if d_comm
+	end
+
+	def recalc_comm
+		d_comm = default_positions_commission&.percentage
+		new_comm = nett_value * d_comm/100 if d_comm
+		self.update_column(:comm, new_comm)
 	end
 
 	def calc_override(base_comm)
