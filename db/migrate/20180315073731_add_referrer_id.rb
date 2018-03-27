@@ -5,10 +5,11 @@ class AddReferrerId < ActiveRecord::Migration[5.1]
   	add_index :users, :referrer_id unless index_exists?(:users, :referrer_id)
   	add_index :teams, :upline_id unless index_exists?(:teams, :upline_id)
   	User.all.each do |u|
-  		u.update(referrer_id: u.ancestry&.split('/')&.last)
+      u.skip_confirmation_notification!
+  		u.update_column(:referrer_id, u.ancestry&.split('/')&.last)
   	end
   	Team.all.each do |t|
-  		t.update(upline_id: t.ancestry&.split('/')&.last)
+  		t.update_column(:upline_id, t.ancestry&.split('/')&.last)
   	end
   end
   def down
