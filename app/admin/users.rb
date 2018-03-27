@@ -160,13 +160,19 @@ ActiveAdmin.register User do
     column :id
     column :name
     column :prefered_name
-    column (:current_position) {|user| user.current_position&.title }
+    column(:current_position) do |user|
+      user.current_position.title
+    end
     column :ic_no
     column :email
     column :phone_no
     column :birthday
-    column(:upline) {|user| user.upline&.user&.prefered_name}
-    column(:referrer) {|user| user.referrer&.prefered_name}
+    column('Immediate Upline') do |user|
+      user.upline&.display_name
+    end
+    column(:referrer) do |user|
+      user.referrer&.display_name
+    end
     column :location
     column :created_at
     column :updated_at

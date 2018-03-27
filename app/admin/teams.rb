@@ -216,7 +216,6 @@ csv do
 	column('Location') do |t|
 		t.user.location
 	end
-	column('Team') { |t| t.main_team.display_name }
 	column :total_spa_value
 	column :total_nett_value
 	column :total_comm

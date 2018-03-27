@@ -197,7 +197,7 @@ show do
 		row :unit_no
 		row :buyer
 		list_row :ren do |s|
-			s.salevalues.map {|sv| 
+			(s.main_salevalues + s.other_salevalues).map {|sv| 
 				if sv.user.nil?
 					sv.other_user + " (#{sv.percentage}%)"
 				else
@@ -313,10 +313,12 @@ csv do
 	column :unit_size
 	column :spa_value
 	column :nett_value
-	# if current_user.admin?
-	# 	column(:commission_percentage) {|sale| sale.commission.percentage}
-	# end
-	# column(:commission) {|sale| sale.nett_value * sale.commission.percentage/100 }
+	if current_user.admin?
+		column('Commission Percentage (%)') {|sale| sale.default_positions_commission.percentage}
+	end
+	column(:commission) do |sale|
+		sale.nett_value * sale.default_positions_commission.percentage/100
+	end
 end
 
 end

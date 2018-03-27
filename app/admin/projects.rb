@@ -107,7 +107,7 @@ csv do
 		column("Commission #{x} (%)") do |p|
 			comm = p.commissions.order(:effective_date)[x-1]
 			if comm
-				"#{comm.percentage}"
+				"#{comm.default_positions_commission.percentage}"
 			else
 				nil
 			end
