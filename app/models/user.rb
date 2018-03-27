@@ -31,6 +31,7 @@
 #  ic_no                  :string
 #  location               :string
 #  referrer_id            :integer
+#  upline_id              :integer
 #
 # Indexes
 #
@@ -41,6 +42,7 @@
 #  index_users_on_referrer_id           (referrer_id)
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_team_id               (team_id)
+#  index_users_on_upline_id             (upline_id)
 #
 
 class User < ApplicationRecord
@@ -59,7 +61,7 @@ class User < ApplicationRecord
 	has_many :salevalues, through: :teams
 	has_many :sales, through: :salevalues
 	belongs_to :referrer, class_name: 'User', optional: true
-	has_one :upline, through: :current_team
+	belongs_to :upline, class_name: 'Team', optional: true
 
 	accepts_nested_attributes_for :teams
 
@@ -74,9 +76,7 @@ class User < ApplicationRecord
 			id = id[/\d+/].to_i
 		end
 		user = User.find(id)
-		subteams = user.current_team.subtree
-		users = subteams.pluck(:user_id)
-		search(id_in: users).result	
+		search(id_in: user.current_team_members.pluck(:id)).result	
   	}
   	scope :referrer_eq, -> (id){
   		if id.is_a? String
@@ -113,7 +113,7 @@ class User < ApplicationRecord
 	end
 
 	def current_team_members
-		user_ids = current_team.subtree.pluck(:user_id)
+		user_ids = current_team.subtree.current.pluck(:user_id).uniq
 		User.where(id: user_ids)
 	end
 
@@ -139,7 +139,7 @@ class User < ApplicationRecord
 	end
 
 	def set_team
-		Team.create(user_id: id, parent_id: parent&.current_team&.id, position_id: Position.default.id, effective_date: Date.today)
+		Team.create(user_id: id, parent_id: parent&.current_team&.id, position_id: Position.default.id, effective_date: parent&.effective_date)
 	end
 
 	def lock_user

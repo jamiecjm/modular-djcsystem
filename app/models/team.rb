@@ -12,6 +12,7 @@
 #  position_id    :integer
 #  upline_id      :integer
 #  hidden         :boolean          default(TRUE)
+#  current        :boolean          default(TRUE)
 #
 # Indexes
 #
@@ -35,7 +36,7 @@ class Team < ApplicationRecord
 	# validates :parent_id, presence: true, unless: proc { user.admin? }
 	validates :user_id, presence: true
 	validate :must_be_less_than_first_sale_date
-	validate :check_subtree
+	validate :check_subtree, unless: proc{new_record?}
 	# validates_uniqueness_of :user_id, :scope => [:effective_date]
 
 	scope :visible, ->{where(hidden: false)}
@@ -78,6 +79,10 @@ class Team < ApplicationRecord
 		reorder('effective_date DESC').where('effective_date <= ?', date)
 	}
 
+	scope :current, ->{
+		where(current: true)
+	}
+
 	# scope :main, -> {
 	# 	team_id = User.pluck(:team_id).uniq.compact
 	# 	where(id: team_id)
@@ -94,6 +99,8 @@ class Team < ApplicationRecord
 	before_destroy :prevent_destroy
 	after_save :reset_sv_team_id, if: proc {effective_date_changed? || !skip_callbacks}
 	after_save :update_children_ancestry, if: proc {ancestry_changed?}
+	after_save :update_user_upline_id, if: proc{upline_id_changed?}
+	before_save :check_current_team
 
 
 	attr_accessor :skip_callbacks, :call_after_rollback
@@ -138,6 +145,17 @@ class Team < ApplicationRecord
 		other_teams(include_self)&.lteq_timepoint(effective_date)&.first
 	end
 
+	def check_current_team
+		c_team = user.current_team
+		other_teams(true).each do |t|
+			if t == c_team
+				t.update_column(:current, true)
+			else
+				t.update_column(:current, false)
+			end
+		end
+	end
+	
 	protected
 
 	def must_be_less_than_first_sale_date
@@ -149,7 +167,7 @@ class Team < ApplicationRecord
 	end
 
 	def check_subtree
-		if subtree.pluck(:id).include?(upline_id)
+		if subtree&.pluck(:id)&.include?(upline_id)
 			errors.add(:upline_id, "must not be yourself or downline at the same time")
 		end
 	end
@@ -254,6 +272,10 @@ class Team < ApplicationRecord
 		children.each do |t|
 			t.update(ancestry: ancestry + "/#{id}", skip_callbacks: true)
 		end
+	end
+
+	def update_user_upline_id
+		user.update_column(:upline_id, upline_id)
 	end
 
 	def reset_sv_team_id

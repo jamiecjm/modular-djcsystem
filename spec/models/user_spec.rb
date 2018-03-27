@@ -31,6 +31,7 @@
 #  ic_no                  :string
 #  location               :string
 #  referrer_id            :integer
+#  upline_id              :integer
 #
 # Indexes
 #
@@ -41,6 +42,7 @@
 #  index_users_on_referrer_id           (referrer_id)
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_team_id               (team_id)
+#  index_users_on_upline_id             (upline_id)
 #
 
 require 'rails_helper'

@@ -12,6 +12,7 @@
 #  position_id    :integer
 #  upline_id      :integer
 #  hidden         :boolean          default(TRUE)
+#  current        :boolean          default(TRUE)
 #
 # Indexes
 #
