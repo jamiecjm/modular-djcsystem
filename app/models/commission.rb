@@ -24,7 +24,7 @@ class Commission < ApplicationRecord
 	has_many :salevalues, through: :sales
 
 	after_save :reset_sale_comm, if: proc{effective_date_changed?}
-	after_destroy :recalculate_sv
+	after_destroy :reset_sale_comm
 	after_initialize :initialize_position_commission
 
 	validates :effective_date, presence: true
