@@ -212,7 +212,6 @@ ActiveAdmin.setup do |config|
   current_javascripts.each{ |j| config.register_javascript j }
   config.register_javascript 'https://www.gstatic.com/charts/loader.js'
   config.register_javascript 'https://use.fontawesome.com/releases/v5.0.8/js/all.js'
-  config.register_javascript 'https://cdnjs.cloudflare.com/ajax/libs/slidesjs/3.0/jquery.slides.min.js'
 
   # == CSV options
   #
