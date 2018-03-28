@@ -17,11 +17,15 @@
 	height: 60px;
     background-color: white;
     box-shadow: 0 4px 4px 0 #F2F2F2;
-    @include flex-basis(calc(100%/4 - 50px));
+    @include flex-basis(calc(100%/5 - 50px));
     @include flexbox();
     @include align-items(center);
     margin: 5px;
     padding: 20px;
+	@media only screen
+	and (max-width: 1056px) {
+		@include flex-basis(calc(100%/4 - 50px));
+	}
 	@media only screen
 	and (max-width: 903px) {
 		@include flex-basis(calc(100%/2 - 50px));
