@@ -69,7 +69,7 @@ class Sale < ApplicationRecord
 		where('extract(month from date) = ?', month.to_date.month)
 	}
 
-	before_save :set_comm
+	before_validation :set_comm
 	after_save :recalculate_sv, unless: proc {id_changed?}
 	# after_initialize :initialize_sv
 

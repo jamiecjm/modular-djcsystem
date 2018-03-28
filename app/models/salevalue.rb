@@ -76,7 +76,8 @@ class Salevalue < ApplicationRecord
 	end
 
 	def calc_comm
-		d_comm = default_positions_commission&.percentage
+		d_comm = PositionsCommission.find_by(commission_id: commission.id, position_id: Position.default.id)
+		d_comm = d_comm&.percentage
 		self.comm = nett_value * d_comm/100 if d_comm
 	end
 
