@@ -2,7 +2,7 @@ ActiveAdmin.register User do
   permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :admin,
   teams_attributes: [:id, :title, :user_id, :position_id, :parent_id, :effective_date, :locked, :_destroy, :upline_id, :hidden]
 
-  menu parent: 'Teams', label: 'Members'
+  menu parent: 'Team', label: 'Members'
 
   scope :approved, default: true
 

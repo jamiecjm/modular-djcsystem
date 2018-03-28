@@ -243,7 +243,7 @@ ActiveAdmin.setup do |config|
           s.add label: 'New', url: '/sales/new', priority: 0
         end
         menu.add label: 'Team', priority: 2 do |t|
-          # t.add label: 'Profile', url: proc{ team_path(current_user.team_id) }, priority: 0, if: proc { current_user.user? }
+          t.add label: 'Performance', url: proc{ teams_path }, priority: 0
         end
         menu.add label: 'Projects', priority: 3 do |p|
           p.add label: 'New', url: '/projects/new', priority: 0, if: proc { current_user.admin? }

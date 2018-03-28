@@ -12,7 +12,7 @@ ActiveAdmin.register Team do
 #   permitted
 # end
 
-menu priority: 1, parent: 'Teams', label: 'Performance'
+menu false
 
 permit_params :name, :user_id
 
