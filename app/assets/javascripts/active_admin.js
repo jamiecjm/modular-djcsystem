@@ -32,7 +32,7 @@ Raven.context(function () {
 
   function scale_chart(){
     if($(window).width() <= 767){
-      scale = ($("#active_admin_content").width()-15)/1200;
+      scale = ($("#active_admin_content").width()-15)/1300;
       $("#chart").css("transform", "scale("+scale+")");
     } else {
       $("#chart").css("transform", "none");

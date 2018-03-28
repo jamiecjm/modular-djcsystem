@@ -31,7 +31,7 @@
         ]);
 
     // Set chart options
-    var options = {'title': 'REN Total Nett Value - Total: <%= number_to_currency(sales.to_h.values.inject(:+), unit: 'RM ', precision: 0)%>',
+    var options = {'title': 'REN Total Nett Value - Total: <%= number_to_currency(sales.to_h.values.compact.inject(:+), unit: 'RM ', precision: 0)%>',
                     'height': <%=(height ||= sales.length)*25%>,
                     'chartArea': {'width': '80%','height': '90%'},
                     'legend': {position: 'none'},

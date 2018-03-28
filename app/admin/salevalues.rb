@@ -20,26 +20,26 @@ actions :index
 
 scope 'Booked/Done', default: true, show_count: false do |sv|
 	sv = sv.not_cancelled
-	@total_spa = sv.pluck('spa').inject(:+)
-	@total_nett_value = sv.pluck('nett_value').inject(:+)
-	@total_comm = sv.pluck('comm').inject(:+)
+	@total_spa = sv.pluck('spa').compact.inject(:+)
+	@total_nett_value = sv.pluck('nett_value').compact.inject(:+)
+	@total_comm = sv.pluck('comm').compact.inject(:+)
 	@total_sales = sv.length
 	sv
 end
 
 scope :cancelled, show_count: false do |sv|
 	sv = sv.cancelled
-	@total_spa = sv.pluck('spa').inject(:+)
-	@total_nett_value = sv.pluck('nett_value').inject(:+)
-	@total_comm = sv.pluck('comm').inject(:+)
+	@total_spa = sv.pluck('spa').compact.inject(:+)
+	@total_nett_value = sv.pluck('nett_value').compact.inject(:+)
+	@total_comm = sv.pluck('comm').compact.inject(:+)
 	@total_sales = sv.length
 	sv
 end
 
 scope :all, show_count: false do |sv|
-	@total_spa = sv.pluck('spa').inject(:+)
-	@total_nett_value = sv.pluck('nett_value').inject(:+)
-	@total_comm = sv.pluck('comm').inject(:+)
+	@total_spa = sv.pluck('spa').compact.inject(:+)
+	@total_nett_value = sv.pluck('nett_value').compact.inject(:+)
+	@total_comm = sv.pluck('comm').compact.inject(:+)
 	@total_sales = sv.length
 	sv
 end

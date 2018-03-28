@@ -6,11 +6,12 @@ $(document).ready(function(){
 
   $("body").on("click", ".filter-trigger", function(){
     $('#main_content_wrapper').toggleClass('disabled');
-    if ($("#sidebar").position().left > $(window).width()){
+    if ($('#main_content_wrapper').hasClass('disabled')){
       $("#sidebar").animate({right: 0});
     }else{
       $("#sidebar").animate({right: -285});
     }
+    
   });
 
 });

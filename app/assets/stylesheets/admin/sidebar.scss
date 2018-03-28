@@ -1,7 +1,7 @@
 @import "flexbox";
 @import "media-query-mixins";
 
-@include mobile-only{
+
 	.filter-trigger{
 	    position: absolute;
 	    left: -42px;
@@ -40,14 +40,7 @@
 	.sidebar_section {
 	    margin-bottom: 0;
 	}
-}
 
-@include desktop-only(){
-	.filter-trigger{
-		display: none;
-	}
-
-}
 
 .index #summary_sidebar_section .panel_contents .columns .column:first-child{
 	width: 38% !important;

@@ -16,7 +16,7 @@
     ]);
 
     var options = {
-      title: "Monthly Sales Figure - Total: <%= number_to_currency(sales.to_h.values.inject(:+), unit: 'RM ', precision: 0)%>",
+      title: "Monthly Sales Figure - Total: <%= number_to_currency(sales.to_h.values.compact.inject(:+), unit: 'RM ', precision: 0)%>",
       height: 600,
       legend: {position: 'none'},
       vAxis: { title: 'Total Nett Value (RM)'
