@@ -1,0 +1,10 @@
+@import "flexbox";
+@import "media-query-mixins";
+
+#index_table_salevalues ul:last-child{
+	@include flexbox();
+}
+
+#index_table_salevalues ul:last-child li{
+	margin-right: 7px;
+}

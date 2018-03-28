@@ -113,6 +113,15 @@ controller do
 			UserMailer.generate_report(resource, current_website).deliver
 		end
 	end
+
+	def destroy
+		resource.destroy
+		if resource.destroyed?
+			redirect_back fallback_location: collection_path, notice: "Sale was successfully destroyed."
+		else
+			redirect_back fallback_location: collection_path, alert: resource.errors.full_messages
+		end
+	end
 end
 
 index title: 'Team Sales', pagination_total: false do

@@ -16,7 +16,7 @@ menu label: 'Individual', parent: 'Sales'
 
 config.sort_order = 'sales.date_desc'
 
-actions :index, :create, :update
+actions :index
 
 scope 'Booked/Done', default: true, show_count: false do |sv|
 	sv = sv.not_cancelled
@@ -81,22 +81,8 @@ end
 
 batch_action :destroy, false
 
-member_action :view do |sv|
-	redirect_to sale_path(sv.sale)
-end
-
-member_action :edit do |sv|
-	redirect_to edit_sale_path(sv.sale)
-end
-
-controller do
-	before_action :denied, only: [:show, :edit, :destroy]
-	def show
-	end
-	def edit
-	end
-	def destroy
-	end
+action_item :new_sale do 
+	link_to 'New Sale', new_sale_path
 end
 
 index title: 'Individual Sales', pagination_total: false do |sv|
@@ -129,7 +115,14 @@ index title: 'Individual Sales', pagination_total: false do |sv|
 		sv.sale.nett_value
 	end	
 	if current_user.admin?
-		column 'Project Commission (%)', :default_positions_commission, sortable: 'positions_commissions.percentage'
+		column 'Project Commission (%)', :default_positions_commission
+	end
+	list_column '' do |sv|
+		[
+			(link_to 'View', sale_path(sv.sale)),
+			(link_to 'Edit', edit_sale_path(sv.sale)),
+			(link_to 'Delete', "/sales/#{sv.sale.id}", method: :delete, 'data-confirm': 'Are you sure you want to delete this?')
+		]
 	end
 end
 
