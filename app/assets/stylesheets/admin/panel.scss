@@ -1,0 +1,25 @@
+.panel{
+	background: #FFFFFF !important;
+	border-radius: 4px !important;
+	box-shadow: 0 1px 4px #ddd !important;
+	margin-bottom: 20px !important;
+}
+
+.panel h3{
+	background-color: inherit !important;
+	background-image: none !important;
+	border-bottom: solid 1px #EFEFEF;
+	border-top-color: transparent !important;
+	border-right-color: transparent !important;
+	border-bottom-color: #EFEFEF !important;
+	border-left-color: transparent !important;
+	font-size: 1.8em !important;
+	margin: 0 20px 15px 20px;
+	padding: 15px 0 !important;
+	box-shadow: none !important;
+}
+
+form fieldset.inputs {
+    background: #FFFFFF !important;
+    box-shadow: 0 1px 4px #ddd !important;
+}

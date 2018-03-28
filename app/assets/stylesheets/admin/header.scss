@@ -1,6 +1,11 @@
 @import "flexbox";
 @import "media-query-mixins";
 
+#title_bar{
+	background-color: #FFFFFF !important;
+	background-image: none !important;
+}
+
 #header #tabs{
 	@include desktop-only{
 		top: 2px !important;

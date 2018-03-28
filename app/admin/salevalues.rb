@@ -117,7 +117,7 @@ index title: 'Individual Sales', pagination_total: false do |sv|
 	if current_user.admin?
 		column 'Project Commission (%)', :default_positions_commission
 	end
-	list_column '' do |sv|
+	list_column :actions do |sv|
 		[
 			(link_to 'View', sale_path(sv.sale)),
 			(link_to 'Edit', edit_sale_path(sv.sale)),

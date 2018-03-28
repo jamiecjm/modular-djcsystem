@@ -1,0 +1,7 @@
+@import "flexbox";
+@import "media-query-mixins";
+
+#quick-links .panel_contents{
+	@include flexbox();
+	@include flex-wrap(wrap);
+}

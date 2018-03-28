@@ -12,3 +12,44 @@
 		display: none;
 	}
 }
+
+.card{
+	height: 60px;
+    background-color: white;
+    box-shadow: 0 4px 4px 0 #F2F2F2;
+    @include flex-basis(calc(100%/4 - 50px));
+    @include flexbox();
+    @include align-items(center);
+    margin: 5px;
+    padding: 20px;
+}
+
+.card:nth-child(6n+1){
+	background-color: #ff7373;
+}
+
+.card:nth-child(6n+2){
+	background-color: #40e0d0;
+}
+
+.card:nth-child(6n+3){
+	background-color: #c6e2ff;
+}
+
+.card:nth-child(6n+4){
+	background-color: #ffa500;
+}
+
+.card:nth-child(6n+5){
+	background-color: #ffc3a0;
+}
+
+.card:nth-child(6n+6){
+	background-color: #088da5;
+}
+
+.card-content{
+	font-size: 18px;
+	margin: 0 auto;
+	color: white;
+}

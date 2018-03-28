@@ -18,6 +18,7 @@ $approved-color: #08A510;
 body {
     position: relative;
     min-height: 80vh;
+    background-color: #FAFAFA;
 }
 
 body.logged_out{
@@ -71,5 +72,13 @@ img {
 	display: none;
 }
 
+
+a{
+    text-decoration: none !important;
+}
+
+a:hover{
+    opacity: 0.8;
+}
 
 

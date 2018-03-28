@@ -23,9 +23,13 @@
 }
 
 #chart {
-	border: 1px solid black;
 	padding: 10px;
 	min-width: 1200px;
+	background-color: #FFFFFF;
+	background: #FFFFFF !important;
+	border-radius: 4px !important;
+	box-shadow: 0 1px 4px #ddd !important;
+	margin-bottom: 20px !important;
 
 	@include mobile-only{
 	    transform-origin: top left;

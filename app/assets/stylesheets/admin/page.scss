@@ -10,6 +10,15 @@
     transition: opacity 0.4s ease-in-out;
 }
 
+#index_footer{
+	height: 20px;
+}
+
+table.index_table th{
+    background: #FFFFFF !important;
+    background-image: none !important;	
+}
+
 @include mobile-only{
 	body.logged_out #content_wrapper #active_admin_content{
 		max-width: 500px;
