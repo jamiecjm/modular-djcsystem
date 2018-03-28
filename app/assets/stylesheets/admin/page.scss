@@ -10,13 +10,38 @@
     transition: opacity 0.4s ease-in-out;
 }
 
+.index:not(.dashboard) #active_admin_content #main_content_wrapper #main_content {
+    background: #FFFFFF;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px #ddd;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
 #index_footer{
 	height: 20px;
 }
 
 table.index_table th{
-    background: #FFFFFF !important;
-    background-image: none !important;	
+    background: #FAFAFA;
+    background-image: none;	
+}
+
+table.index_table th.sorted-asc, table.index_table th.sorted-desc{
+    background: #FAFAFA;
+    background-image: none;		
+}
+
+table.index_table tr.even td{
+	background: #FAFAFA;
+}
+
+table.index_table td{
+	border-left: 1px solid #e8e8e8;
+}
+
+table.index_table{
+	border-right: 1px solid #e8e8e8;
 }
 
 @include mobile-only{

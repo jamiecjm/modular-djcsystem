@@ -1,14 +1,55 @@
 @import "flexbox";
 @import "media-query-mixins";
 
-#title_bar{
-	background-color: #FFFFFF !important;
-	background-image: none !important;
+#header{
+	background-color: #FFFFFF;
+	background-image: none;
+	border-bottom: 1px solid #cdcdcd;
+	box-shadow: none;
+}
+
+#header a, #header a:link{
+	@include desktop-only{
+		color: #5E6469;
+	}
+	text-shadow: initial;
+}
+
+#header h1{
+	@include desktop-only{
+		padding: 3px 30px 0 20px;
+		font-size: 2em;		
+	}
+
+}
+
+#header h1 a:hover{
+	color: inherit;
+}
+
+#title_bar, #active_admin_content, #footer{
+	padding-left: 230px;
+}
+
+.flashes{
+	padding-left: 200px;
+}
+
+#wrapper{
+	margin-top: 123px;
 }
 
 #header #tabs{
 	@include desktop-only{
-		top: 2px !important;
+		top: 51px !important;
+		position: fixed;
+		left: 0;
+		width: 180px;
+		padding: 10px;
+		margin: 0;
+		background-color: #FFFFFF;
+		height: 100vh;
+		border-right: 1px solid #cdcdcd;
 	}
 	@include mobile-only(){
 	    position: relative;
@@ -26,8 +67,9 @@
 }
 
 #header #tabs > li{
+	display: inherit;
+	margin-bottom: 20px;
 	@include mobile-only(){
-	    
 	    z-index: 850;
         padding: 15px;
 	    border-bottom: 1px solid #9e9f9e;
@@ -47,6 +89,7 @@
 	position: fixed;
     top: 0;
     list-style: none;
+    min-height: 40px;
 	@include mobile-only(){
 		padding: 0;
 		font-size: 15px;
@@ -73,20 +116,20 @@
 }
 
 #header ul.tabs > #menu, #header ul.tabs > #menu:hover, #header #menu, #header #menu:hover{
-	@include mobile-only(){
+
 		cursor: pointer;
 		width: 7%;
 	    vertical-align: middle;
 	    background: no-repeat center center;
 	    background-size: 30px;
 	    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(205, 205, 205, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-	}
+
 }
 
 #header ul.tabs > #menu:hover, #header #menu:hover{
-	@include mobile-only(){
+
 	    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-	}
+
 }
 
 #header ul.tabs > #menu:hover a, #header #menu:hover a{
@@ -99,7 +142,14 @@
 	}		
 }
 
+#header ul.tabs li{
+	font-size: 15px;
+}
+
 #header ul.tabs > #menu, #header #menu{
+	@include desktop-only{
+		display: none;
+	}
     position: fixed;
     top: 0;
     right: 0;
@@ -154,77 +204,87 @@
 }
 
 #title_bar{
-	margin-top: 38px;
+	background-color: #FFFFFF;
+	background-image: none;
+	position: fixed;
+	top: 51px;
+	border-top: none;
+	border-left: none;
+	border-right: none;
 	@include mobile-only(){
 	    padding: 15px 12px;
-	    margin-top: 51px;
 	}		
 }
 
-#header #tabs > li:hover{
-	@include mobile-only(){
-	    background: #6F757A;
-	}		
-}
-
-#header ul.tabs > li.has_nested.current > a{
-	@include mobile-only(){
-	    background: url('/assets/active_admin/nested_menu_arrow-15084d93c65c1964d7077700ea748bd2d70cfa2d4c19707c58a9c64e232dd442.gif') no-repeat calc(100% - 7px) 50%;
-	}		
-}
-
-#header ul.tabs > li.has_nested.current:hover > a{
-	@include mobile-only(){
-	    background: url('/assets/active_admin/nested_menu_arrow_dark-7c43b8e0a5f8823875f49a093c9d7a6b374f885b6f9cc248ae9cd7e6e9b29034.gif') no-repeat calc(100% - 7px) 50%;
-	}		
-}
-
-#header ul.tabs > li.has_nested:hover > a{
-	@include mobile-only(){
-        border: none;
-		background-color: #6F757A;
-	}		
-}
-
-#header ul.tabs > li:hover > a {
-	@include mobile-only(){
-	    background: #6F757A;
+#header #tabs > li:hover a{
+	@include desktop-only{
+		color: inherit;
 	}
 }
 
-#header ul.tabs > li.has_nested.current{
-	@include mobile-only(){
+#header #tabs > li.has_nested:hover > a{
+	background: url('/assets/active_admin/nested_menu_arrow-15084d93c65c1964d7077700ea748bd2d70cfa2d4c19707c58a9c64e232dd442.gif') no-repeat calc(100% - 7px) 50%;
+}
+
+#header ul.tabs > li.has_nested.current > a{
+	@include desktop-only{
+		color: inherit;
+	}
+	background: url('/assets/active_admin/nested_menu_arrow-15084d93c65c1964d7077700ea748bd2d70cfa2d4c19707c58a9c64e232dd442.gif') no-repeat calc(100% - 7px) 50%;
+}
+
+#header ul.tabs > li.has_nested.current:hover > a{
+	background: url('/assets/active_admin/nested_menu_arrow_dark-7c43b8e0a5f8823875f49a093c9d7a6b374f885b6f9cc248ae9cd7e6e9b29034.gif') no-repeat calc(100% - 7px) 50%;
+}
+
+#header ul.tabs > li.has_nested:hover > a{
+
+        border: none;
+		background-color: #6F757A;
+		
+}
+
+#header ul.tabs > li:hover > a {
+
 	    background: #6F757A;
-	}	
+
 }
 
 #header ul.tabs > li ul{
-	@include mobile-only(){
-	    position: relative;
-     	border-radius: inherit;
-	    box-shadow: none;
-	    background: none;
-        width: 100%;
-	}	
+	margin: 0;
+	@include desktop-only{
+		margin-bottom: 10px;
+	}
+    position: relative;
+ 	border-radius: inherit;
+    box-shadow: none;
+    background: none;
+    width: 100%;
 }
 
 #header ul.tabs > li:hover ul{
-	@include mobile-only(){
+
 	    display: none
-	}	
+
+}
+
+#header #utility_nav a:hover{
+	background: none;
+	color: inherit;
 }
 
 #header ul.tabs > li ul li{
-	@include mobile-only(){
+	padding: 5px 10px;
+	@include mobile-only{
 	    border-bottom: 1px solid #9e9f9e;
         padding: 10px;
-	}		
+	}
 }
 
 #header ul.tabs > li ul li:last-child{
-	@include mobile-only(){
+
 	    border-bottom: none;
-	}		
+	
 }
 
 #header #tabs #profile, #header #tabs #logout{

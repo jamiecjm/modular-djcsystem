@@ -22,6 +22,10 @@
     @include align-items(center);
     margin: 5px;
     padding: 20px;
+	@media only screen
+	and (max-width: 903px) {
+		@include flex-basis(calc(100%/2 - 50px));
+	}
 }
 
 .card:nth-child(6n+1){
@@ -52,4 +56,5 @@
 	font-size: 18px;
 	margin: 0 auto;
 	color: white;
+	text-align: center;
 }
