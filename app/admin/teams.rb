@@ -18,15 +18,9 @@ permit_params :name, :user_id
 
 controller do
     def scoped_collection
-    	if params['action'] == 'index'
-	    	if params['as'].blank?
-			  	end_of_association_chain.group('teams.id').select('SUM(salevalues.spa) as total_spa_value', 'SUM(salevalues.nett_value) as total_nett_value', 
-					'SUM(salevalues.comm) as total_comm', 'COUNT(salevalues.id) as total_sales', :user_id)
-			elsif params['as'] == 'barchart'
-				end_of_association_chain.joins(:user).group('users.prefered_name', 'teams.id', 'users.id')
-			else
-				end_of_association_chain
-			end
+    	if params['action'] == 'index' && (params['as'].blank? || params['as'] == 'table')
+		  	end_of_association_chain.group('user_id').select('SUM(salevalues.spa) as total_spa_value', 'SUM(salevalues.nett_value) as total_nett_value', 
+		  		'SUM(salevalues.comm) as total_comm', 'COUNT(salevalues.id) as total_sales', :user_id)
 		else
 			end_of_association_chain
 		end
@@ -69,10 +63,10 @@ before_action only: :index do
 	if params['q']['sales_status_in'].nil?
 		params['q']['sales_status_in'] = ["Booked","Done"]
 	end
-	if !params['as'].nil? && params['as'] != 'table'
+	if params['as'] == 'barchart' || params['as'] == 'column_chart'
 		params['per_page'] = '1'
-		params['order'] = nil
-	else
+		params['order'] = nil		
+	elsif params['as'].nil? || params['as'] == 'table'
 		params['as'] = nil
 		params['per_page'] = nil
 		if params['order'].nil?
@@ -121,9 +115,7 @@ index title: 'Sales Performance', default: true do
 end
 
 index title: 'Sales Performance Barchart', as: :barchart, class: 'index_as_barchart', download_links: false do
-	@sales = teams.per(teams.length * teams.total_pages).order('SUM(salevalues.nett_value) DESC').sum('salevalues.nett_value')
-	@sales = @sales.map { |k,v| [k[0],v]}
-	@sales = @sales.to_h.sort_by{|k, v| v}.reverse
+	@sales = teams.per(teams.length * teams.total_pages).joins(:user).group('users.prefered_name').select(:user_id).reorder('SUM(salevalues.nett_value) DESC').sum('salevalues.nett_value')
 	render partial: 'teams/ren_sales_performance', :locals => {sales: @sales, filters: params['q']}, layout: 'layouts/chart'
 	a id: 'download_link', download: "barchart-#{Date.current}"
 end

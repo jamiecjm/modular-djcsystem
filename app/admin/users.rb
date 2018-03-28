@@ -16,22 +16,22 @@ ActiveAdmin.register User do
   batch_action :approve, confirm: "Are you sure?", if: proc {current_user.admin? && params['scope']=='pending'} do |ids, inputs|
       User.where(id: ids).update_all(locked_at: nil)
       UserMailer.notify(User.where(id: ids), current_website).deliver
-      redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been approved"
+      redirect_back fallback_location: collection_path, notice: "Users with id #{ids.join(', ')} has been approved"
   end
 
   batch_action :disapprove, confirm: "Are you sure?", if: proc {current_user.admin? && (params['scope']=='approved' || params['scope'].nil?) } do |ids, inputs|
     User.where(id: ids).update_all(locked_at: Time.now)
-    redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been disapproved"
+    redirect_back fallback_location: collection_path, notice: "Users with id #{ids.join(', ')} has been disapproved"
   end
 
   batch_action :archive, confirm: "Are you sure?", if: proc {current_user.admin? && (params['scope']=='pending' || params['scope'] == 'approved' || params['scope'].nil?)} do |ids, inputs|
     User.where(id: ids).update_all(archived: true, locked_at: Time.now)
-    redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been archived"
+    redirect_back fallback_location: collection_path, notice: "Users with id #{ids.join(', ')} has been archived"
   end
 
   batch_action :unarchive, confirm: "Are you sure?", if: proc {current_user.admin? && params['scope']=='archived'} do |ids, inputs|
     User.where(id: ids).update_all(archived: false)
-    redirect_to collection_path, notice: "Users with id #{ids.join(', ')} has been unarchived"
+    redirect_back fallback_location: collection_path, notice: "Users with id #{ids.join(', ')} has been unarchived"
   end
 
   batch_action :change_upline_of, if: proc {current_user.admin?}, form: {
@@ -44,7 +44,7 @@ ActiveAdmin.register User do
         new_team.attributes = {parent_id: upline.id, upline_id: upline.id, effective_date: inputs[:effective_date], hidden: false}
         new_team.save
       end
-      redirect_to collection_path
+      redirect_back fallback_location: collection_path
   end
 
 
