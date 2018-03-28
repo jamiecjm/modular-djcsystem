@@ -27,12 +27,14 @@
 	color: inherit;
 }
 
-#title_bar, #active_admin_content, #footer{
-	padding-left: 230px;
-}
+@include desktop-only{
+	#title_bar, #active_admin_content, #footer{
+		padding-left: 230px;
+	}
 
-.flashes{
-	padding-left: 200px;
+	.flashes{
+		padding-left: 200px;
+	}	
 }
 
 #wrapper{
