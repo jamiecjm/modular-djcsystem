@@ -38,13 +38,18 @@ ActiveAdmin.register User do
     upline: User.order(:prefered_name).pluck(:prefered_name),
     effective_date: :datepicker
     } do |ids, inputs|
-      upline = User.find(inputs[:upline]).current_team
-      User.where(id: ids).find_each do |u|
-        new_team = u.current_team.dup
-        new_team.attributes = {parent_id: upline.id, upline_id: upline.id, effective_date: inputs[:effective_date], hidden: false}
-        new_team.save
+      inputs[:upline] = nil if inputs[:upline] == 'null'
+      if inputs[:effective_date].blank?
+        redirect_back fallback_location: collection_path, alert: 'Effective Date must not be blank.'
+      else
+        upline = User.find(inputs[:upline]).current_team
+        User.where(id: ids).find_each do |u|
+          new_team = u.current_team.dup
+          new_team.attributes = {parent_id: upline.id, upline_id: upline.id, effective_date: inputs[:effective_date], hidden: false}
+          new_team.save
+        end
+        redirect_back fallback_location: collection_path
       end
-      redirect_back fallback_location: collection_path
   end
 
 
