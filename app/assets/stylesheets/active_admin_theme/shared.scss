@@ -1,7 +1,7 @@
 @import "flexbox";
 @import "media-query-mixins";
 
-body {
+body.logged_in {
     position: relative;
     min-height: 80vh;
     background-color: #F4F4F4;
@@ -22,7 +22,7 @@ a{
 }
 
 a:hover{
-    opacity: 0.8;
+    opacity: 0.6;
 }
 
 .desktop-only{

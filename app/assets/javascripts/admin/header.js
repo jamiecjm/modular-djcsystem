@@ -10,6 +10,7 @@ $(document).ready(function(){
     } 
   });
   $("#header ul.tabs > li").click(function(){
-    $(this).find("ul").toggle();
+    $("#header ul.tabs > li ul").not($(this).find("ul")).removeClass('opened');
+    $(this).find("ul").toggleClass('opened');
   });
 });

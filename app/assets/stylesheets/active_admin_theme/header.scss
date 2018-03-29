@@ -2,10 +2,9 @@
 @import "media-query-mixins";
 
 #header{
-	background-color: #FFFFFF;
-	background-image: none;
-	border-bottom: 1px solid #cdcdcd;
 	box-shadow: none;
+    background: #FFFFFF;
+    border-bottom: 1px solid #cdcdcd;
 }
 
 #header a, #header a:link{
@@ -18,7 +17,8 @@
 #header h1{
 	@include desktop-only{
 		padding: 3px 30px 0 20px;
-		font-size: 2em;		
+		font-size: 2em;	
+		color: inherit;	
 	}
 
 }
@@ -28,17 +28,17 @@
 }
 
 @include desktop-only{
-	#title_bar, #active_admin_content, #footer{
-		padding-left: 230px;
+	.logged_in #title_bar, #active_admin_content, #footer{
+		padding-left: 210px;
 	}
 
-	.flashes{
-		padding-left: 200px;
+	.logged_in .flashes{
+		padding-left: 180px;
 	}	
 }
 
-#wrapper{
-    top: 123px;
+.logged_in #wrapper{
+    top: 114px;
     position: relative;
 }
 
@@ -48,7 +48,6 @@
 		position: fixed;
 		left: 0;
 		width: 180px;
-		padding: 10px;
 		margin: 0;
 		background-color: #FFFFFF;
 		height: 100vh;
@@ -70,11 +69,16 @@
 }
 
 #header #tabs > li{
-	display: inherit;
-	margin-bottom: 20px;
+	@include desktop-only{
+		display: inherit;
+	    margin: 0;
+	    background: #f4f4f4;
+	    border-bottom: 1px solid #cdcdcd;		
+	}
+
 	@include mobile-only(){
 	    z-index: 850;
-        padding: 15px;
+        // padding: 15px;
 	    border-bottom: 1px solid #9e9f9e;
         margin: 0 20px;
         width: calc(100% - 70px);
@@ -82,7 +86,27 @@
 	}
 }
 
+#header #tabs > li.current{
+	@include desktop-only{
+		background-color: #fff;
+	}
+}
+
+#header #tabs > li:hover > a{
+	@include desktop-only{
+		background-color: #fff;
+	}
+}
+
+#header #tabs a{
+    padding: 20px;
+    display: block;
+}
+
+
 #header ul.tabs > li.current > a{
+	background: none;
+    color: inherit;
 	@include mobile-only{
 		background-color: #6F757A !important;
 	}
@@ -214,14 +238,27 @@
 	border-top: none;
 	border-left: none;
 	border-right: none;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-bottom: 1px solid #cdcdcd;
+    box-shadow: none;
+    height: 63px;
 	@include mobile-only(){
 	    padding: 15px 12px;
 	}		
 }
 
+#header #tabs > li:hover{
+	@include desktop-only{
+		color: inherit;
+		background-color: #fff;
+	}
+}
+
 #header #tabs > li:hover a{
 	@include desktop-only{
 		color: inherit;
+		background: none;
 	}
 }
 
@@ -248,21 +285,25 @@
 }
 
 #header ul.tabs > li:hover > a {
-
-	    background: #6F757A;
-
+	border-radius: 0;
+	background: #6F757A;	
 }
 
 #header ul.tabs > li ul{
 	margin: 0;
 	@include desktop-only{
 		margin-bottom: 10px;
+		background: inherit;
 	}
     position: relative;
  	border-radius: inherit;
     box-shadow: none;
     background: none;
     width: 100%;
+}
+
+#header ul.tabs > li ul.opened{
+	display: contents !important;
 }
 
 #header ul.tabs > li:hover ul{
@@ -277,11 +318,7 @@
 }
 
 #header ul.tabs > li ul li{
-	padding: 5px 10px;
-	@include mobile-only{
-	    border-bottom: 1px solid #9e9f9e;
-        padding: 10px;
-	}
+	padding: 0 10px;
 }
 
 #header ul.tabs > li ul li:last-child{
