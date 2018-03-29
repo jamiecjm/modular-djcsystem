@@ -45,6 +45,7 @@ class Sale < ApplicationRecord
 	accepts_nested_attributes_for :other_salevalues
 
 	validates :date, presence: true
+	validates :status, presence: true
 	validates :unit_no, presence: true
 	validates :spa_value, presence: true
 	validates :nett_value, presence: true
