@@ -14,6 +14,8 @@ ActiveAdmin.register Team do
 
 menu false
 
+actions :index
+
 permit_params :name, :user_id
 
 controller do
@@ -160,9 +162,9 @@ show do
 		row 'Parent Team' do |t|
 			t.parent
 		end
-		row :overriding do |t|
-			t.positions.last.overriding
-		end
+		# row :overriding do |t|
+		# 	t.positions.last.overriding
+		# end
 	end
 
     # panel "Downlines" do
