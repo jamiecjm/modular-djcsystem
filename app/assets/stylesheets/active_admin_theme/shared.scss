@@ -1,6 +1,30 @@
 @import "flexbox";
 @import "media-query-mixins";
 
+body {
+    position: relative;
+    min-height: 80vh;
+    background-color: #F4F4F4;
+}
+
+body.logged_out{
+    min-height: 100vh;
+    background-color: #F4F4F4;
+}
+
+img {
+	max-height: 100%;
+	max-width: 100%;
+}
+
+a{
+    text-decoration: none !important;
+}
+
+a:hover{
+    opacity: 0.8;
+}
+
 .desktop-only{
 	@include mobile-only{
 		display: none;

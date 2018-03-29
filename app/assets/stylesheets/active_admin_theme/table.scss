@@ -59,23 +59,6 @@
 
 }
 
-@include desktop-only(){
-
-	table.index_table td:not(.col-buyer){
-		white-space: nowrap;
-	}
-
-	th[class^='col col-ren'] {
-	    white-space: nowrap;  
-	}
-
-	.col-buyer {
-		max-width: 200px;
-		min-width: 150px;
-		
-	}
-}
-
 thead .resource_selection_toggle_cell{
 	display: none;
 }

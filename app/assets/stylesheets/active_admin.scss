@@ -3,6 +3,7 @@
 @import "activeadmin_addons/all";
 @import "flexbox";
 @import "media-query-mixins";
+@import "active_admin_theme/\*";
 @import "admin/\*";
 
 $pending-color: #FF9900;
@@ -14,72 +15,3 @@ $approved-color: #08A510;
   &.Cancelled { background: $rejected-color; }
   &.Done { background: $approved-color; }
 }
-
-body {
-    position: relative;
-    min-height: 80vh;
-    background-color: #F4F4F4;
-}
-
-body.logged_out{
-    min-height: 100vh;
-    background-color: #F4F4F4;
-}
-
-img {
-	max-height: 100%;
-	max-width: 100%;
-}
-
-.show.sales .ui-dialog li {
-    @include flexbox();
-    @include flex-direction(column);
-}
-
-.show.sales .ui-dialog {
-    position: absolute !important;
-    width: auto !important; 
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%,-50%) !important;
-    z-index: 9999;
-    // @include mobile-only{
-    //     top: 100% !important;
-    // }
-}
-
-.show.sales .ui-dialog form textarea[name='content']{
-    @include desktop-only{
-        min-height: 200px;
-    }
-}
-
-.show.sales .ui-dialog-content{
-	width: 30vw !important;
-    min-width: 300px;
-}
-
-.show.sales .ui-dialog form input[type=text], .show.sales .ui-dialog form input[type=password], .show.sales .ui-dialog form input[type=email], 
-.show.sales .ui-dialog form input[type=number], .show.sales .ui-dialog form input[type=url], .show.sales .ui-dialog form input[type=tel], 
-.show.sales .ui-dialog form input[type=date], .show.sales .ui-dialog form input[type=time], .show.sales .ui-dialog form textarea {
-	width: auto !important;
-}
-
-#website_remove_logo_input{
-	padding-top: 0 !important;
-}
-
-#website_remove_logo{
-	display: none;
-}
-
-
-a{
-    text-decoration: none !important;
-}
-
-a:hover{
-    opacity: 0.8;
-}
-
-

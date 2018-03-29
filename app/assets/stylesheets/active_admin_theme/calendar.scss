@@ -1,0 +1,27 @@
+@import "flexbox";
+@import "media-query-mixins";
+
+.fc-state-default.fc-corner-left{
+	border-top-left-radius: 200px;
+	border-bottom-left-radius: 200px;
+}
+
+.fc-state-default.fc-corner-right{
+	border-top-right-radius: 200px;
+	border-bottom-right-radius: 200px;
+}
+
+.calendar .column{
+	@include mobile-only(){
+		width: 100% !important;
+		margin-right: 0 !important;		
+	}
+}
+
+.fc-event{
+	font-size: 13px;
+}
+
+#calendar a{
+	text-decoration: none;
+}
