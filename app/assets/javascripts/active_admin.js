@@ -2,10 +2,7 @@
 //= require activeadmin_addons/all
 //= require tinymce-jquery
 //= require html2canvas
-//= require admin/header
-//= require admin/sidebar
-//= require admin/projects
-//= require admin/users
+//= require_tree ./admin
 
 $(window).on('load', function () {
   $('#active_admin_content').css('opacity', 1);

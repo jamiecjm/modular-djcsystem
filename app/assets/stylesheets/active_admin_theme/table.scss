@@ -3,6 +3,17 @@
 
 @include mobile-only{
 
+	.table_tools_segmented_control{
+		margin-top: 10px;
+		width: 100% !important;
+	}
+
+	.table_tools_segmented_control li a{
+		border-radius: 10px;
+	    margin-right: 5px;
+	    margin-bottom: 5px;
+	}
+
 	table.index_table {
 		border: 0;
 	}

@@ -29,7 +29,7 @@
 	    border-radius: 4px;
 	    box-shadow: inset 0 1px 4px #ddd;
 	    margin-bottom: 20px;
-	    z-index: 800;
+	    z-index: 700;
 	}
 
 	.sidebar_section > h3{
@@ -48,4 +48,13 @@
 }
 .index #summary_sidebar_section .panel_contents .columns .column:last-child{
 	width: 58% !important;
+}
+
+form.filter_form .filter_form_field.filter_date_range input[type=date] + input{
+	margin-left: 6px;
+}
+
+form.filter_form .filter_form_field.filter_date_range input[type=date] {
+    box-sizing: border-box;
+    width: 114px;
 }
