@@ -124,17 +124,17 @@ RSpec.describe Team, type: :model do
 		end
 
 		it 'update the existed time point' do
-			User.third.teams.last.update(effective_date: Date.current, upline_id: nil)
+			User.third.teams.last.update(effective_date: '2000-1-1', upline_id: nil)
 			expect(Team.third.parent_id).to eq(nil)
 		end
 
 		it 'does not create new ancestry tree' do
-			User.third.teams.last.update(effective_date: Date.current, upline_id: nil)
+			User.third.teams.last.update(effective_date: '2000-1-1', upline_id: nil)
 			expect(Team.count).to eq(@total_team)
 		end
 
 		it 'original timepoint adapt previous timepoint settings (1 timepoint in between)' do
-			User.third.teams.last.update(effective_date: Date.current, upline_id: nil)
+			User.third.teams.last.update(effective_date: '2000-1-1', upline_id: nil)
 			last_attributes = User.third.teams.last.attributes.except('id', 'effective_date', 'hidden', 'created_at', 'updated_at')
 			previous_attributes = User.third.teams.second.attributes.except('id', 'effective_date', 'hidden', 'created_at', 'updated_at')
 			expect(last_attributes).to eq(previous_attributes)

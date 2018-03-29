@@ -35,7 +35,7 @@ class Team < ApplicationRecord
 
 	# validates :parent_id, presence: true, unless: proc { user.admin? }
 	validates :user_id, presence: true
-	validate :must_be_less_than_first_sale_date
+	# validate :must_be_less_than_first_sale_date
 	validate :check_subtree, unless: proc{new_record?}
 	# validates_uniqueness_of :user_id, :scope => [:effective_date]
 
@@ -208,11 +208,8 @@ class Team < ApplicationRecord
 	def update_existing_record
 		team = team_at_timepoint(effective_date, false)
 		if team.present?
-			team.parent_id = parent_id if parent&.other_teams&.include?(team.parent)
-			team.upline_id = team.parent_id
 			team.hidden = false
 			team.attributes = self.attributes.except('id', 'effective_date', 'ancestry', 'hidden', 'created_at', 'updated_at')
-			team.skip_callbacks = true
 			team.save
 		end
 	end
@@ -270,6 +267,7 @@ class Team < ApplicationRecord
 
 	def update_children_ancestry
 		children.each do |t|
+			ancestry ||= ''
 			t.update(ancestry: ancestry + "/#{id}", skip_callbacks: true)
 		end
 	end

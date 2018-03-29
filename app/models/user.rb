@@ -139,7 +139,7 @@ class User < ApplicationRecord
 	end
 
 	def set_team
-		Team.create(user_id: id, parent_id: parent&.current_team&.id, position_id: Position.default.id, effective_date: parent&.effective_date)
+		Team.create(user_id: id, parent_id: parent&.current_team&.id, position_id: Position.default.id, effective_date: '2000-1-1')
 	end
 
 	def lock_user

@@ -185,41 +185,4 @@ RSpec.describe User, type: :model do
 		end
 	end
 
-	context 'becomes inactive' do
-		before do
-			admin = FactoryBot.create(:admin)
-			root = FactoryBot.create(:root)
-			root.current_team.update(effective_date: 1.month.ago)
-			children1 = FactoryBot.build(:children1)
-			children1.parent = root
-			children1.save
-			children2 = FactoryBot.build(:children2)
-			children2.parent = root
-			children2.save
-			grandchildren1 = FactoryBot.build(:grandchildren1)
-			grandchildren1.parent = children1
-			grandchildren1.save
-			grandchildren2 = FactoryBot.build(:grandchildren2)
-			grandchildren2.parent = children1
-			grandchildren2.save
-			grandchildren3 = FactoryBot.build(:grandchildren3)
-			grandchildren3.parent = children2
-			grandchildren3.save
-			grandchildren4 = FactoryBot.build(:grandchildren4)
-			grandchildren4.parent = children2
-			grandchildren4.save
-			Team.create(user_id: root.id, position_id: nil, effective_date: Date.today)
-		end
-
-		it 'has 1 current_team_members' do
-			root = User.find_by(name: 'Root')
-			expect(root.current_team_members.length).to eq(1)
-		end
-
-		it 'has 8 all_team_subtree' do
-			root = User.find_by(name: 'Root')
-			byebug
-			expect(root.all_team_subtree.length).to eq(8)
-		end
-	end
 end
