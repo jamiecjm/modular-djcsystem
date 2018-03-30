@@ -1,6 +1,33 @@
 @import "flexbox";
 @import "media-query-mixins";
 
+table.index_table th{
+    background: #FAFAFA;
+    background-image: none;	
+    box-shadow: none;
+}
+
+table.index_table th.sorted-asc, table.index_table th.sorted-desc{
+    background: #FAFAFA;
+    background-image: none;		
+}
+
+table.index_table tr.even td{
+	background: #FAFAFA;
+}
+
+table.index_table td{
+	border-left: 1px solid #e8e8e8;
+}
+
+table.index_table{
+	border-right: 1px solid #e8e8e8;
+}
+
+table.index_table th:last-child{
+	border-right: none;
+}
+
 @include mobile-only{
 
 	.table_tools_segmented_control{

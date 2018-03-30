@@ -13,4 +13,8 @@ $(document).ready(function(){
     $("#header ul.tabs > li ul").not($(this).find("ul")).removeClass('opened');
     $(this).find("ul").toggleClass('opened');
   });
+
+  $('#title_bar').click(function(){
+    $('.logged_in #title_bar, #active_admin_content, #footer, .logged_in .flashes, #header #tabs').toggleClass('hidden')
+  })
 });

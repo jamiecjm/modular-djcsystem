@@ -28,13 +28,19 @@
 }
 
 @include desktop-only{
-	.logged_in #title_bar, #active_admin_content, #footer{
-		padding-left: 210px;
+	.logged_in #title_bar, #active_admin_content, #footer, .logged_in .flashes{
+	    padding-left: 200px;
+	    -webkit-transition: padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
+	    -moz-transition: padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
+	    -ms-transition: padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
+	    -o-transition: padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
+	    transition: padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
 	}
 
 	.logged_in .flashes{
-		padding-left: 180px;
-	}	
+		margin-left: -20px;
+	}
+	
 }
 
 .logged_in #wrapper{
@@ -43,15 +49,22 @@
 }
 
 #header #tabs{
+    -webkit-transition: padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    -moz-transition: padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    -ms-transition: padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    -o-transition: padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    transition: padding 0.4s ease-in-out, opacity 0.4s ease-in-out;
 	@include desktop-only{
 		top: 51px !important;
 		position: fixed;
-		left: 0;
+		left: -181px;
 		width: 180px;
 		margin: 0;
 		background-color: #FFFFFF;
 		height: 100vh;
 		border-right: 1px solid #cdcdcd;
+		padding-left: 200px;
+		margin-left: -20px;
 	}
 	@include mobile-only(){
 	    position: relative;
@@ -65,6 +78,12 @@
 	    vertical-align: top;
 	    width: 100vw;
 	    display: block;
+	}
+}
+
+@include desktop-only{
+	.logged_in #title_bar.hidden, #active_admin_content.hidden, #footer.hidden, .logged_in .flashes.hidden, #header #tabs.hidden{
+	    padding-left: 20px;
 	}
 }
 
@@ -225,6 +244,12 @@
 }
 
 #title_bar h2{
+	@include desktop-only{
+		@include flexbox();
+	    height: 50px;
+	    align-items: center;
+	    pointer-events: none;
+	}
 	@include mobile-only(){
 	    font-size: 2em;
 	}		
@@ -247,6 +272,23 @@
 	    padding: 15px 12px;
 	}		
 }
+
+#page_title:before{
+	@include desktop-only(){
+		content: '';
+		display: inline-block;
+	    cursor: pointer;
+	    width: 40px;
+	    height: 50px;
+	    float: left;
+	    vertical-align: middle;
+	    background: no-repeat center left;
+	    background-size: 30px;
+	    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(205, 205, 205, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+	    pointer-events: all;
+	}
+}
+
 
 #header #tabs > li:hover{
 	@include desktop-only{
