@@ -9,6 +9,7 @@ $(document).ready(function(){
       $("#tabs").animate({top: "-100vh"});
     } 
   });
+  $('#header #tabs > li.current ul').addClass('opened');
   $("#header ul.tabs > li").click(function(){
     $("#header ul.tabs > li ul").not($(this).find("ul")).removeClass('opened');
     $(this).find("ul").toggleClass('opened');

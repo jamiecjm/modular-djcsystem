@@ -89,7 +89,8 @@
 
 #header #tabs > li{
 	@include desktop-only{
-		display: inherit;
+		@include flexbox();
+		@include flex-direction(column);
 	    margin: 0;
 	    background: #f4f4f4;
 	    border-bottom: 1px solid #cdcdcd;		
@@ -345,13 +346,11 @@
 }
 
 #header ul.tabs > li ul.opened{
-	display: contents !important;
+	display: block !important;
 }
 
 #header ul.tabs > li:hover ul{
-
-	    display: none
-
+    display: none
 }
 
 #header #utility_nav a:hover{
