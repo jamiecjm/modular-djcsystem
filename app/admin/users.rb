@@ -1,5 +1,5 @@
 ActiveAdmin.register User do
-  permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :admin,
+  permit_params :name, :prefered_name, :ic_no, :phone_no, :birthday, :team_id, :parent_id, :location, :email, :admin, :password, :password_confirmation,
   teams_attributes: [:id, :title, :user_id, :position_id, :parent_id, :effective_date, :locked, :_destroy, :upline_id, :hidden]
 
   menu parent: 'Team', label: 'Members'
@@ -55,7 +55,7 @@ ActiveAdmin.register User do
 
   batch_action :destroy, false
 
-  action_item :change_password, only: :show do
+  action_item :change_password, only: :show, if: proc {resource == current_user} do
     link_to "Change password", edit_user_registration_path
   end
 
@@ -78,6 +78,10 @@ ActiveAdmin.register User do
     end
     column :referrer
     column :location
+    column :sales_count do |user|
+      sales = user.sales
+      link_to pluralize(sales.length, 'sale'), sales_path(q: {users_id_in: user.id, date_gteq: sales.first&.date}), target: '_blank'
+    end
     column :created_at
     column :updated_at
     actions
@@ -111,6 +115,11 @@ ActiveAdmin.register User do
           end
           t.input :hidden, as: :hidden, input_html: {value: false}
         end
+      end
+
+      inputs do
+        input :password
+        input :password_confirmation
       end
     end
 

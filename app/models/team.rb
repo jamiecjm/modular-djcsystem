@@ -159,7 +159,7 @@ class Team < ApplicationRecord
 	protected
 
 	def must_be_less_than_first_sale_date
-		first_sale_date = user.sales&.order(:date)&.first&.date
+		first_sale_date = user.sales&.first&.date
 		first_effective_date = other_teams.order(:effective_date).first.effective_date
 		unless first_sale_date.nil? || (first_sale_date.present? && first_effective_date <= first_sale_date)
 			errors.add(:effective_date, "must be earlier than first sale date (#{first_sale_date})")

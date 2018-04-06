@@ -59,7 +59,7 @@ class User < ApplicationRecord
 	has_one :current_team, ->{where('teams.effective_date <= ?', Date.today).reorder('teams.effective_date DESC')}, class_name: 'Team'
 	has_one :current_position, through: :current_team, source: :position
 	has_many :salevalues, through: :teams
-	has_many :sales, through: :salevalues
+	has_many :sales, ->{order(:date)}, through: :salevalues
 	belongs_to :referrer, class_name: 'User', optional: true
 	belongs_to :upline, class_name: 'Team', optional: true
 

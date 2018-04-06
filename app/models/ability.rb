@@ -17,8 +17,6 @@ class Ability
         can :manage, :all
         cannot [:create, :destroy], Team
         cannot [:create, :destroy], Website
-        cannot :destroy, Project, id: Project.where(id: Sale.pluck(:project_id)).ids
-        cannot :destroy, User
       end
     end
   end
