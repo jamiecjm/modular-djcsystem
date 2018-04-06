@@ -71,7 +71,7 @@ before_action only: :index do
 	elsif params['as'].nil? || params['as'] == 'table'
 		params['as'] = nil
 		params['per_page'] = nil
-		order = params['order'].gsub(/_desc/, '').gsub(/_asc/, '')
+		order = params['order']&.gsub(/_desc/, '')&.gsub(/_asc/, '')
 		if params['order'].nil? || !([order] & ['total_sales', 'total_spa_value', 'total_nett_value', 'total_comm']).any?
 			params['order'] = 'total_nett_value_desc'
 		end
