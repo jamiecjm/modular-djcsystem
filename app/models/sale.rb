@@ -49,6 +49,7 @@ class Sale < ApplicationRecord
 	validates :unit_no, presence: true
 	validates :spa_value, presence: true
 	validates :nett_value, presence: true
+	validates :project_id, presence: true
 	validates :buyer, presence: true
 	validates :main_salevalues, :presence => true
 
