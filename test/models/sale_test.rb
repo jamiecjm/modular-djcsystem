@@ -18,6 +18,7 @@
 #  spa_value     :float
 #  nett_value    :float
 #  status        :string           default("Booked")
+#  booking_form  :string
 #
 # Indexes
 #

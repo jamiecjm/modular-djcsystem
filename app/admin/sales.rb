@@ -13,7 +13,7 @@ ActiveAdmin.register Sale do
 # end
 
 permit_params :date, :project_id, :unit_no, :unit_size, :spa_value, :nett_value, :buyer, 
-:package, :remark, :spa_sign_date, :la_date, :status,
+:package, :remark, :spa_sign_date, :la_date, :status, :booking_form,
 main_salevalues_attributes: [:team_id, :percentage, :id, :sale_id, :_destroy],
 other_salevalues_attributes: [:other_user, :percentage, :id, :sale_id, :_destroy]
 
@@ -226,6 +226,11 @@ show do
 		number_row :commission, as: :currency, seperator: ',', unit: '' do |sale|
 			sale.nett_value * sale.default_positions_commission.percentage/100
 		end
+		row :booking_form do |sale|
+			if sale.booking_form?
+				link_to File.basename(Sale.last.booking_form.path), sale.booking_form.url, target: '_blank'
+			end
+		end
 		row :package
 		row :remark
 	end
@@ -257,6 +262,7 @@ form do |f|
 		input :spa_value, min: 0, step: 'any'
 		input :nett_value, min: 0, step: 'any'
 		input :buyer
+		input :booking_form, hint: '.pdf, .doc or .docx only'
 		input :package
 		input :remark
 	end

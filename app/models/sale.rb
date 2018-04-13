@@ -18,6 +18,7 @@
 #  spa_value     :float
 #  nett_value    :float
 #  status        :string           default("Booked")
+#  booking_form  :string
 #
 # Indexes
 #
@@ -40,6 +41,8 @@ class Sale < ApplicationRecord
 	belongs_to :commission, optional: true
 	has_many :positions_commissions, through: :commission
 	has_one :default_positions_commission, through: :commission
+
+	mount_uploader :booking_form, AttachmentUploader
 
 	accepts_nested_attributes_for :main_salevalues
 	accepts_nested_attributes_for :other_salevalues
@@ -71,7 +74,7 @@ class Sale < ApplicationRecord
 		where('extract(month from date) = ?', month.to_date.month)
 	}
 
-	before_validation :set_comm
+	before_save :set_comm
 	after_save :recalculate_sv, unless: proc {id_changed?}
 	# after_initialize :initialize_sv
 
