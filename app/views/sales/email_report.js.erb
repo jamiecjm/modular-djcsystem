@@ -19,6 +19,7 @@ var checkExist = setInterval(function() {
 	    'Buyer: <%=@sale.buyer%><br>' +
 	    'SPA Price: RM <%=number_with_delimiter('%.2f' % @sale.spa_value)%><br>' +
 	    'Nett Price: RM <%=number_with_delimiter('%.2f' % @sale.nett_value)%><br>' +
+	    'Booking Form: <%=link_to File.basename(@sale.booking_form&.path), @sale.booking_form&.url, target: '_blank'%><br>' +
 	    'Package: <%=@sale.package%><br>' +
 	    'Remark: <%=@sale.remark%><br>' +
 	    'Team: <%=@company_name%><br><br>' +
@@ -29,7 +30,10 @@ var checkExist = setInterval(function() {
 		;
       $('textarea[name=content]').html(content);
       tinyMCE.init({
-	    selector: 'textarea[name=content]'
+	    selector: 'textarea[name=content]',
+		theme: 'modern',
+		plugins: 'print preview fullpage searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount imagetools contextmenu colorpicker textpattern help',
+		toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat'
 	  });
    }
 }, 100);

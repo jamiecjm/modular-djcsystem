@@ -228,7 +228,7 @@ show do
 		end
 		row :booking_form do |sale|
 			if sale.booking_form?
-				link_to File.basename(Sale.last.booking_form.path), sale.booking_form.url, target: '_blank'
+				link_to File.basename(sale.booking_form.path), sale.booking_form.url, target: '_blank'
 			end
 		end
 		row :package
