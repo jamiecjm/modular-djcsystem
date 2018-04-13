@@ -4,6 +4,15 @@ ActiveAdmin.register_page "Dashboard" do
 
   content title: proc{ I18n.t("active_admin.dashboard") } do
     columns do
+        panel 'System Updates' do
+            span '2018-04-13'
+            ul do
+                li 'You can now upload booking form via new/edit sale page.'
+                li 'Booking form link is included in the draft email to admin.'
+            end
+        end
+    end
+    columns do
         panel 'Quick Links', id: 'quick-links' do
             a href: new_sale_path, class: 'card' do
                 span class: 'card-content' do
