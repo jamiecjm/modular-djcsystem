@@ -1,6 +1,7 @@
 //= require active_admin/base
 //= require activeadmin_addons/all
 //= require tinymce-jquery
+//= require ckeditor-jquery
 //= require html2canvas
 //= require_tree ./admin
 

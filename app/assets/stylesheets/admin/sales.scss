@@ -24,15 +24,11 @@
 }
 
 .show.sales .ui-dialog {
-    // position: absolute !important;
     width: auto !important; 
-    top: 100px !important;
-    // left: 50% !important;
-    // transform: translate(-50%,-50%) !important;
-    // z-index: 9999;
-    // @include mobile-only{
-    //     top: 100% !important;
-    // }
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%,-50%) !important;  
 }
 
 // .show.sales .ui-dialog form textarea[name='content']{
