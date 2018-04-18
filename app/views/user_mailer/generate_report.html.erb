@@ -12,10 +12,11 @@ Size: <%=number_with_delimiter(@sale.unit_size, precision: 0)%> sqft<br>
 Buyer: <%=@sale.buyer%><br>
 SPA Price: RM <%=number_with_delimiter('%.2f' % @sale.spa_value)%><br>
 Nett Price: RM <%=number_with_delimiter('%.2f' % @sale.nett_value)%><br>
+Booking Form: <%=link_to File.basename(@sale.booking_form&.path), @sale.booking_form&.url, target: '_blank' if @sale.booking_form?%><br>
 Package: <%=@sale.package%><br>
 Remark: <%=@sale.remark%><br>
 Team: <%=@company_name%><br><br>
 <p>
-    Congratulations on closing a sale. <%=link_to 'Login', sale_url(@sale) %> to check your sales report.
+    Congratulations on closing a sale. <%=link_to 'Login', sale_url(@sale) %> to check your sale report.
 </p>
 DJC Sales System

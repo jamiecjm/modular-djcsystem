@@ -63,6 +63,20 @@ ActiveAdmin.register User do
     render json: User.order(:prefered_name).pluck(:id, :prefered_name)
   end
 
+  controller do
+
+    before_action :remove_password_input, only: :update
+
+    private
+
+    def remove_password_input
+      if params['user']['password'].blank? && params['user']['password_confirmation'].blank?
+        params['user']['password'] = nil
+        params['user']['password_confirmation'] = nil
+      end
+    end
+  end
+
   index pagination_total: false do
     selectable_column
     id_column
@@ -118,8 +132,8 @@ ActiveAdmin.register User do
       end
 
       inputs do
-        input :password
-        input :password_confirmation
+        input :password, input_html: {required: false}
+        input :password_confirmation, input_html: {required: false}
       end
     end
 

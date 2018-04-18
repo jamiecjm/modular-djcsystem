@@ -20,6 +20,7 @@ module ModularDjcsystem
     config.sass.load_paths << File.expand_path('../../vendor/assets/stylesheets/')
     config.assets.paths << File.expand_path('../../vendor/assets/javascripts/')
     config.filter_parameters << :password
+    config.assets.precompile += ['ckeditor/*']
 
     config.time_zone = 'Asia/Kuala_Lumpur'
   end
