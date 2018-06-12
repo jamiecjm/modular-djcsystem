@@ -50,7 +50,7 @@ class Salevalue < ApplicationRecord
 		joins(:sale).where('extract(month from sales.date) = ?', month.to_date.month)
 	}
 
-	before_create :calc_value
+	before_save :calc_value
 	before_save :adjust_team_id
 
 	def self.ransackable_scopes(_auth_object = nil)
