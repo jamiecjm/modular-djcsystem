@@ -42,15 +42,23 @@
 
 .timeline .event-start{
   border-top-left-radius: 5px;
-  border-top-right-radius: 5px;  
+  border-top-right-radius: 5px;
 }
 
 .timeline .event-end{
   border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;  
+  border-bottom-right-radius: 5px;
   box-shadow: 0 4px 4px 0 #F2F2F2;
 }
 
 .timeline .event span:first-child{
   font-size: 17px;
+}
+
+.timeline-object{
+  margin-bottom: 40px;
+}
+
+.timeline-object h4 {
+  margin: 10px 0;
 }

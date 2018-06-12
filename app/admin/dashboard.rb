@@ -5,11 +5,15 @@ ActiveAdmin.register_page "Dashboard" do
   content title: proc{ I18n.t("active_admin.dashboard") } do
     columns do
         panel 'System Updates' do
-            span '2018-04-13'
-            ul do
-                li 'You can now upload booking form via new/edit sale page.'
-                li 'Booking form link is included in the draft email to admin.'
+          controller.instance_variable_get(:@response).each do |release|
+            div class: 'timeline-object' do
+              span release['created_at'].to_date
+              span release['tag_name']
+              h4 release['name']
+              markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, extensions = {})
+              div markdown.render(release['body']).html_safe
             end
+          end
         end
     end
     columns do
@@ -59,9 +63,20 @@ ActiveAdmin.register_page "Dashboard" do
                     span class: 'card-content' do
                         'Company Profile'
                     end
-                end                                
+                end
             end
         end
     end
   end # content
+
+  controller do
+
+    def index
+      url = 'https://api.github.com/repos/jamiecjm/modular-djcsystem/releases'
+      response = RestClient.get url
+      @response = JSON.parse(response.body)
+    end
+
+  end
+
 end
