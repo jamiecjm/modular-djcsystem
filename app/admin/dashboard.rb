@@ -5,7 +5,7 @@ ActiveAdmin.register_page "Dashboard" do
   content title: proc{ I18n.t("active_admin.dashboard") } do
     columns do
         panel 'System Updates' do
-          controller.instance_variable_get(:@response).each do |release|
+          controller.instance_variable_get(:@response).first(5).each do |release|
             div class: 'timeline-object' do
               span release['created_at'].to_date
               span release['tag_name']

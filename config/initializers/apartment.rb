@@ -101,7 +101,7 @@ Rails.application.config.middleware.use Apartment::Elevators::Generic, lambda { 
   else
     website = Website.find_by(external_host: request.host)
   end
-  return website&.id
+  return website&.subdomain
 }
 
 # Rails.application.config.middleware.use Apartment::Elevators::Domain
