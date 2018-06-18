@@ -145,7 +145,7 @@ ActiveAdmin.setup do |config|
   # You can add before, after and around filters to all of your
   # Active Admin resources and pages from here.
   #
-  config.skip_before_action :verify_authenticity_token, if: proc{ devise_controller? && action_name == 'create' }
+  config.skip_before_action :verify_authenticity_token
   config.before_action :set_mailer_host
   config.before_action :set_raven_context, if: proc{ Rails.env.production? }
   config.before_action :configure_permitted_parameters, if: proc{ devise_controller? }
@@ -261,17 +261,17 @@ ActiveAdmin.setup do |config|
   # To disable/customize for the :admin namespace:
   #
     config.namespace nil do |admin|
-  
+
       # Disable the links entirely
       # admin.download_links = false
-  
+
       # Only show XML & PDF options
       admin.download_links = [:csv]
-  
+
       # Enable/disable the links based on block
       #   (for example, with cancan)
       # admin.download_links = proc { can?(:view_download_links) }
-  
+
     end
 
   # == Pagination
@@ -316,4 +316,3 @@ ActiveAdmin.setup do |config|
 
   config.disable_streaming_in = ['production', 'development', 'staging']
 end
-
