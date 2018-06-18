@@ -3,19 +3,19 @@ ActiveAdmin.register_page "Dashboard" do
   menu false
 
   content title: proc{ I18n.t("active_admin.dashboard") } do
-    columns do
-        panel 'System Updates' do
-          controller.instance_variable_get(:@response).first(5).each do |release|
-            div class: 'timeline-object' do
-              span release['created_at'].to_date
-              span release['tag_name']
-              h4 release['name']
-              markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, extensions = {})
-              div markdown.render(release['body']).html_safe
-            end
-          end
-        end
-    end
+    # columns do
+    #     panel 'System Updates' do
+    #       controller.instance_variable_get(:@response).first(5).each do |release|
+    #         div class: 'timeline-object' do
+    #           span release['created_at'].to_date
+    #           span release['tag_name']
+    #           h4 release['name']
+    #           markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, extensions = {})
+    #           div markdown.render(release['body']).html_safe
+    #         end
+    #       end
+    #     end
+    # end
     columns do
         panel 'Quick Links', id: 'quick-links' do
             a href: new_sale_path, class: 'card' do
@@ -72,9 +72,9 @@ ActiveAdmin.register_page "Dashboard" do
   controller do
 
     def index
-      url = 'https://api.github.com/repos/jamiecjm/modular-djcsystem/releases'
-      response = RestClient.get url
-      @response = JSON.parse(response.body)
+      # url = 'https://api.github.com/repos/jamiecjm/modular-djcsystem/releases'
+      # response = RestClient.get url
+      # @response = JSON.parse(response.body)
     end
 
   end
