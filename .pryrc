@@ -1,4 +1,4 @@
-ActiveRecord::Base.connection.schema_search_path = 2
+ActiveRecord::Base.connection.schema_search_path = "eliteone"
 begin
   require 'awesome_print'
   AwesomePrint.defaults = {
@@ -10,4 +10,3 @@ begin
 rescue LoadError => err
   puts "no awesome_print :("
 end
-
