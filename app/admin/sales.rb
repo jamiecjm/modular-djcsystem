@@ -12,10 +12,10 @@ ActiveAdmin.register Sale do
 #   permitted
 # end
 
-permit_params :date, :project_id, :unit_no, :unit_size, :spa_value, :nett_value, :buyer, 
+permit_params :date, :project_id, :unit_no, :unit_size, :spa_value, :nett_value, :buyer,
 :package, :remark, :spa_sign_date, :la_date, :status, :booking_form,
-main_salevalues_attributes: [:team_id, :percentage, :id, :sale_id, :_destroy],
-other_salevalues_attributes: [:other_user, :percentage, :id, :sale_id, :_destroy]
+main_salevalues_attributes: [:team_id, :percentage, :id, :sale_id, :order, :_destroy],
+other_salevalues_attributes: [:other_user, :percentage, :id, :sale_id, :order, :_destroy]
 
 menu label: 'Team', priority: 1, parent: 'Sales'
 
@@ -71,7 +71,7 @@ before_action only: :index do
 				params['q']['date_gteq'] = Date.current.strftime('%Y-12-16').to_date
 			else
 				params['q']['date_gteq'] = Date.current.strftime('%Y-12-16').to_date - 1.year
-			end	
+			end
 		end
 	end
 end
@@ -99,7 +99,7 @@ member_action :send_report do
 	to = params[:to].gsub(/\s+/, '').split(',')
 	cc = params[:cc].gsub(/\s+/, '').split(',')
 	bcc = params[:bcc].gsub(/\s+/, '').split(',')
-	UserMailer.email_admin(user: current_user, sale: sale, to: to, cc: cc, bcc: bcc, subject: params['subject'], 
+	UserMailer.email_admin(user: current_user, sale: sale, to: to, cc: cc, bcc: bcc, subject: params['subject'],
 		content: params['content'], company: current_website).deliver
 end
 
@@ -141,7 +141,7 @@ index title: 'Team Sales', pagination_total: false do
 					[sv[x-1].other_user, "(#{sv[x-1].percentage}%)"]
 				else
 					if can? :read, sv[x-1].user
-						[(link_to sv[x-1].user.prefered_name, salevalues_path(q: {team_user_id_eq: sv[x-1].user.id, sale_id_eq: sale.id, 
+						[(link_to sv[x-1].user.prefered_name, salevalues_path(q: {team_user_id_eq: sv[x-1].user.id, sale_id_eq: sale.id,
 							sale_date_gteq_datetime: sale.date, sale_date_lteq_datetime: sale.date}), target: '_blank'), "(#{sv[x-1].percentage}%)"]
 					else
 						[sv[x-1].user.prefered_name, "(#{sv[x-1].percentage}%)"]
@@ -188,7 +188,7 @@ sidebar :summary, only: :index, priority: 0 do
 		column do
 			span number_to_currency(controller.instance_variable_get(:@total_comm), unit: 'RM ', delimeter: ',')
 		end
-	end	
+	end
 	columns do
 		column do
 			span 'Total Sales'
@@ -207,7 +207,7 @@ show do
 		row :unit_no
 		row :buyer
 		list_row :ren do |s|
-			(s.main_salevalues + s.other_salevalues).map {|sv| 
+			(s.main_salevalues + s.other_salevalues).map {|sv|
 				if sv.user.nil?
 					sv.other_user + " (#{sv.percentage}%)"
 				else
@@ -236,16 +236,16 @@ show do
 	end
 
 	attributes_table title: 'SPA and LA Sign Date' do
-		
+
 		row :spa_sign_date, label: 'SPA Sign Date'
 		row :la_date, label: 'LA Sign Date'
-		
+
 	end
 end
 
 form do |f|
 	f.semantic_errors *f.object.errors.keys
-	inputs do 
+	inputs do
 		input :date
 		input :status
 		has_many :main_salevalues, :allow_destroy => true, new_record: 'Add REN', heading: 'REN', sortable: :order, sortable_start: 1 do |sv|
@@ -278,12 +278,12 @@ form do |f|
 end
 
 filter :upline, as: :select, label: 'Upline', :collection => proc { User.accessible_by(current_ability).order('prefered_name').map { |u| [u.prefered_name, "[#{u.id}]"] } }
-filter :year, as: :select, :collection => proc { 
+filter :year, as: :select, :collection => proc {
 	start_year = Sale.order('date asc').first&.date&.year
 	start_year ||= Date.current.year
 	start_year -= 1
 	end_year = Date.current.year+1
-	(start_year..end_year).to_a.reverse 
+	(start_year..end_year).to_a.reverse
 }
 filter :month, as: :select, :collection => proc { (1..12).to_a.map{|m| Date::MONTHNAMES[m] }}
 filter :date

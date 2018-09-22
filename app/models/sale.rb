@@ -44,8 +44,8 @@ class Sale < ApplicationRecord
 
 	mount_uploader :booking_form, AttachmentUploader
 
-	accepts_nested_attributes_for :main_salevalues
-	accepts_nested_attributes_for :other_salevalues
+	accepts_nested_attributes_for :main_salevalues, allow_destroy: true
+	accepts_nested_attributes_for :other_salevalues, allow_destroy: true
 
 	validates :date, presence: true
 	validates :status, presence: true
