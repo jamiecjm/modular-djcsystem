@@ -48,8 +48,8 @@
 class User < ApplicationRecord
 	# Include default devise modules. Others available are:
 	# :confirmable, :lockable, :timeoutable and :omniauthable
-	devise :database_authenticatable, 
-	       :recoverable, :rememberable, :trackable, :validatable, 
+	devise :database_authenticatable,
+	       :recoverable, :rememberable, :trackable, :validatable,
 	       :registerable, :confirmable, :lockable
 
 	extend Enumerize
@@ -67,7 +67,7 @@ class User < ApplicationRecord
 
 	has_ancestry orphan_strategy: :adopt
 
-	enumerize :location, in: ["KL","JB","Penang","Melaka"]
+	enumerize :location, in: ["KL","JB","Penang","Melaka", "KK", "Kuching"]
 
   	scope :approved, -> { order(:prefered_name).where(locked_at: nil, archived: false) }
   	scope :pending, -> { where.not(locked_at: nil).where(unconfirmed_email: nil, archived: false) }
@@ -76,14 +76,14 @@ class User < ApplicationRecord
 			id = id[/\d+/].to_i
 		end
 		user = User.find(id)
-		search(id_in: user.current_team_members.pluck(:id)).result	
+		search(id_in: user.current_team_members.pluck(:id)).result
   	}
   	scope :referrer_eq, -> (id){
   		if id.is_a? String
 			id = id[/\d+/].to_i
 		end
 		user = User.find(id)
-		search(id_in: user.children.ids).result 		
+		search(id_in: user.children.ids).result
   	}
 
   	validates :name, presence: true
