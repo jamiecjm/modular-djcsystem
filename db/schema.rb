@@ -29,18 +29,6 @@ ActiveRecord::Schema.define(version: 20180615021346) do
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
   end
 
-  create_table "ckeditor_assets", force: :cascade do |t|
-    t.string "data_file_name", null: false
-    t.string "data_content_type"
-    t.integer "data_file_size"
-    t.string "type", limit: 30
-    t.integer "width"
-    t.integer "height"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["type"], name: "index_ckeditor_assets_on_type"
-  end
-
   create_table "commissions", id: :serial, force: :cascade do |t|
     t.integer "project_id"
     t.float "percentage"
@@ -59,17 +47,6 @@ ActiveRecord::Schema.define(version: 20180615021346) do
     t.index ["salevalue_id"], name: "index_overriding_commissions_on_salevalue_id"
     t.index ["team_id", "salevalue_id"], name: "index_overriding_commissions_on_team_id_and_salevalue_id", unique: true
     t.index ["team_id"], name: "index_overriding_commissions_on_team_id"
-  end
-
-  create_table "position_commissions", force: :cascade do |t|
-    t.integer "position_id"
-    t.integer "commission_id"
-    t.float "percentage"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["commission_id"], name: "index_position_commissions_on_commission_id"
-    t.index ["position_id", "commission_id"], name: "index_position_commissions_on_position_id_and_commission_id", unique: true
-    t.index ["position_id"], name: "index_position_commissions_on_position_id"
   end
 
   create_table "positions", force: :cascade do |t|
@@ -146,7 +123,7 @@ ActiveRecord::Schema.define(version: 20180615021346) do
     t.date "effective_date"
     t.integer "position_id"
     t.integer "upline_id"
-    t.boolean "hidden", default: true
+    t.boolean "hidden", default: false
     t.boolean "current", default: true
     t.index ["ancestry"], name: "index_teams_on_ancestry"
     t.index ["upline_id"], name: "index_teams_on_upline_id"

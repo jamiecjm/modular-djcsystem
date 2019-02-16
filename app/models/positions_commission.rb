@@ -2,10 +2,10 @@
 #
 # Table name: positions_commissions
 #
-#  id            :integer          not null, primary key
+#  id            :bigint(8)        not null, primary key
 #  position_id   :integer
-#  percentage    :float
 #  commission_id :integer
+#  percentage    :float
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #

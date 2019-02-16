@@ -2,7 +2,7 @@
 #
 # Table name: teams_positions
 #
-#  id             :integer          not null, primary key
+#  id             :bigint(8)        not null, primary key
 #  team_id        :integer
 #  position_id    :integer
 #  effective_date :date

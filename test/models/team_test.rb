@@ -11,7 +11,7 @@
 #  effective_date :date
 #  position_id    :integer
 #  upline_id      :integer
-#  hidden         :boolean          default(TRUE)
+#  hidden         :boolean          default(FALSE)
 #  current        :boolean          default(TRUE)
 #
 # Indexes

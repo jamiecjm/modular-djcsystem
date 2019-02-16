@@ -2,7 +2,7 @@
 #
 # Table name: overriding_commissions
 #
-#  id           :integer          not null, primary key
+#  id           :bigint(8)        not null, primary key
 #  team_id      :integer
 #  salevalue_id :integer
 #  override     :float

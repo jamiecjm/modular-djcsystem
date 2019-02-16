@@ -2,7 +2,7 @@
 #
 # Table name: positions
 #
-#  id         :integer          not null, primary key
+#  id         :bigint(8)        not null, primary key
 #  title      :string
 #  overriding :boolean          default(FALSE)
 #  ancestry   :string
@@ -15,9 +15,9 @@
 #  index_positions_on_ancestry  (ancestry)
 #
 
-FactoryBot.define do
-  factory :default_position, class: 'Position' do
-    title 'REN'
-    default true
-  end
-end
+# FactoryBot.define do
+#   factory :default_position, class: 'Position' do
+#     title 'REN'
+#     default true
+#   end
+# end

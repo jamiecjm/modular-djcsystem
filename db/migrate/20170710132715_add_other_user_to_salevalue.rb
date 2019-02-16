@@ -11,10 +11,10 @@ class AddOtherUserToSalevalue < ActiveRecord::Migration[5.1]
     			sv.update_columns(user_id: nil, other_user: u.prefered_name)
     		end
     	end
-      Unit.all.each do |u|
-        sale = u.sale
-        sale.update_columns(unit_no: u.unit_no, unit_size: u.size, spa_value: u.spa_price, nett_value: u.nett_price)
-      end
+      # Unit.all.each do |u|
+      #   sale = u.sale
+      #   sale.update_columns(unit_no: u.unit_no, unit_size: u.size, spa_value: u.spa_price, nett_value: u.nett_price)
+      # end
   end
 
   def down
