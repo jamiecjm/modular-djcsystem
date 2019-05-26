@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180615021346) do
+ActiveRecord::Schema.define(version: 20190525235820) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(version: 20180615021346) do
     t.float "nett_value"
     t.string "status", default: "Booked"
     t.string "booking_form"
+    t.string "buyer_source"
     t.index ["commission_id"], name: "index_sales_on_commission_id"
     t.index ["date"], name: "index_sales_on_date"
     t.index ["project_id"], name: "index_sales_on_project_id"

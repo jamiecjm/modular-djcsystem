@@ -19,6 +19,7 @@
 #  nett_value    :float
 #  status        :string           default("Booked")
 #  booking_form  :string
+#  buyer_source  :string
 #
 # Indexes
 #
