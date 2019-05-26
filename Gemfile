@@ -61,6 +61,7 @@ group :development do
   gem 'awesome_print'
   gem 'meta_request'
   gem 'brakeman', :require => false
+  gem 'rubocop-performance'
 end
 
 group :production do
