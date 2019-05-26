@@ -1,5 +1,6 @@
 class Change < ActiveRecord::Migration[5.1]
   def up
+	
   	add_column :sales, :status_string, :string
   	Sale.all.each do |s|
   		s.status_string = s.status

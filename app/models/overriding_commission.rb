@@ -17,6 +17,6 @@
 #
 
 class OverridingCommission < ApplicationRecord
-	belongs_to :team
-	belongs_to :salevalue, optional: true
+  belongs_to :team
+  belongs_to :salevalue, optional: true
 end

@@ -1,5 +1,6 @@
 class ChangeStatusName < ActiveRecord::Migration[5.1]
-  def up
+	def up
+		return if column_exists?(:sales, :status)
   	remove_column :sales, :status
   	rename_column :sales, :status_string, :status
   	remove_column :users, :location

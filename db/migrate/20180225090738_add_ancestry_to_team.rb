@@ -1,5 +1,6 @@
 class AddAncestryToTeam < ActiveRecord::Migration[5.1]
   def up
+
   	add_column :teams, :overriding, :boolean, default: false, if: column_exists?(:teams, :overriding)
   	add_column :teams, :overriding_percentage, :float, if: column_exists?(:teams, :overriding_percentage)
     team = Team.search(id_in: User.pluck(:team_id)).result

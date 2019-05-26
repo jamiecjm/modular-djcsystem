@@ -1,5 +1,6 @@
 class CreatePositions < ActiveRecord::Migration[5.1]
   def up
+    return if table_exists?(:positions)
     create_table :positions do |t|
     	t.string :title, unique: true
     	t.boolean :overriding, default: false

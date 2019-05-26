@@ -15,43 +15,41 @@
 #
 
 class Commission < ApplicationRecord
+  belongs_to :project, optional: true
+  has_many :positions_commissions, dependent: :destroy
+  has_one :default_positions_commission, -> { where(position_id: Position.default.id) }, class_name: "PositionsCommission"
+  has_many :positions, -> { distinct.ordered_by_ancestry.reverse }, through: :positions_commissions
+  has_many :sales, through: :project
+  has_many :salevalues, through: :sales
 
-	belongs_to :project, optional: true
-	has_many :positions_commissions, dependent: :destroy
-	has_one :default_positions_commission, -> {where(position_id: Position.default.id)}, class_name: 'PositionsCommission'
-	has_many :positions, -> {distinct.ordered_by_ancestry.reverse}, through: :positions_commissions
-	has_many :sales, through: :project
-	has_many :salevalues, through: :sales
+  after_save :reset_sale_comm, if: proc { effective_date_changed? }
+  after_destroy :reset_sale_comm
+  after_initialize :initialize_position_commission
 
-	after_save :reset_sale_comm, if: proc{effective_date_changed?}
-	after_destroy :reset_sale_comm
-	after_initialize :initialize_position_commission
+  validates :effective_date, presence: true
 
-	validates :effective_date, presence: true
+  accepts_nested_attributes_for :positions_commissions
 
-	accepts_nested_attributes_for :positions_commissions
+  scope :by_date, ->(date) { where("commissions.effective_date <= ?", date) }
 
-	scope :by_date, ->(date){ where('commissions.effective_date <= ?', date) }
+  def display_name
+    percentage
+  end
 
-	def display_name
-		percentage
-	end
+  def reset_sale_comm
+    sales.each do |s|
+      s.set_comm
+      s.save
+    end
+  end
 
-	def reset_sale_comm
-		sales.each do |s|
-			s.set_comm
-			s.save
-		end
-	end
+  def initialize_position_commission
+    if new_record? && positions_commissions.blank?
+      positions_commissions.build(position_id: Position.default.id)
 
-	def initialize_position_commission
-		if new_record? && positions_commissions.blank?
-			positions_commissions.build(position_id: Position.default.id)
-		
-			# Position.all.ordered_by_ancestry.reverse.each do |p| 
-			# 	positions_commissions.build(position_id: p.id)
-			# end		
-		end
-	end
-
+      # Position.all.ordered_by_ancestry.reverse.each do |p|
+      # 	positions_commissions.build(position_id: p.id)
+      # end
+    end
+  end
 end
