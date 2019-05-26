@@ -95,6 +95,18 @@ ActiveAdmin.register Sale do
   end
 
   member_action :send_report do
+    cookies[:report_to] = {
+      value: params[:to],
+      expires: 1.year.from_now,
+    }
+    cookies[:report_cc] = {
+      value: params[:cc],
+      expires: 1.year.from_now,
+    }
+    cookies[:report_bcc] = {
+      value: params[:bcc],
+      expires: 1.year.from_now,
+    }
     sale = Sale.find(params[:id])
     to = params[:to].gsub(/\s+/, "").split(",")
     cc = params[:cc].gsub(/\s+/, "").split(",")
@@ -280,12 +292,12 @@ ActiveAdmin.register Sale do
 
   filter :upline, as: :select, label: "Upline", :collection => proc { User.accessible_by(current_ability).order("prefered_name").map { |u| [u.prefered_name, "[#{u.id}]"] } }
   filter :year, as: :select, :collection => proc {
-           start_year = Sale.order("date asc").first&.date&.year
-           start_year ||= Date.current.year
-           start_year -= 1
-           end_year = Date.current.year + 1
-           (start_year..end_year).to_a.reverse
-         }
+                  start_year = Sale.order("date asc").first&.date&.year
+                  start_year ||= Date.current.year
+                  start_year -= 1
+                  end_year = Date.current.year + 1
+                  (start_year..end_year).to_a.reverse
+                }
   filter :month, as: :select, :collection => proc { (1..12).to_a.map { |m| Date::MONTHNAMES[m] } }
   filter :date
   # filter :teams, as: :select, collection: proc { Team.where(overriding: true) }
