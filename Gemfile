@@ -62,6 +62,7 @@ group :development do
   gem 'meta_request'
   gem 'brakeman', :require => false
   gem 'rubocop-performance'
+  gem 'local-subdomain'
 end
 
 group :production do
@@ -73,7 +74,6 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'ancestry'
 gem 'apartment'
-gem 'local-subdomain'
 gem 'activeadmin'
 gem 'devise', git: 'https://github.com/plataformatec/devise' #, ref: '88e9a85'
 gem 'cancancan'
