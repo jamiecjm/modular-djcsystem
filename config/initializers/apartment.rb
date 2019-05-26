@@ -2,7 +2,7 @@
 # Apartment can support many different "Elevators" that can take care of this routing to your data.
 # Require whichever Elevator you're using below or none if you have a custom one.
 #
-require 'apartment/elevators/generic'
+require "apartment/elevators/generic"
 # require 'apartment/elevators/domain'
 # require 'apartment/elevators/subdomain'
 # require 'apartment/elevators/first_subdomain'
@@ -48,7 +48,7 @@ Apartment.configure do |config|
   #   end
   # end
   #
-  config.tenant_names = lambda { Website.pluck :id }
+  config.tenant_names = lambda { Website.pluck :subdomain }
 
   # PostgreSQL:
   #   Specifies whether to use PostgreSQL schemas or create a new database per Tenant.
@@ -90,11 +90,11 @@ end
 # Setup a custom Tenant switching middleware. The Proc should return the name of the Tenant that
 # you want to switch to.
 Rails.application.config.middleware.use Apartment::Elevators::Generic, lambda { |request|
-  domain = request.host.split('.')[1..-1].join('.')
-  subdomain = request.host.split('.')[0]
-  if ['djcsystem.com', 'lvh.me'].include?(domain)
-    if subdomain == 'www'
-      return 'public'
+  domain = request.host.split(".")[1..-1].join(".")
+  subdomain = request.host.split(".")[0]
+  if ["djcsystem.com", "lvh.me"].include?(domain)
+    if subdomain == "www"
+      return "public"
     else
       website = Website.find_by(subdomain: subdomain)
     end
