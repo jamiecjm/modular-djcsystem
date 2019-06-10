@@ -95,18 +95,6 @@ ActiveAdmin.register Sale do
   end
 
   member_action :send_report do
-    cookies[:report_to] = {
-      value: params[:to],
-      expires: 1.year.from_now,
-    }
-    cookies[:report_cc] = {
-      value: params[:cc],
-      expires: 1.year.from_now,
-    }
-    cookies[:report_bcc] = {
-      value: params[:bcc],
-      expires: 1.year.from_now,
-    }
     sale = Sale.find(params[:id])
     to = params[:to].gsub(/\s+/, "").split(",")
     cc = params[:cc].gsub(/\s+/, "").split(",")

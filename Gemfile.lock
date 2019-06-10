@@ -111,7 +111,7 @@ GEM
       activemodel (>= 4.0.0)
       activesupport (>= 4.0.0)
       mime-types (>= 1.16)
-    chartkick (3.0.2)
+    chartkick (3.2.0)
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
     ckeditor_rails (4.10.0)
@@ -457,7 +457,7 @@ DEPENDENCIES
   cancancan
   capybara (~> 2.13)
   carrierwave
-  chartkick
+  chartkick (>= 3.2.0)
   ckeditor_rails
   cloudinary
   coffee-rails (~> 4.2)

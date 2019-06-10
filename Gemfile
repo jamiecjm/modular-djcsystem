@@ -78,7 +78,7 @@ gem 'activeadmin'
 gem 'devise', git: 'https://github.com/plataformatec/devise' #, ref: '88e9a85'
 gem 'cancancan'
 gem 'activeadmin_addons'
-gem 'chartkick'
+gem 'chartkick', ">= 3.2.0"
 gem 'groupdate'
 gem 'carrierwave'
 gem 'mini_magick'
