@@ -95,7 +95,7 @@ class Team < ApplicationRecord
   after_create :build_ancestry, unless: proc { skip_callbacks || previous_team.nil? }
   before_save :update_children_date, unless: proc { skip_callbacks || new_record? || !effective_date_changed? }
   before_save :set_upline_id, unless: proc { skip_callbacks }
-  # before_destroy :prevent_destroy
+  before_destroy :prevent_destroy
   after_save :reset_sv_team_id, if: proc { effective_date_changed? || !skip_callbacks }
   after_save :update_children_ancestry, if: proc { ancestry_changed? }
   after_save :update_user_upline_id, if: proc { upline_id_changed? }
