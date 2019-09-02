@@ -116,17 +116,17 @@ ActiveAdmin.register User do
     end
 
     if current_user.admin?
-      # inputs do
-      #   f.has_many :teams, scope: :visible, heading: "Position", new_record: false do |t|
-      #     t.input :position, label: "Title"
-      #     t.input :upline
-      #     unless t.object == f.object.teams.first
-      #       t.input :effective_date
-      #       t.input :_destroy, label: "Delete", as: :boolean unless t.object.new_record?
-      #     end
-      #     t.input :hidden, as: :hidden, input_html: { value: false }
-      #   end
-      # end
+      inputs do
+        f.has_many :teams, scope: :visible, heading: "Position", new_record: false do |t|
+          t.input :position, label: "Title"
+          t.input :upline
+          unless t.object == f.object.teams.first
+            t.input :effective_date
+            t.input :_destroy, label: "Delete", as: :boolean unless t.object.new_record?
+          end
+          t.input :hidden, as: :hidden, input_html: { value: false }
+        end
+      end
 
       inputs do
         input :password, input_html: { required: false }
